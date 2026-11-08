@@ -1,0 +1,8 @@
+[install]
+# Exact versions only: `bun add x` writes "1.2.3", never "^1.2.3".
+exact = true
+
+[test]
+coverageThreshold = { lines = 1.0, functions = 1.0 }
+coverageSkipTestFiles = true
+coveragePathIgnorePatterns = ["src/**/actions/**", "src/flows/**"]
