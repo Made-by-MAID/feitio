@@ -31,3 +31,12 @@ test('the showcase uses only icons the sprite has', async () => {
   expect([...inMarkup, ...listed].filter((name) => !known.has(name))).toEqual([]);
   expect(listed.sort()).toEqual([...known].sort());
 });
+
+test('every switch the showcase script wires has its buttons in the markup', async () => {
+  const page = await read('site', 'index.html');
+  const markup = page.slice(0, page.indexOf('<script>'));
+  const wired = [...page.matchAll(/\[data-([a-z]+)-set\]/g)].map((match) => match[1] as string);
+  const switches = [...new Set([...wired, 'mode', 'density', 'language'])];
+  const missing = switches.filter((name) => !markup.includes(`data-${name}-set=`));
+  expect(missing).toEqual([]);
+});
