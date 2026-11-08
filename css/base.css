@@ -226,3 +226,17 @@
     box-shadow: var(--feitio-shadow-lift);
   }
 }
+
+@layer feitio.shapes {
+  /* Hand-drawn illustrations for empty screens and big errors: ink, with a touch of orange. */
+  .feitio-illustration {
+    inline-size: 8rem;
+    block-size: auto;
+    color: var(--feitio-color-text);
+    rotate: -3deg;
+  }
+
+  .feitio-hot {
+    stroke: var(--feitio-color-accent);
+  }
+}

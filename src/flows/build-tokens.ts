@@ -1,4 +1,6 @@
 import { join } from 'node:path';
+import { loadIcons } from '../icons/actions/load-icons.ts';
+import { renderSprite } from '../icons/calculations/render-sprite.ts';
 import { loadTokens } from '../tokens/actions/load-tokens.ts';
 import { readTextFile } from '../tokens/actions/read-text-file.ts';
 import { writeTextFile } from '../tokens/actions/write-text-file.ts';
@@ -8,10 +10,12 @@ import { renderTypescript } from '../tokens/calculations/render-typescript.ts';
 /** The theme a page gets when it sets no `data-theme`. */
 export const DEFAULT_THEME = 'casa';
 
-/** What `bun run build` writes, from the tokens folder of the repository root. */
+/** What `bun run build` writes, from the tokens and icons folders of the repository root. */
 export async function buildOutputs(root: string): Promise<Map<string, string>> {
   const { base, themes } = await loadTokens(join(root, 'tokens'));
+  const icons = await loadIcons(join(root, 'icons'));
   return new Map([
+    [join(root, 'icons', 'sprite.svg'), renderSprite(icons)],
     [join(root, 'css', 'tokens.css'), renderCss(base, themes, DEFAULT_THEME)],
     [
       join(root, 'js', 'tokens.ts'),
