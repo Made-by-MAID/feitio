@@ -54,6 +54,24 @@
     --feitio-cell-padding-block: 0.85rem;
     --feitio-cell-padding-inline: 0.9rem;
     --feitio-control-min-size: 44px;
+
+    /* Lets sizes that are auto (a block that grows) transition too, where the browser supports it. */
+    interpolate-size: allow-keywords;
+  }
+
+  /*
+   * Every change of state is a transition, never a jump: colors when day turns to night, spacing
+   * when the density changes, sizes when content grows. One duration and one curve for all of it.
+   */
+  *,
+  *::before,
+  *::after {
+    transition-property:
+      color, background-color, border-color, outline-color, text-decoration-color, fill, stroke,
+      box-shadow, opacity, transform, translate, rotate, scale, padding, margin, gap, inline-size,
+      block-size, min-block-size, border-radius;
+    transition-duration: var(--feitio-duration-change);
+    transition-timing-function: var(--feitio-easing-change);
   }
 
   [data-density="compact"] {
@@ -176,7 +194,7 @@
   /* A process note: why something is the way it is. */
   .feitio-note {
     padding-inline-start: var(--feitio-space-3);
-    border-inline-start: 2px solid var(--feitio-color-accent);
+    border-inline-start: var(--feitio-border-width) solid var(--feitio-color-accent);
     font-style: italic;
     color: var(--feitio-color-accent-strong);
   }

@@ -64,8 +64,8 @@
   "border": {
     "$type": "dimension",
     "width": {
-      "$value": { "value": 2, "unit": "px" },
-      "$description": "The ink line of controls and lifted paper."
+      "$value": { "value": 1, "unit": "px" },
+      "$description": "The ink line of controls and lifted paper: fine, like a pen stroke."
     }
   },
   "focus": {
@@ -91,10 +91,18 @@
     "place": {
       "$value": { "value": 260, "unit": "ms" },
       "$description": "Paper being placed: how long a menu or a notice takes to settle."
+    },
+    "change": {
+      "$value": { "value": 320, "unit": "ms" },
+      "$description": "Any change of state: day to night, density, hover, a size that grows. Nothing jumps."
     }
   },
   "easing": {
     "$type": "cubicBezier",
-    "place": { "$value": [0.2, 0.9, 0.3, 1.25], "$description": "Settles with a small overshoot." }
+    "place": { "$value": [0.2, 0.9, 0.3, 1.25], "$description": "Settles with a small overshoot." },
+    "change": {
+      "$value": [0.3, 0, 0.2, 1],
+      "$description": "Starts gently and lands softly, with no overshoot."
+    }
   }
 }
