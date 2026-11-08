@@ -6,7 +6,12 @@
   "type": "module",
   "files": [
     "tokens",
-    "css"
+    "css",
+    "js",
+    "icons",
+    "illustrations",
+    "docs",
+    "skills"
   ],
   "scripts": {
     "build": "bun src/flows/build-tokens.ts",
