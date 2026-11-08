@@ -84,6 +84,8 @@ better made outside Feitio.
   `feitio.base` and `feitio.shapes`.
 - `icons/`, `illustrations/`: hand-drawn SVG.
 - `docs/guidelines/`: how and why.
+- `site/`: the showcase, in English and Portuguese, published on GitHub Pages straight from `main`
+  (the root `index.html` sends visitors there).
 - `skills/feitio/`: a skill for AI coding agents that build interfaces with Feitio.
 
 ## Work on it
@@ -95,6 +97,10 @@ bun install
 bun run build   # tokens and icons into css/, js/ and icons/sprite.svg
 bun run check   # style, types and tests (contrast, gamut, icons, generated files up to date)
 ```
+
+The showcase (`site/index.html`, published on GitHub Pages) is checked in a real browser by
+`bun run test:e2e`: axe-core accessibility by day, at night and in compact density, no broken
+request, no sideways scroll on a phone. It needs Chromium (`bunx playwright install chromium`).
 
 Read [`AGENTS.md`](AGENTS.md) before changing anything; it holds the rules for people and agents.
 

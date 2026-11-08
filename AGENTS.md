@@ -39,10 +39,15 @@ Rules for anyone changing this repository, people and AI agents alike. Read the
   `function`, never as arrow functions in a `const`.
 - Calculations are fully covered; the coverage threshold enforces it.
 - Exact dependency versions, never `^` or `~` (`bunfig.toml` writes them exact).
-- Code, comments, commits and documentation in English. Interface text in examples, in Portuguese.
+- Code, comments, commits and documentation in English.
+- The showcase speaks English and Portuguese: English in the markup, Portuguese beside it in
+  `data-pt` (plain text) or `data-pt-html` (text with links or emphasis). New text needs both.
 
 ## Checks
 
 `bun run check` runs Biome, the TypeScript compiler and the tests: contrast and gamut of every
 theme, icon rules, no unknown `--feitio-` variable in the base CSS, generated files up to date. It
 must pass before any commit.
+
+`bun run test:e2e` opens the showcase in Chromium and runs axe-core on it.
+The showcase uses only Feitio's files and tokens, like any page built with it.

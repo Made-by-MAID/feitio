@@ -20,11 +20,14 @@
     "check:types": "tsc --noEmit",
     "test": "bun test",
     "test:coverage": "bun test --coverage",
-    "check": "bun run check:style && bun run check:types && bun test --coverage"
+    "check": "bun run check:style && bun run check:types && bun test --coverage",
+    "test:e2e": "bun e2e/run.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.3",
     "@types/bun": "1.4.4",
+    "axe-core": "4.14.0",
+    "playwright": "1.65.0",
     "typescript": "7.0.2"
   }
 }

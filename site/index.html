@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Feitio, a handmade design system</title>
+<meta name="description" content="Feitio is a handmade, humanist design system: guidelines, tokens, base CSS and hand-drawn icons.">
+<link rel="stylesheet" href="../css/fonts.css">
+<link rel="stylesheet" href="../css/feitio.css">
+<style>
+  /* Layout of this page only. Every value still comes from a Feitio token. */
+  main { padding-block: var(--feitio-space-6) var(--feitio-space-7); padding-inline: var(--feitio-space-4); display: grid; gap: var(--feitio-space-7); }
+  section > p, header > p { margin-top: var(--feitio-space-3); }
+  .stroke { display: block; inline-size: min(100%, 26rem); block-size: auto; margin-top: var(--feitio-space-3); }
+  .stroke path { fill: none; stroke: var(--feitio-color-accent); stroke-width: 7; stroke-linecap: round; stroke-dasharray: 700; stroke-dashoffset: 700; animation: draw 1.4s 0.4s var(--feitio-easing-change) forwards; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  @media (prefers-reduced-motion: reduce) { .stroke path { stroke-dashoffset: 0; } }
+  .lede { font-size: var(--feitio-font-size-h3); color: var(--feitio-color-text-soft); }
+  fieldset.row { border: 0; padding: 0; margin-inline: 0; align-items: center; }
+  fieldset.row legend { float: left; margin-inline-end: var(--feitio-space-2); font-family: var(--feitio-font-ui); font-size: var(--feitio-font-size-small); color: var(--feitio-color-text-soft); }
+  .row { display: flex; flex-wrap: wrap; gap: var(--feitio-space-2); margin-top: var(--feitio-space-4); position: relative; }
+  .button { display: inline-flex; align-items: center; gap: var(--feitio-space-2); font-family: var(--feitio-font-ui); font-weight: var(--feitio-font-weight-bold); font-size: var(--feitio-font-size-small); min-block-size: var(--feitio-control-min-size); padding: var(--feitio-control-padding-block) var(--feitio-control-padding-inline); border: var(--feitio-border-width) solid var(--feitio-color-text); border-radius: var(--feitio-radius); background: transparent; cursor: pointer; }
+  .button[aria-pressed="true"] { background: var(--feitio-color-text); color: var(--feitio-color-surface); }
+  .button.primary { background: var(--feitio-color-accent); border-color: var(--feitio-color-accent); color: var(--feitio-color-on-accent); }
+  .rows { display: grid; gap: var(--feitio-space-3); margin-top: var(--feitio-space-4); }
+  .rows > div { display: grid; grid-template-columns: 9rem 1fr; gap: var(--feitio-space-3); padding-top: var(--feitio-space-3); border-top: var(--feitio-border-width) solid var(--feitio-color-line); }
+  .rows dt { font-family: var(--feitio-font-ui); font-weight: var(--feitio-font-weight-bold); }
+  .rows .never dt { text-decoration: line-through; text-decoration-color: var(--feitio-color-accent); text-decoration-thickness: 2px; }
+  @media (max-width: 36rem) { .rows > div { grid-template-columns: 1fr; gap: var(--feitio-space-1); } }
+  .swatches { display: flex; flex-wrap: wrap; gap: var(--feitio-space-3); margin-top: var(--feitio-space-4); }
+  .swatch { inline-size: 6.8rem; font-family: var(--feitio-font-ui); font-size: var(--feitio-font-size-small); }
+  .chip { block-size: 4rem; border-radius: var(--feitio-radius); border: var(--feitio-border-width) solid var(--feitio-color-line); margin-bottom: var(--feitio-space-2); }
+  .swatch b { display: block; }
+  .swatch span { color: var(--feitio-color-text-soft); }
+  .scale { display: grid; gap: var(--feitio-space-3); margin-top: var(--feitio-space-4); }
+  .scale div { display: flex; gap: var(--feitio-space-3); align-items: baseline; border-top: var(--feitio-border-width) solid var(--feitio-color-line); padding-top: var(--feitio-space-2); }
+  .scale small { inline-size: 5.5rem; flex: none; }
+  .spaces { display: grid; gap: var(--feitio-space-2); margin-top: var(--feitio-space-4); font-family: var(--feitio-font-ui); font-size: var(--feitio-font-size-small); color: var(--feitio-color-text-soft); }
+  .spaces div { display: flex; align-items: center; gap: var(--feitio-space-3); }
+  .spaces b { inline-size: 3.5rem; flex: none; font-weight: var(--feitio-font-weight-bold); }
+  .spaces i { block-size: 0.9rem; background: var(--feitio-color-accent); border-radius: var(--feitio-radius); }
+  .menu { position: absolute; top: calc(100% + var(--feitio-space-2)); left: 0; inline-size: 15rem; padding: var(--feitio-space-2) 0; font-family: var(--feitio-font-ui); list-style: none; z-index: 1; margin: 0; }
+  .menu li { padding: var(--feitio-space-2) var(--feitio-space-3); }
+  .menu li:first-child { color: var(--feitio-color-accent-strong); font-weight: var(--feitio-font-weight-bold); }
+  table { inline-size: 100%; border-collapse: collapse; margin-top: var(--feitio-space-3); font-family: var(--feitio-font-ui); font-size: var(--feitio-font-size-small); font-variant-numeric: tabular-nums; }
+  th, td { text-align: start; padding: var(--feitio-cell-padding-block) var(--feitio-cell-padding-inline); border-bottom: var(--feitio-border-width) solid var(--feitio-color-line); }
+  th { color: var(--feitio-color-text-soft); border-bottom-color: var(--feitio-color-text); }
+  .number { text-align: end; }
+  .badge { display: inline-flex; align-items: center; gap: var(--feitio-space-1); font-weight: var(--feitio-font-weight-bold); padding: 0 var(--feitio-space-2); border-radius: var(--feitio-radius); }
+  .badge .feitio-icon { inline-size: 1.05em; block-size: 1.05em; }
+  .badge.ok { color: var(--feitio-color-ok); background: var(--feitio-color-ok-surface); }
+  .badge.warn { color: var(--feitio-color-warn); background: var(--feitio-color-warn-surface); }
+  .badge.error { color: var(--feitio-color-error); background: var(--feitio-color-error-surface); }
+  .icons { display: grid; grid-template-columns: repeat(auto-fill, minmax(6.5rem, 1fr)); gap: var(--feitio-space-4); margin-top: var(--feitio-space-4); }
+  .icons figure { display: grid; justify-items: center; gap: var(--feitio-space-2); font-family: var(--feitio-font-ui); font-size: var(--feitio-font-size-small); color: var(--feitio-color-text-soft); }
+  .icons .feitio-icon { inline-size: 2.4rem; block-size: 2.4rem; color: var(--feitio-color-text); }
+  .empty { display: grid; justify-items: center; text-align: center; gap: var(--feitio-space-3); margin-top: var(--feitio-space-4); }
+  .empty p { color: var(--feitio-color-text-soft); }
+  footer { font-family: var(--feitio-font-ui); font-size: var(--feitio-font-size-small); color: var(--feitio-color-text-soft); }
+</style>
+</head>
+<body>
+<main class="feitio-measure">
+  <header>
+    <small>Feitio</small>
+    <h1 data-pt="Feito à mão, cheio de energia.">Made by hand, full of energy.</h1>
+    <svg class="stroke" viewBox="0 0 420 30" aria-hidden="true"><path d="M5 19 C 80 8, 150 26, 230 15 S 350 8, 415 16"/></svg>
+    <p class="lede" data-pt-html="Um design system para interfaces que mostram o cuidado de quem fez e a vontade de seguir em frente. &lt;em&gt;Feitio&lt;/em&gt; é o jeito como uma coisa é feita.">A design system for interfaces that show the care of whoever made them and the will to keep going. <em>Feitio</em> is Portuguese for the way a thing is made.</p>
+    <fieldset class="row"><legend data-pt="Luz">Light</legend>
+      <button type="button" class="button" data-mode-set="" aria-pressed="true" data-pt="Seguir o sistema">Follow the system</button>
+      <button type="button" class="button" data-mode-set="light" aria-pressed="false" data-pt="Dia">Day</button>
+      <button type="button" class="button" data-mode-set="dark" aria-pressed="false" data-pt="Noite">Night</button>
+    </fieldset>
+  </header>
+
+  <section aria-labelledby="voice">
+    <h2 id="voice" data-pt="Voz">Voice</h2>
+    <p data-pt="Ateliê vivo: entre a bancada de quem faz à mão e uma oficina cheia de energia.">A living workshop: somewhere between a craftsperson's bench and a busy workshop.</p>
+    <dl class="rows">
+      <div><dt data-pt="Requinte">Refinement</dt><dd data-pt="Poucos elementos, cada um bem acabado. Se não ajuda, sai.">Few elements, each one well finished. If it does not help, it goes.</dd></div>
+      <div><dt data-pt="Processo">Process</dt><dd data-pt="As marcas do trabalho ficam à vista quando ajudam a entender.">The marks of the work stay in sight when they help to understand.</dd></div>
+      <div><dt data-pt="Energia">Energy</dt><dd data-pt="O laranja aparece só onde algo acontece.">The orange shows up only where something happens.</dd></div>
+      <div class="never"><dt data-pt="Tech vibes">Techy</dt><dd data-pt="Nada de neon, tela escura brilhando ou fonte mono decorando.">No neon, no glowing dark screens, no decorative monospace.</dd></div>
+      <div class="never"><dt data-pt="Convoluto">Convoluted</dt><dd data-pt="Uma ideia por bloco, poucos tipos de componente.">One idea per block, few kinds of component.</dd></div>
+      <div class="never"><dt data-pt="Barulhento">Noisy</dt><dd data-pt="Laranja raro; movimento só em resposta a uma ação.">Rare orange; motion only in answer to an action.</dd></div>
+    </dl>
+    <p class="feitio-note" data-pt="O texto é direto e caloroso. O botão diz o que acontece; o erro diz o que houve e como resolver, sem pedir desculpa.">Text is direct and warm. A button says what happens; an error says what happened and how to fix it, without apologizing.</p>
+  </section>
+
+  <section aria-labelledby="color">
+    <h2 id="color" data-pt="Cor">Color</h2>
+    <p data-pt="Seis papéis que todo tema preenche, e três cores de estado terrosas. Troque entre dia e noite no topo da página.">Six roles every theme fills, and three earthy status colors. Switch between day and night at the top of the page.</p>
+    <div class="swatches">
+      <div class="swatch"><div class="chip" style="background: var(--feitio-color-surface)"></div><b data-pt="Superfície">Surface</b><span data-pt="página">page</span></div>
+      <div class="swatch"><div class="chip" style="background: var(--feitio-color-surface-raised)"></div><b data-pt="Superfície alta">Raised</b><span data-pt="blocos">blocks</span></div>
+      <div class="swatch"><div class="chip" style="background: var(--feitio-color-text)"></div><b data-pt="Texto">Text</b><span data-pt="principal">main</span></div>
+      <div class="swatch"><div class="chip" style="background: var(--feitio-color-text-soft)"></div><b data-pt="Texto suave">Soft text</b><span data-pt="apoio">support</span></div>
+      <div class="swatch"><div class="chip" style="background: var(--feitio-color-accent)"></div><b data-pt="Acento">Accent</b><span data-pt="ação">action</span></div>
+      <div class="swatch"><div class="chip" style="background: var(--feitio-color-accent-strong)"></div><b data-pt="Acento forte">Strong accent</b><span data-pt="links">links</span></div>
+    </div>
+    <div class="swatches">
+      <div class="swatch"><div class="chip" style="background: var(--feitio-color-ok)"></div><b data-pt="Certo">OK</b><span data-pt="musgo">moss</span></div>
+      <div class="swatch"><div class="chip" style="background: var(--feitio-color-warn)"></div><b data-pt="Atenção">Attention</b><span data-pt="mostarda">mustard</span></div>
+      <div class="swatch"><div class="chip" style="background: var(--feitio-color-error)"></div><b data-pt="Erro">Error</b><span data-pt="vinho">wine</span></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="type">
+    <h2 id="type" data-pt="Tipografia">Typography</h2>
+    <p data-pt="A família Alegreya: a sans nos títulos e em tudo em que se age, a serifa para ler, o itálico nas notas de processo.">The Alegreya family: the sans for headings and anything you act on, the serif for reading, the italic for process notes.</p>
+    <div class="scale">
+      <div><small data-pt="Título 1">Heading 1</small><span style="font: var(--feitio-font-weight-heavy) var(--feitio-font-size-h1) / 1.05 var(--feitio-font-ui)" data-pt="Ritmo e intenção">Rhythm and intent</span></div>
+      <div><small data-pt="Título 2">Heading 2</small><span style="font: var(--feitio-font-weight-bold) var(--feitio-font-size-h2) / 1.1 var(--feitio-font-ui)" data-pt="Esta semana">This week</span></div>
+      <div><small data-pt="Título 3">Heading 3</small><span style="font: var(--feitio-font-weight-bold) var(--feitio-font-size-h3) var(--feitio-font-ui)" data-pt="Novo item">New item</span></div>
+      <div><small data-pt="Texto">Text</small><span data-pt="Leitura calma, com requinte sem solenidade.">Calm reading, refined without ceremony.</span></div>
+      <div><small data-pt="Nota">Note</small><span style="font-style: italic; color: var(--feitio-color-accent-strong)" data-pt="Uma anotação de quem está fazendo.">A note from whoever is making it.</span></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="space">
+    <h2 id="space" data-pt="Espaço">Space</h2>
+    <p data-pt="Sete passos, do ícone ao lado da palavra ao ar entre seções.">Seven steps, from an icon next to a word to the air between sections.</p>
+    <div class="spaces">
+      <div><b>4px</b><i style="inline-size: var(--feitio-space-1)"></i>icon and word</div>
+      <div><b>8px</b><i style="inline-size: var(--feitio-space-2)"></i>inside a control</div>
+      <div><b>16px</b><i style="inline-size: var(--feitio-space-3)"></i>between items</div>
+      <div><b>24px</b><i style="inline-size: var(--feitio-space-4)"></i>inside a block</div>
+      <div><b>40px</b><i style="inline-size: var(--feitio-space-5)"></i>padding of a block</div>
+      <div><b>64px</b><i style="inline-size: var(--feitio-space-6)"></i>between blocks</div>
+      <div><b>96px</b><i style="inline-size: var(--feitio-space-7)"></i>between sections</div>
+    </div>
+  </section>
+
+  <section aria-labelledby="shape">
+    <h2 id="shape" data-pt="Forma, profundidade e movimento">Shape, depth and motion</h2>
+    <p data-pt="Cantos levemente irregulares, como papel recortado à mão. O que flutua é papel sobreposto, com um traço fino de tinta e sombra dura, e chega como um recorte assentando na mesa. Toda mudança de estado tem transição.">Uneven corners, like paper cut by hand. What floats is lifted paper, with a fine ink line and a hard shadow, and it arrives like a cut-out laid on the table. Every change of state is a transition.</p>
+    <div class="feitio-block">
+      <h3 data-pt="Experimente">Try it</h3>
+      <div class="row">
+        <button type="button" class="button" id="menu-button" aria-expanded="false" aria-controls="menu"><svg class="feitio-icon" aria-hidden="true"><use href="../icons/sprite.svg#feitio-sliders"/></svg><span data-pt="Ordenar por">Sort by</span></button>
+        <button type="button" class="button primary"><svg class="feitio-icon" aria-hidden="true"><use href="../icons/sprite.svg#feitio-plus"/></svg><span data-pt="Novo item">New item</span></button>
+        <ul class="menu feitio-lift" id="menu" hidden>
+          <li data-pt="Mais antigos primeiro">Oldest first</li>
+          <li data-pt="Responsável">Owner</li>
+          <li data-pt="Situação">Status</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="density">
+    <h2 id="density" data-pt="Densidade">Density</h2>
+    <p data-pt="Páginas de leitura respiram; telas de trabalho são compactas. A tabela abaixo troca de densidade e as linhas acompanham suavemente.">Reading pages breathe; work screens are compact. The table below changes density and its rows follow smoothly.</p>
+    <div class="feitio-block" id="density-area">
+      <fieldset class="row"><legend data-pt="Densidade">Density</legend>
+        <button type="button" class="button" data-density-set="" aria-pressed="true" data-pt="Confortável">Comfortable</button>
+        <button type="button" class="button" data-density-set="compact" aria-pressed="false" data-pt="Compacta">Compact</button>
+      </fieldset>
+      <table>
+        <caption class="feitio-note" style="caption-side: bottom; text-align: start; margin-top: var(--feitio-space-3)" data-pt="O estado sempre vem com ícone e palavra.">Status always comes with an icon and a word.</caption>
+        <thead><tr><th scope="col" data-pt="Item">Item</th><th scope="col" data-pt="Responsável">Owner</th><th scope="col" data-pt="Situação">Status</th><th scope="col" class="number" data-pt="Dias">Days</th></tr></thead>
+        <tbody>
+          <tr><td data-pt="Reescrever a página inicial">Rewrite the home page</td><td>Ana</td><td><span class="badge ok"><svg class="feitio-icon" aria-hidden="true"><use href="../icons/sprite.svg#feitio-check"/></svg><span data-pt="Feito">Done</span></span></td><td class="number">2</td></tr>
+          <tr><td data-pt="Fotos novas do catálogo">New catalog photos</td><td>Bruno</td><td><span class="badge warn"><svg class="feitio-icon" aria-hidden="true"><use href="../icons/sprite.svg#feitio-warn"/></svg><span data-pt="Atrasado">Late</span></span></td><td class="number">9</td></tr>
+          <tr><td data-pt="Publicar a coleção de inverno">Publish the winter collection</td><td>Carla</td><td><span class="badge error"><svg class="feitio-icon" aria-hidden="true"><use href="../icons/sprite.svg#feitio-close"/></svg><span data-pt="Travado">Blocked</span></span></td><td class="number">14</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="icons">
+    <h2 id="icons" data-pt="Ícones e ilustração">Icons and illustration</h2>
+    <p data-pt="Desenhados à mão: a linha passa do canto, o círculo não fecha, e nenhum ícone é uma linha só.">Drawn by hand: the line overshoots the corner, a ring does not close, and no icon is a single line.</p>
+    <div class="icons" id="icon-grid"></div>
+    <div class="feitio-block empty">
+      <svg class="feitio-illustration" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" viewBox="0 0 120 100" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 40c30-2.6 62 1.4 92-1.8"/>
+        <path d="M18 41.5c3 16 6.2 32 10.4 46.6"/>
+        <path d="M25.6 88.6c22.4-1.8 43.6.6 66.2-1.6"/>
+        <path d="M101.6 41.6c-2.8 15.4-6 30.8-10.4 46.4"/>
+        <path d="M32 52c1.8 10 3.2 20 4.6 29.4M50 52.6c.4 9.8.2 19.6.6 29.2M68.4 52c-.6 9.8-1.2 19.6-1.8 29.6M86 51.6c-1.6 9.6-3 19.4-4.8 29.2"/>
+        <path d="M36 39c2.4-14 13-24.4 24.6-24.6C72.8 14.2 83.4 25 85 38.6"/>
+        <path class="feitio-hot" d="M60.6 6.4c-.2 2.4.2 4.8-.1 7.2M44 11.2c1.4 1.8 2.6 3.6 4 5.6M77.2 11c-1.4 1.8-2.6 3.8-4 5.8"/>
+      </svg>
+      <h3 data-pt="Nada por aqui ainda">Nothing here yet</h3>
+      <p data-pt="Tudo o que estava aberto foi feito ou guardado. Crie o próximo quando quiser.">Everything open is done or put away. Create the next one when you are ready.</p>
+      <button type="button" class="button primary" data-pt="Criar um item">Create an item</button>
+    </div>
+  </section>
+
+  <footer>
+    <p data-pt-html="O Feitio é código aberto, sob a licença MIT: &lt;a href=&quot;https://github.com/Made-by-MAID/feitio&quot;&gt;github.com/Made-by-MAID/feitio&lt;/a&gt;.">Feitio is open source under the MIT license: <a href="https://github.com/Made-by-MAID/feitio">github.com/Made-by-MAID/feitio</a>.</p>
+    <p data-pt-html="Feito pela MAID, uma assistente de IA, para &lt;a href=&quot;https://github.com/HenriqueArtur&quot;&gt;@HenriqueArtur&lt;/a&gt;.">Made by MAID, an AI assistant, for <a href="https://github.com/HenriqueArtur">@HenriqueArtur</a>.</p>
+  </footer>
+</main>
+<script>
+  const root = document.documentElement;
+
+  function wire(attribute, target) {
+    const buttons = document.querySelectorAll(`[data-${attribute}-set]`);
+    for (const button of buttons) {
+      button.addEventListener('click', () => {
+        const value = button.getAttribute(`data-${attribute}-set`);
+        if (value) target.setAttribute(`data-${attribute}`, value);
+        else target.removeAttribute(`data-${attribute}`);
+        for (const other of buttons) other.setAttribute('aria-pressed', String(other === button));
+      });
+    }
+  }
+  wire('mode', root);
+  wire('density', document.getElementById('density-area'));
+
+  const menu = document.getElementById('menu');
+  const menuButton = document.getElementById('menu-button');
+  menuButton.addEventListener('click', () => {
+    const open = menu.hidden;
+    menu.hidden = !open;
+    menu.classList.toggle('feitio-place', open);
+    menuButton.setAttribute('aria-expanded', String(open));
+  });
+
+  const icons = {
+    task: ['Task', 'Tarefa'],
+    calendar: ['Calendar', 'Agenda'],
+    search: ['Search', 'Buscar'],
+    sliders: ['Settings', 'Ajustes'],
+    plus: ['Create', 'Criar'],
+    check: ['OK', 'Certo'],
+    close: ['Close', 'Fechar'],
+    warn: ['Attention', 'Atenção'],
+    info: ['Information', 'Informação'],
+    'chevron-down': ['Open', 'Abrir'],
+    'chevron-right': ['Next', 'Seguir'],
+    menu: ['Menu', 'Menu'],
+  };
+  const grid = document.getElementById('icon-grid');
+  for (const [name, [en, pt]] of Object.entries(icons)) {
+    grid.insertAdjacentHTML('beforeend', `<figure><svg class="feitio-icon" aria-hidden="true"><use href="../icons/sprite.svg#feitio-${name}"/></svg><figcaption data-pt="${pt}">${en}</figcaption></figure>`);
+  }
+
+  // English is in the markup; Portuguese sits next to it in data-pt (text) and data-pt-html.
+  const titles = { en: document.title, pt: 'Feitio, um design system feito à mão' };
+  function setLanguage(language) {
+    root.lang = language === 'pt' ? 'pt-BR' : 'en';
+    document.title = titles[language];
+    for (const element of document.querySelectorAll('[data-pt]')) {
+      element.dataset.en ??= element.textContent;
+      element.textContent = language === 'pt' ? element.dataset.pt : element.dataset.en;
+    }
+    for (const element of document.querySelectorAll('[data-pt-html]')) {
+      element.dataset.enHtml ??= element.innerHTML;
+      element.innerHTML = language === 'pt' ? element.dataset.ptHtml : element.dataset.enHtml;
+    }
+    for (const button of document.querySelectorAll('[data-language-set]')) {
+      button.setAttribute('aria-pressed', String(button.dataset.languageSet === language));
+    }
+  }
+  for (const button of document.querySelectorAll('[data-language-set]')) {
+    button.addEventListener('click', () => setLanguage(button.dataset.languageSet));
+  }
+  if (navigator.language.toLowerCase().startsWith('pt')) setLanguage('pt');
+</script>
+</body>
+</html>
