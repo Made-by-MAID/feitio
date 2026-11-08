@@ -9,7 +9,8 @@
 <link rel="stylesheet" href="../css/feitio.css">
 <style>
   /* Layout of this page only. Every value still comes from a Feitio token. */
-  main { padding-block: var(--feitio-space-6) var(--feitio-space-7); padding-inline: var(--feitio-space-4); display: grid; gap: var(--feitio-space-7); }
+  /* minmax(0, 1fr): a grid track never grows past the screen to fit wide content, like a table. */
+  main { padding-block: var(--feitio-space-6) var(--feitio-space-7); padding-inline: var(--feitio-space-4); display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--feitio-space-7); }
   section > p, header > p { margin-top: var(--feitio-space-3); }
   .stroke { display: block; inline-size: min(100%, 26rem); block-size: auto; margin-top: var(--feitio-space-3); }
   .stroke path { fill: none; stroke: var(--feitio-color-accent); stroke-width: 7; stroke-linecap: round; stroke-dasharray: 700; stroke-dashoffset: 700; animation: draw 1.4s 0.4s var(--feitio-easing-change) forwards; }
@@ -162,8 +163,8 @@
         <button type="button" class="button" data-density-set="" aria-pressed="true" data-pt="Confortável">Comfortable</button>
         <button type="button" class="button" data-density-set="compact" aria-pressed="false" data-pt="Compacta">Compact</button>
       </fieldset>
-      <!-- biome-ignore lint/a11y/noNoninteractiveTabindex: a region that scrolls on its own must take focus, or keyboard users cannot scroll it (WCAG 2.1.1). -->
-      <section class="table-scroll" tabindex="0" aria-labelledby="density">
+      <!-- biome-ignore lint/a11y/noNoninteractiveTabindex: an area that scrolls on its own must take focus, or keyboard users cannot scroll it (WCAG 2.1.1). It is not a landmark: the section around it already is. -->
+      <div class="table-scroll" tabindex="0">
       <table>
         <caption class="feitio-note" style="caption-side: bottom; text-align: start; margin-top: var(--feitio-space-3)" data-pt="O estado sempre vem com ícone e palavra.">Status always comes with an icon and a word.</caption>
         <thead><tr><th scope="col" data-pt="Item">Item</th><th scope="col" data-pt="Responsável">Owner</th><th scope="col" data-pt="Situação">Status</th><th scope="col" class="number" data-pt="Dias">Days</th></tr></thead>
@@ -173,7 +174,7 @@
           <tr><td data-pt="Publicar a coleção de inverno">Publish the winter collection</td><td>Carla</td><td><span class="badge error"><svg class="feitio-icon" aria-hidden="true"><use href="../icons/sprite.svg#feitio-close"/></svg><span data-pt="Travado">Blocked</span></span></td><td class="number">14</td></tr>
         </tbody>
       </table>
-      </section>
+      </div>
     </div>
   </section>
 
