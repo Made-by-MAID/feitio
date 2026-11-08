@@ -93,6 +93,10 @@ try {
 }
 
 if (problems.length > 0) {
+  // On GitHub Actions, each problem is also an annotation: short, and readable through the API.
+  if (process.env.GITHUB_ACTIONS === 'true') {
+    for (const problem of problems) console.log(`::error title=Showcase::${problem}`);
+  }
   console.error(
     `The showcase has ${problems.length} problem(s):\n${problems.map((p) => `- ${p}`).join('\n')}`,
   );
