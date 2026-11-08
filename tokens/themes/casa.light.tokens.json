@@ -1,0 +1,61 @@
+{
+  "$description": "The house theme by day: cream paper, warm ink, a lively orange.",
+  "color": {
+    "$type": "color",
+    "surface": {
+      "$value": { "colorSpace": "oklch", "components": [0.96, 0.018, 80] },
+      "$description": "Page background."
+    },
+    "surface-raised": {
+      "$value": { "colorSpace": "oklch", "components": [0.925, 0.026, 76] },
+      "$description": "Blocks on the page."
+    },
+    "surface-top": {
+      "$value": { "colorSpace": "oklch", "components": [0.985, 0.01, 85] },
+      "$description": "Lifted paper: menus, dialogs."
+    },
+    "text": {
+      "$value": { "colorSpace": "oklch", "components": [0.26, 0.022, 55] },
+      "$description": "Main text."
+    },
+    "text-soft": {
+      "$value": { "colorSpace": "oklch", "components": [0.46, 0.025, 55] },
+      "$description": "Supporting text."
+    },
+    "accent": {
+      "$value": { "colorSpace": "oklch", "components": [0.64, 0.19, 40] },
+      "$description": "The main action. Rare on purpose."
+    },
+    "accent-strong": {
+      "$value": { "colorSpace": "oklch", "components": [0.5, 0.16, 38] },
+      "$description": "Orange text and links."
+    },
+    "on-accent": {
+      "$value": { "colorSpace": "oklch", "components": [0.18, 0.03, 45] },
+      "$description": "Text on the accent."
+    },
+    "line": {
+      "$value": { "colorSpace": "oklch", "components": [0.26, 0.022, 55], "alpha": 0.15 },
+      "$description": "Hairlines and dividers."
+    },
+    "shadow": {
+      "$value": { "colorSpace": "oklch", "components": [0.26, 0.022, 55], "alpha": 0.9 },
+      "$description": "The hard shadow of lifted paper."
+    },
+    "ok": {
+      "$value": { "colorSpace": "oklch", "components": [0.45, 0.09, 140] },
+      "$description": "It worked: moss green."
+    },
+    "ok-surface": { "$value": { "colorSpace": "oklch", "components": [0.91, 0.04, 135] } },
+    "warn": {
+      "$value": { "colorSpace": "oklch", "components": [0.5, 0.1, 85] },
+      "$description": "Attention: mustard."
+    },
+    "warn-surface": { "$value": { "colorSpace": "oklch", "components": [0.92, 0.06, 90] } },
+    "error": {
+      "$value": { "colorSpace": "oklch", "components": [0.45, 0.15, 15] },
+      "$description": "It failed: wine, never the orange."
+    },
+    "error-surface": { "$value": { "colorSpace": "oklch", "components": [0.91, 0.04, 15] } }
+  }
+}

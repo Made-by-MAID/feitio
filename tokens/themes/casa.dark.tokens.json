@@ -1,0 +1,24 @@
+{
+  "$description": "The house theme at night: warm charcoal, cream as ink, the orange lit up. Not the day inverted.",
+  "color": {
+    "$type": "color",
+    "surface": { "$value": { "colorSpace": "oklch", "components": [0.22, 0.016, 55] } },
+    "surface-raised": { "$value": { "colorSpace": "oklch", "components": [0.275, 0.02, 55] } },
+    "surface-top": { "$value": { "colorSpace": "oklch", "components": [0.31, 0.022, 55] } },
+    "text": { "$value": { "colorSpace": "oklch", "components": [0.93, 0.022, 80] } },
+    "text-soft": { "$value": { "colorSpace": "oklch", "components": [0.76, 0.03, 72] } },
+    "accent": { "$value": { "colorSpace": "oklch", "components": [0.7, 0.18, 44] } },
+    "accent-strong": { "$value": { "colorSpace": "oklch", "components": [0.77, 0.15, 52] } },
+    "on-accent": { "$value": { "colorSpace": "oklch", "components": [0.18, 0.03, 45] } },
+    "line": { "$value": { "colorSpace": "oklch", "components": [0.93, 0.022, 80], "alpha": 0.15 } },
+    "shadow": {
+      "$value": { "colorSpace": "oklch", "components": [0.12, 0.01, 55], "alpha": 0.95 }
+    },
+    "ok": { "$value": { "colorSpace": "oklch", "components": [0.78, 0.1, 140] } },
+    "ok-surface": { "$value": { "colorSpace": "oklch", "components": [0.3, 0.04, 140] } },
+    "warn": { "$value": { "colorSpace": "oklch", "components": [0.83, 0.11, 88] } },
+    "warn-surface": { "$value": { "colorSpace": "oklch", "components": [0.32, 0.05, 85] } },
+    "error": { "$value": { "colorSpace": "oklch", "components": [0.76, 0.12, 15] } },
+    "error-surface": { "$value": { "colorSpace": "oklch", "components": [0.31, 0.06, 15] } }
+  }
+}

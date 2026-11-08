@@ -1,0 +1,25 @@
+{
+  "name": "@made-by-maid/feitio",
+  "version": "0.0.0",
+  "description": "A handmade, humanist design system: guidelines, tokens and base CSS.",
+  "license": "MIT",
+  "type": "module",
+  "files": [
+    "tokens",
+    "css"
+  ],
+  "scripts": {
+    "build": "bun src/flows/build-tokens.ts",
+    "fmt": "biome check --write .",
+    "check:style": "biome ci --error-on-warnings .",
+    "check:types": "tsc --noEmit",
+    "test": "bun test",
+    "test:coverage": "bun test --coverage",
+    "check": "bun run check:style && bun run check:types && bun test --coverage"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.6.3",
+    "@types/bun": "1.4.4",
+    "typescript": "7.0.2"
+  }
+}
