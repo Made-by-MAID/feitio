@@ -1,0 +1,5 @@
+/*
+ * Alegreya and Alegreya Sans from Google Fonts, for pages that do not host the fonts themselves.
+ * Both are under the SIL Open Font License. Load this before css/feitio.css, or self-host them.
+ */
+@import url("https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,500;1,400;1,500&family=Alegreya+Sans:wght@500;700;800&display=swap");

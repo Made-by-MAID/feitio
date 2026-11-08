@@ -1,0 +1,210 @@
+/*
+ * Feitio base: the page itself and the few shapes every port shares. It reads only the tokens of
+ * css/tokens.css; colors come from the theme (`data-theme`, `data-mode`), never from here.
+ */
+@layer feitio.reset, feitio.tokens, feitio.base, feitio.shapes;
+
+@layer feitio.reset {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  body,
+  h1,
+  h2,
+  h3,
+  h4,
+  p,
+  ul,
+  ol,
+  dl,
+  dd,
+  figure,
+  blockquote {
+    margin: 0;
+  }
+
+  img,
+  svg,
+  video {
+    display: block;
+    max-width: 100%;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+    color: inherit;
+  }
+}
+
+@layer feitio.base {
+  :root {
+    /* The uneven corners together, ready for border-radius. */
+    --feitio-radius: var(--feitio-radius-top-left) var(--feitio-radius-top-right)
+      var(--feitio-radius-bottom-right) var(--feitio-radius-bottom-left);
+
+    /* Inside controls and tables: comfortable by default, compact where data-density says so. */
+    --feitio-control-padding-block: 0.75rem;
+    --feitio-control-padding-inline: 1.35rem;
+    --feitio-cell-padding-block: 0.85rem;
+    --feitio-cell-padding-inline: 0.9rem;
+    --feitio-control-min-size: 44px;
+  }
+
+  [data-density="compact"] {
+    --feitio-control-padding-block: 0.45rem;
+    --feitio-control-padding-inline: 0.9rem;
+    --feitio-cell-padding-block: 0.4rem;
+    --feitio-cell-padding-inline: 0.6rem;
+    --feitio-control-min-size: 40px;
+  }
+
+  body {
+    background: var(--feitio-color-surface);
+    color: var(--feitio-color-text);
+    font-family: var(--feitio-font-text);
+    font-size: var(--feitio-font-size-body);
+    line-height: var(--feitio-line-height-text);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--feitio-font-ui);
+    font-weight: var(--feitio-font-weight-heavy);
+    line-height: var(--feitio-line-height-heading);
+    text-wrap: balance;
+  }
+
+  h1 {
+    font-size: clamp(2.4rem, 6vw, var(--feitio-font-size-h1));
+    letter-spacing: -0.02em;
+  }
+
+  h2 {
+    font-size: var(--feitio-font-size-h2);
+    font-weight: var(--feitio-font-weight-bold);
+  }
+
+  h3,
+  h4 {
+    font-size: var(--feitio-font-size-h3);
+    font-weight: var(--feitio-font-weight-bold);
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  a {
+    color: var(--feitio-color-accent-strong);
+    text-underline-offset: 0.2em;
+  }
+
+  small {
+    font-family: var(--feitio-font-ui);
+    font-size: var(--feitio-font-size-small);
+    color: var(--feitio-color-text-soft);
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px solid var(--feitio-color-line);
+    margin-block: var(--feitio-space-5);
+  }
+
+  :focus-visible {
+    outline: var(--feitio-focus-width) solid var(--feitio-color-accent);
+    outline-offset: var(--feitio-focus-offset);
+  }
+
+  ::selection {
+    background: color-mix(in oklch, var(--feitio-color-accent) 30%, transparent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      /* biome-ignore lint/complexity/noImportantStyles: asking for less motion must beat any animation, wherever it comes from. */
+      animation: none !important;
+      /* biome-ignore lint/complexity/noImportantStyles: same as above, for transitions. */
+      transition: none !important;
+    }
+  }
+}
+
+@layer feitio.shapes {
+  /* A reading column: never wider than a comfortable line. */
+  .feitio-measure {
+    max-inline-size: var(--feitio-measure-reading);
+    margin-inline: auto;
+  }
+
+  /* Paper cut by hand: the uneven corners. */
+  .feitio-paper {
+    border-radius: var(--feitio-radius);
+  }
+
+  /* A block on the page. */
+  .feitio-block {
+    background: var(--feitio-color-surface-raised);
+    border-radius: var(--feitio-radius);
+    padding: var(--feitio-space-5) var(--feitio-space-4);
+  }
+
+  /* Lifted paper, for what floats: menus, dialogs, a highlighted card. */
+  .feitio-lift {
+    background: var(--feitio-color-surface-top);
+    border: var(--feitio-border-width) solid var(--feitio-color-text);
+    border-radius: var(--feitio-radius);
+    box-shadow: var(--feitio-shadow-lift);
+  }
+
+  /* Paper being placed: how lifted paper arrives, only when someone acts. */
+  .feitio-place {
+    animation: feitio-place var(--feitio-duration-place) var(--feitio-easing-place);
+  }
+
+  /* A process note: why something is the way it is. */
+  .feitio-note {
+    padding-inline-start: var(--feitio-space-3);
+    border-inline-start: 2px solid var(--feitio-color-accent);
+    font-style: italic;
+    color: var(--feitio-color-accent-strong);
+  }
+
+  /* Hand-drawn icons: the line is thick and the drawing leans a little. */
+  .feitio-icon {
+    inline-size: 1.35em;
+    block-size: 1.35em;
+    flex: none;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    rotate: -3deg;
+  }
+}
+
+@keyframes feitio-place {
+  from {
+    opacity: 0;
+    transform: translate(-3px, -8px) rotate(-1.5deg);
+    box-shadow: 0 0 0 var(--feitio-color-shadow);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+    box-shadow: var(--feitio-shadow-lift);
+  }
+}
