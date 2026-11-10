@@ -23,7 +23,7 @@
       "$description": "Supporting text."
     },
     "accent": {
-      "$value": { "colorSpace": "oklch", "components": [0.64, 0.19, 40] },
+      "$value": { "colorSpace": "oklch", "components": [0.54, 0.165, 40] },
       "$description": "The main action. Rare on purpose."
     },
     "accent-strong": {
@@ -31,7 +31,7 @@
       "$description": "Orange text and links."
     },
     "on-accent": {
-      "$value": { "colorSpace": "oklch", "components": [0.18, 0.03, 45] },
+      "$value": { "colorSpace": "oklch", "components": [0.97, 0.015, 80] },
       "$description": "Text on the accent."
     },
     "line": {
