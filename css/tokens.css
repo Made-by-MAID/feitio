@@ -49,9 +49,9 @@
     --feitio-color-surface-top: oklch(98.5% 0.01 85);
     --feitio-color-text: oklch(26% 0.022 55);
     --feitio-color-text-soft: oklch(46% 0.025 55);
-    --feitio-color-accent: oklch(64% 0.19 40);
+    --feitio-color-accent: oklch(54% 0.165 40);
     --feitio-color-accent-strong: oklch(50% 0.16 38);
-    --feitio-color-on-accent: oklch(18% 0.03 45);
+    --feitio-color-on-accent: oklch(97% 0.015 80);
     --feitio-color-line: oklch(26% 0.022 55 / 0.15);
     --feitio-color-shadow: oklch(26% 0.022 55 / 0.9);
     --feitio-color-ok: oklch(45% 0.09 140);
@@ -69,9 +69,9 @@
     --feitio-color-surface-top: oklch(31% 0.022 55);
     --feitio-color-text: oklch(93% 0.022 80);
     --feitio-color-text-soft: oklch(76% 0.03 72);
-    --feitio-color-accent: oklch(70% 0.18 44);
+    --feitio-color-accent: oklch(54% 0.165 40);
     --feitio-color-accent-strong: oklch(77% 0.15 52);
-    --feitio-color-on-accent: oklch(18% 0.03 45);
+    --feitio-color-on-accent: oklch(97% 0.015 80);
     --feitio-color-line: oklch(93% 0.022 80 / 0.15);
     --feitio-color-shadow: oklch(12% 0.01 55 / 0.95);
     --feitio-color-ok: oklch(78% 0.1 140);
@@ -90,9 +90,9 @@
       --feitio-color-surface-top: oklch(31% 0.022 55);
       --feitio-color-text: oklch(93% 0.022 80);
       --feitio-color-text-soft: oklch(76% 0.03 72);
-      --feitio-color-accent: oklch(70% 0.18 44);
+      --feitio-color-accent: oklch(54% 0.165 40);
       --feitio-color-accent-strong: oklch(77% 0.15 52);
-      --feitio-color-on-accent: oklch(18% 0.03 45);
+      --feitio-color-on-accent: oklch(97% 0.015 80);
       --feitio-color-line: oklch(93% 0.022 80 / 0.15);
       --feitio-color-shadow: oklch(12% 0.01 55 / 0.95);
       --feitio-color-ok: oklch(78% 0.1 140);

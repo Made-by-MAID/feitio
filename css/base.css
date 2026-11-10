@@ -82,6 +82,38 @@
     --feitio-control-min-size: 40px;
   }
 
+  /*
+   * The scrollbar follows the ink: thin, in soft ink over a clear track, in every scrolling box.
+   * The browser's grey bar is the one thing on a page Feitio did not draw.
+   */
+  :root {
+    scrollbar-color: color-mix(in oklch, var(--feitio-color-text) 35%, transparent) transparent;
+  }
+
+  * {
+    scrollbar-width: thin;
+  }
+
+  /* Browsers without scrollbar-color (older Safari) get the same look through their own pseudo. */
+  @supports not (scrollbar-color: auto) {
+    /* This pseudo only reads the physical width and height. */
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: color-mix(in oklch, var(--feitio-color-text) 35%, transparent);
+      background-clip: padding-box;
+      border: 2px solid transparent;
+      border-radius: var(--feitio-radius);
+    }
+  }
+
   body {
     background: var(--feitio-color-surface);
     color: var(--feitio-color-text);

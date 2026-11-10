@@ -21,8 +21,12 @@ Every theme fills the same **roles**. Components never know a color, only a role
 `casa` is cream paper, warm ink and a lively orange, more vivid than the usual terracotta.
 
 - **By day:** cream background, near-black brown ink, orange.
-- **At night:** warm charcoal, cream as ink, the orange lit up to keep its contrast. Night is
-  designed on its own; it is never the day inverted.
+- **At night:** warm charcoal, cream as ink, and orange text and links lit up to keep their
+  contrast. Night is designed on its own; it is never the day inverted.
+
+The main action is the same in both modes: a deep orange with cream text on it. WCAG 2's formula
+overrates dark text on a saturated mid-tone orange, which passed the test and still tired the eye;
+the perceptual APCA measure agrees with the eye, so the orange stays deep and the text on it light.
 
 With no `data-mode`, a page follows the system. `data-mode="light"` or `"dark"` chooses.
 
