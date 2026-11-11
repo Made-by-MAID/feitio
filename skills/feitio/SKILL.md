@@ -28,14 +28,21 @@ share.
 5. **Shape:** the uneven radius (`--feitio-radius`) on blocks and controls; borders are the 1px ink
    line; what floats is lifted paper (`feitio-lift`) and arrives with `feitio-place`.
 6. **Motion:** the base CSS already transitions every change of state. Add no motion that nobody
-   asked for.
+   asked for. One paper at a time: when an action makes several things appear, only one arrives
+   with `feitio-place`; the rest slide in. What is already on screen never lands again. Where a
+   piece follows the finger, `data-motion="direct"` turns motion off.
 7. **Density:** `data-density="compact"` on work areas with tables and forms; reading stays
    comfortable.
 8. **Icons:** from the sprite, `aria-hidden="true"`, always next to a word or inside a button with
    an `aria-label`. New icons follow the [iconography](../../docs/guidelines/iconography.md) rule:
    no single continuous line.
 9. **Status:** `ok`, `warn`, `error` with their `-surface`, always with an icon and a word.
-10. **Text:** direct, warm, action verbs. Buttons say what happens. Errors say what happened and how
+10. **Notices that go away:** a notice may close by itself only when it says something worked or
+    informs; warnings and errors stay until the person closes them. A timed notice always has a
+    close button, and its time stops while the pointer or focus is on it.
+11. **Hidden is hidden:** hide with the `hidden` attribute; the base CSS makes it win over any
+    component's own `display`.
+12. **Text:** direct, warm, action verbs. Buttons say what happens. Errors say what happened and how
     to fix it, without apologizing. Empty screens invite action.
 
 ## Never
