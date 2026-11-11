@@ -1,0 +1,21 @@
+{
+  "name": "@feitio/docs",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "copy-core": "rm -rf public/feitio && mkdir -p public/feitio && cp -R ../../packages/core/icons ../../packages/core/illustrations public/feitio/",
+    "dev": "bun run copy-core && astro dev",
+    "build": "bun run copy-core && astro build && pagefind --site dist",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@feitio/astro": "workspace:*",
+    "@feitio/core": "workspace:*",
+    "@feitio/vanilla": "workspace:*",
+    "astro": "7.4.11"
+  },
+  "devDependencies": {
+    "pagefind": "1.6.0"
+  }
+}

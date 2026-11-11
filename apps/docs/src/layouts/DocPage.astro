@@ -1,0 +1,129 @@
+---
+/**
+ * DocPage: the documentation page template. Every region is a prop: the area, the side navigation,
+ * the breadcrumbs, the title and lede, and the sections, whose headings become the Anchor by
+ * themselves. Header, Drawer, search and Footer come with it.
+ */
+import Icon from '@feitio/astro/Icon.astro';
+import Logo from '../components/Logo.astro';
+import '@feitio/core/css/fonts.css';
+import '@feitio/core/css/feitio.css';
+import '../styles/site.css';
+import { HTML_LANG, LOCALES, type Locale, pathIn, WORDS } from '../i18n/ui.ts';
+
+export type TocItem = { id: string; text: string; children?: { id: string; text: string }[] };
+export type NavGroup = {
+  title: string;
+  items: { text: string; href: string; current?: boolean; soon?: boolean }[];
+};
+
+interface Props {
+  lang: Locale;
+  title: string;
+  area?: 'design' | 'dev' | 'comp' | 'res';
+  areaHref?: string;
+  nav?: NavGroup[];
+  toc?: TocItem[];
+  lede?: string;
+  /** A short label for this page in search results (the area's name). */
+  searchArea?: string;
+}
+const { lang, title, area, areaHref, nav = [], toc = [], lede, searchArea } = Astro.props;
+const words = WORDS[lang];
+const base = import.meta.env.BASE_URL;
+const sprite = `${base}feitio/icons/sprite.svg`;
+const here = Astro.url.pathname;
+const areas = [
+  { key: 'design', href: `${base}${lang}/design/` },
+  { key: 'dev', href: `${base}${lang}/dev/` },
+  { key: 'comp', href: `${base}${lang}/components/` },
+  { key: 'res', href: `${base}${lang}/resources/` },
+] as const;
+const langNames = { pt: 'PT', en: 'EN', es: 'ES', fr: 'FR', de: 'DE' };
+const hasSide = nav.length > 0;
+const hasToc = toc.length > 0;
+const GH =
+  'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z';
+---
+<!doctype html>
+<html lang={HTML_LANG[lang]} data-base={base}>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{title}, Feitio</title>
+<script is:inline>
+  try { const m = localStorage.getItem('feitio-mode'); if (m) document.documentElement.dataset.mode = m; } catch (e) {}
+</script>
+<link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml">
+{LOCALES.map((l) => <link rel="alternate" hreflang={HTML_LANG[l]} href={pathIn(l, here, base)} />)}
+</head>
+<body>
+<a class="skip" href="#conteudo">{words.skip}</a>
+<header class="site-header">
+  <a class="brand" href={`${base}${lang}/`}><Logo />Feitio</a>
+  <nav class="areas" aria-label={words.menu}>
+    {areas.map((a) => <a href={a.href} aria-current={a.key === area ? 'true' : undefined}>{words.areas[a.key]}</a>)}
+  </nav>
+  <div class="tools">
+    <button type="button" class="feitio-button search-open" data-size="small" data-open-search><Icon name="search" sprite={sprite} />{words.search}<kbd class="wide-only">/</kbd></button>
+    <nav class="feitio-segmented wide-only" aria-label={words.language}>
+      {LOCALES.map((l) => <a href={pathIn(l, here, base)} hreflang={HTML_LANG[l]} aria-current={l === lang ? 'true' : undefined}>{langNames[l]}</a>)}
+    </nav>
+    <div class="feitio-segmented wide-only" role="group" aria-label={words.light}><button type="button" data-mode-set="" aria-pressed="true">{words.auto}</button><button type="button" data-mode-set="light" aria-pressed="false">{words.day}</button><button type="button" data-mode-set="dark" aria-pressed="false">{words.night}</button></div>
+    <a class="brand-mark wide-only" href="https://github.com/Made-by-MAID/feitio" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d={GH} /></svg></a>
+    <button type="button" class="feitio-button menu" data-size="small" popovertarget="site-menu" aria-controls="site-menu">{words.menu}<Icon name="menu" sprite={sprite} /></button>
+  </div>
+</header>
+<nav class="feitio-drawer site-drawer" id="site-menu" popover aria-label={words.menu}>
+  <div class="drawer-header"><h2>{words.menu}</h2><button type="button" class="feitio-button close" data-size="small" popovertarget="site-menu" popovertargetaction="hide"><Icon name="close" sprite={sprite} />{words.close}</button></div>
+  <div class="drawer-body">
+    <div class="feitio-nav"><div class="group"><ul><li><a href={`${base}${lang}/`}>{words.home}</a></li>{areas.map((a) => <li><a href={a.href}>{words.areas[a.key]}</a></li>)}</ul></div></div>
+    <div class="choices">
+      <div><span>{words.language}</span><nav class="feitio-segmented" aria-label={words.language}>{LOCALES.map((l) => <a href={pathIn(l, here, base)} hreflang={HTML_LANG[l]} aria-current={l === lang ? 'true' : undefined}>{langNames[l]}</a>)}</nav></div>
+      <div><span>{words.light}</span><span class="feitio-segmented" role="group" aria-label={words.light}><button type="button" data-mode-set="" aria-pressed="true">{words.auto}</button><button type="button" data-mode-set="light" aria-pressed="false">{words.day}</button><button type="button" data-mode-set="dark" aria-pressed="false">{words.night}</button></span></div>
+    </div>
+  </div>
+</nav>
+<dialog class="feitio-dialog search-dialog" id="busca" aria-labelledby="busca-t" data-here-label={words.onThisPage}>
+  <form method="dialog">
+    <h2 id="busca-t" class="feitio-visually-hidden">{words.searchTitle}</h2>
+    <div class="search-head"><Icon name="search" sprite={sprite} /><label class="feitio-visually-hidden" for="busca-campo">{words.searchTitle}</label><input class="search-field" id="busca-campo" type="search" autocomplete="off" placeholder={words.searchPlaceholder}><button type="submit" class="feitio-button close" data-size="small" value="fechar"><Icon name="close" sprite={sprite} />{words.close}</button></div>
+    <ul class="results"></ul>
+    <p class="empty" hidden>{words.searchEmpty}</p>
+    <p class="foot"><span><kbd class="feitio-kbd">↵</kbd> {words.searchFirst}</span><span><kbd class="feitio-kbd">↑</kbd><kbd class="feitio-kbd">↓</kbd> {words.searchChoose}</span><span><kbd class="feitio-kbd">Esc</kbd> {words.searchClose}</span></p>
+  </form>
+</dialog>
+<div class:list={['site-body', { 'has-side': hasSide, 'has-toc': hasToc }]}>
+  {hasSide && (
+    <aside class="site-side" aria-label={words.menu}><div class="side-inner"><div class="feitio-nav">
+      {nav.map((g) => <div class="group"><p class="group-title">{g.title}</p><ul>{g.items.map((i) => <li><a href={i.href} aria-current={i.current ? 'page' : undefined}>{i.text}</a></li>)}</ul></div>)}
+    </div><span class="feitio-scroll-fade" aria-hidden="true"></span></div></aside>
+  )}
+  <main class="site-main" id="conteudo" tabindex="-1" data-pagefind-body data-pagefind-meta={`area:${searchArea ?? ''}`}>
+    {area && (
+      <nav class="feitio-breadcrumbs" aria-label={words.home} data-pagefind-ignore>
+        <ol><li><a href={`${base}${lang}/`}>{words.home}</a></li><li><span class="sep" aria-hidden="true"><Icon name="chevron-right" sprite={sprite} /></span><a href={areaHref ?? areas.find((a) => a.key === area)?.href}>{words.areas[area]}</a></li><li><span class="sep" aria-hidden="true"><Icon name="chevron-right" sprite={sprite} /></span><span aria-current="page">{title}</span></li></ol>
+      </nav>
+    )}
+    <h1 data-pagefind-meta="title">{title}</h1>
+    {lede && <p class="lede">{lede}</p>}
+    {hasToc && (
+      <details class="toc-mobile" data-pagefind-ignore><summary><Icon name="chevron-right" sprite={sprite} />{words.onThisPage}</summary>
+        <nav class="feitio-anchor" aria-label={words.onThisPage}><ul>{toc.map((t) => <li><a href={`#${t.id}`}><Icon name="chevron-right" sprite={sprite} />{t.text}</a>{t.children && <ul>{t.children.map((c) => <li><a href={`#${c.id}`}><Icon name="chevron-right" sprite={sprite} />{c.text}</a></li>)}</ul>}</li>)}</ul></nav>
+      </details>
+    )}
+    <slot />
+  </main>
+  {hasToc && (
+    <aside class="site-toc" data-pagefind-ignore><div class="side-inner">
+      <nav class="feitio-anchor" aria-label={words.onThisPage}><p class="title">{words.onThisPage}</p><ul>{toc.map((t) => <li><a href={`#${t.id}`}><Icon name="chevron-right" sprite={sprite} />{t.text}</a>{t.children && <ul>{t.children.map((c) => <li><a href={`#${c.id}`}><Icon name="chevron-right" sprite={sprite} />{c.text}</a></li>)}</ul>}</li>)}</ul></nav>
+      <span class="feitio-scroll-fade" aria-hidden="true"></span>
+    </div></aside>
+  )}
+</div>
+<a class="feitio-button feitio-back-to-top" data-size="small" href="#conteudo" data-pagefind-ignore><Icon name="chevron-down" sprite={sprite} />{words.top}</a>
+<span class="feitio-scroll-fade" aria-hidden="true"></span>
+<footer class="feitio-footer" data-pagefind-ignore><div class="inner"><span class="who"><Logo /><strong>Feitio</strong><span>© <span data-since="2026">2026</span></span></span><span>{words.madeBy} <a href="https://github.com/HenriqueArtur">@HenriqueArtur</a>.</span><ul><li><a href={`${base}${lang}/dev/changelog/`}>{words.changelog}</a></li><li><a href="https://github.com/Made-by-MAID/feitio/blob/main/LICENSE">{words.license}</a></li><li><a href="https://github.com/Made-by-MAID/feitio">GitHub</a></li></ul></div></footer>
+<script is:inline src={`${base}site.js`}></script>
+</body>
+</html>

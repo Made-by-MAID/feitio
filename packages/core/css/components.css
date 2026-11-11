@@ -1,0 +1,327 @@
+/*
+ * Feitio's components: the styles every implementation shares (Astro, the vanilla HTML, React).
+ * The HTML comes from the Astro components; this file only dresses it. Every color, space, type
+ * size, radius and duration is a token. Em ratios size an icon to the text next to it.
+ */
+@layer feitio.components {
+  /* Stack, Inline, Grid: the space between pieces belongs to the parent, from the scale (data-gap
+     1 to 7). The children never bring their own margin. */
+  .feitio-stack {
+    display: flex;
+    flex-direction: column;
+  }
+  .feitio-stack[data-align="start"] {
+    align-items: flex-start;
+  }
+  .feitio-stack[data-align="center"] {
+    align-items: center;
+  }
+  .feitio-inline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .feitio-inline[data-justify="between"] {
+    justify-content: space-between;
+  }
+  .feitio-inline[data-justify="end"] {
+    justify-content: flex-end;
+  }
+  .feitio-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(var(--feitio-grid-min, 15rem), 100%), 1fr));
+  }
+  .feitio-stack,
+  .feitio-inline,
+  .feitio-grid {
+    gap: var(--feitio-gap, var(--feitio-space-4));
+  }
+  .feitio-stack > *,
+  .feitio-inline > *,
+  .feitio-grid > * {
+    margin: 0;
+    min-inline-size: 0;
+  }
+  [data-gap="1"] {
+    --feitio-gap: var(--feitio-space-1);
+  }
+  [data-gap="2"] {
+    --feitio-gap: var(--feitio-space-2);
+  }
+  [data-gap="3"] {
+    --feitio-gap: var(--feitio-space-3);
+  }
+  [data-gap="4"] {
+    --feitio-gap: var(--feitio-space-4);
+  }
+  [data-gap="5"] {
+    --feitio-gap: var(--feitio-space-5);
+  }
+  [data-gap="6"] {
+    --feitio-gap: var(--feitio-space-6);
+  }
+  [data-gap="7"] {
+    --feitio-gap: var(--feitio-space-7);
+  }
+
+  /* Link: underlined, in the orange made for text. The icon means it opens in another tab. */
+  .feitio-link {
+    color: var(--feitio-color-accent-strong);
+    text-decoration: underline;
+    text-decoration-thickness: var(--feitio-border-width);
+    text-underline-offset: 0.2em;
+  }
+  .feitio-link:hover {
+    text-decoration-thickness: calc(var(--feitio-border-width) * 2);
+  }
+  .feitio-link .feitio-icon {
+    inline-size: 0.95em;
+    block-size: 0.95em;
+    margin-inline-start: 0.15em;
+    vertical-align: -0.1em;
+  }
+
+  /* VisuallyHidden: text for screen readers only. */
+  .feitio-visually-hidden {
+    /* biome-ignore lint/complexity/noImportantStyles: a hidden label must stay hidden whatever styles its parent. */
+    position: absolute !important;
+    inline-size: 1px;
+    block-size: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Button: an action on this screen. The ink line by default; one primary (orange) per screen. */
+  .feitio-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--feitio-space-2);
+    min-block-size: var(--feitio-control-min-size);
+    padding: var(--feitio-control-padding-block) var(--feitio-control-padding-inline);
+    font: var(--feitio-font-weight-bold) var(--feitio-font-size-small) var(--feitio-font-ui);
+    color: var(--feitio-color-text);
+    text-decoration: none;
+    background: var(--feitio-color-surface-top);
+    border: var(--feitio-border-width) solid var(--feitio-color-text);
+    border-radius: var(--feitio-radius);
+    cursor: pointer;
+  }
+  .feitio-button:hover {
+    box-shadow: var(--feitio-shadow-lift);
+    translate: -2px -2px;
+  }
+  .feitio-button:focus-visible {
+    outline: var(--feitio-focus-width) solid var(--feitio-color-accent);
+    outline-offset: var(--feitio-focus-offset);
+  }
+  .feitio-button:disabled,
+  .feitio-button[aria-disabled="true"] {
+    cursor: not-allowed;
+    box-shadow: none;
+    translate: none;
+    border-style: dashed;
+    color: var(--feitio-color-text-soft);
+  }
+  .feitio-button[data-variant="primary"] {
+    background: var(--feitio-color-accent);
+    border-color: var(--feitio-color-accent);
+    color: var(--feitio-color-on-accent);
+  }
+  .feitio-button[data-variant="danger"] {
+    color: var(--feitio-color-error);
+    border-color: var(--feitio-color-error);
+  }
+  .feitio-button[data-size="small"] {
+    position: relative;
+    min-block-size: var(--feitio-control-min-size-small);
+    padding: var(--feitio-control-padding-block-small) var(--feitio-control-padding-inline-small);
+    gap: var(--feitio-space-1);
+  }
+  /* The small button keeps a finger-sized hit area around it. */
+  .feitio-button[data-size="small"]::after {
+    content: "";
+    position: absolute;
+    inset: calc(var(--feitio-space-1) * -1);
+  }
+  .feitio-button[data-size="large"] {
+    min-block-size: var(--feitio-control-min-size-large);
+    padding: var(--feitio-control-padding-block-large) var(--feitio-control-padding-inline-large);
+    font-size: var(--feitio-font-size-body);
+  }
+  .feitio-button .feitio-icon {
+    inline-size: 1.1em;
+    block-size: 1.1em;
+    flex: none;
+  }
+
+  /* Tag: an item's status, always with icon and word, always with the line around it. */
+  .feitio-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--feitio-space-1);
+    padding: calc(var(--feitio-space-1) / 2) var(--feitio-space-2);
+    border-radius: var(--feitio-radius);
+    font: var(--feitio-font-weight-bold) var(--feitio-font-size-small) var(--feitio-font-ui);
+    line-height: var(--feitio-line-height-heading);
+    color: var(--feitio-color-text);
+    background: var(--feitio-color-surface-top);
+    border: var(--feitio-border-width) solid var(--feitio-color-text-soft);
+    white-space: nowrap;
+  }
+  .feitio-tag[data-status="ok"] {
+    color: var(--feitio-color-ok);
+    background: var(--feitio-color-ok-surface);
+    border-color: var(--feitio-color-ok);
+  }
+  .feitio-tag[data-status="warn"] {
+    color: var(--feitio-color-warn);
+    background: var(--feitio-color-warn-surface);
+    border-color: var(--feitio-color-warn);
+  }
+  .feitio-tag[data-status="error"] {
+    color: var(--feitio-color-error);
+    background: var(--feitio-color-error-surface);
+    border-color: var(--feitio-color-error);
+  }
+  .feitio-tag[data-size="small"] {
+    padding: 0 var(--feitio-space-1);
+    font-weight: var(--feitio-font-weight-medium);
+  }
+  .feitio-tag .feitio-icon {
+    inline-size: 1.05em;
+    block-size: 1.05em;
+  }
+
+  /* Notice: what the person needs to know now, in the status color, with icon and word. */
+  .feitio-notice {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--feitio-space-1) var(--feitio-space-2);
+    align-items: start;
+    padding: var(--feitio-space-3);
+    border-radius: var(--feitio-radius);
+    font: var(--feitio-font-size-small) var(--feitio-font-ui);
+    line-height: var(--feitio-line-height-heading);
+    color: var(--feitio-color-text);
+    background: var(--feitio-color-surface-top);
+    border: var(--feitio-border-width) solid var(--feitio-color-text-soft);
+  }
+  .feitio-notice > p {
+    grid-column: 2;
+    margin: 0;
+  }
+  .feitio-notice .feitio-icon {
+    inline-size: 1.15em;
+    block-size: 1.15em;
+    margin-block-start: 0.1em;
+  }
+  .feitio-notice[data-status="ok"] {
+    background: var(--feitio-color-ok-surface);
+    border-color: var(--feitio-color-ok);
+  }
+  .feitio-notice[data-status="warn"] {
+    background: var(--feitio-color-warn-surface);
+    border-color: var(--feitio-color-warn);
+  }
+  .feitio-notice[data-status="error"] {
+    background: var(--feitio-color-error-surface);
+    border-color: var(--feitio-color-error);
+  }
+  .feitio-notice[data-status="ok"] > .feitio-icon {
+    color: var(--feitio-color-ok);
+  }
+  .feitio-notice[data-status="warn"] > .feitio-icon {
+    color: var(--feitio-color-warn);
+  }
+  .feitio-notice[data-status="error"] > .feitio-icon {
+    color: var(--feitio-color-error);
+  }
+  /* The close button, top right; with a time, the thread around the X comes undone (--notice-p). */
+  .feitio-notice:has(> .tools) {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+  .feitio-notice:has(> .tools) > strong {
+    grid-column: 2;
+  }
+  .feitio-notice > .tools {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+    display: flex;
+    align-items: center;
+    margin: calc(var(--feitio-space-2) * -1) calc(var(--feitio-space-2) * -1) 0 0;
+  }
+  .feitio-notice .close {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--feitio-control-min-size-small);
+    block-size: var(--feitio-control-min-size-small);
+    padding: 0;
+    color: var(--feitio-color-text);
+    background: transparent;
+    border: 0;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  .feitio-notice .close::after {
+    content: "";
+    position: absolute;
+    inset: calc(var(--feitio-space-1) * -1);
+  }
+  .feitio-notice .close:hover {
+    background: color-mix(in oklch, var(--feitio-color-text) 8%, transparent);
+  }
+  .feitio-notice .close:focus-visible {
+    outline: var(--feitio-focus-width) solid var(--feitio-color-accent);
+    outline-offset: 0;
+  }
+  .feitio-notice .close .feitio-icon {
+    inline-size: 1em;
+    block-size: 1em;
+    margin: 0;
+    color: var(--feitio-color-text);
+  }
+  .feitio-notice .close:has(.ring) {
+    color: var(--feitio-color-text-soft);
+  }
+  .feitio-notice[data-status="ok"] .close:has(.ring) {
+    color: var(--feitio-color-ok);
+  }
+  .feitio-notice .ring {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    rotate: -8deg;
+    overflow: visible;
+  }
+  .feitio-notice .ring path {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-dasharray: 100px;
+    stroke-dashoffset: calc(var(--notice-p, 0) * -100px);
+    transition: none;
+  }
+  /* Leaving: it fades and its space closes; the pieces below slide up, never another paper. */
+  .feitio-notice.leaving {
+    overflow: hidden;
+    animation: feitio-notice-out var(--feitio-duration-change) var(--feitio-easing-change) forwards;
+  }
+}
+
+@keyframes feitio-notice-out {
+  to {
+    opacity: 0;
+    block-size: 0;
+    padding-block: 0;
+    margin-block: 0;
+    border-width: 0;
+  }
+}

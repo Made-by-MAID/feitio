@@ -101,13 +101,16 @@ A Bun workspace. Every published package shares one version.
     `feitio.base` and `feitio.shapes`.
   - `icons/`, `illustrations/`: hand-drawn SVG.
 - `packages/vanilla` (`@feitio/vanilla`): component behaviors in plain JavaScript.
+- `packages/astro` (`@feitio/astro`): the components, the single source of their HTML. Their styles
+  are in `@feitio/core/css/components.css`.
+- `apps/docs`: the documentation site, in Astro, one set of pages per language (PT, EN, ES, FR, DE),
+  searched with Pagefind. `bun run docs:dev` to work on it, `bun run docs:build` to build it.
 - `docs/guidelines/`: how and why.
 - `site/`: the showcase, in English and Portuguese, published on GitHub Pages straight from `main`
   (the root `index.html` sends visitors there).
 - `skills/feitio/`: a skill for AI coding agents that build interfaces with Feitio.
 
-Coming next: `@feitio/astro` (the components, the single source of their HTML), the documentation
-site built with it, and `@feitio/react`.
+Coming next: the rest of the components and pages on the new site, then `@feitio/react`.
 
 ## Work on it
 

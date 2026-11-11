@@ -1,0 +1,60 @@
+---
+/**
+ * Notice: what the person needs to know now. close adds the X; timeout (ms) makes it go away on its
+ * own, only for success and information, with the thread around the X coming undone. The behavior
+ * comes from @feitio/vanilla; window.feitioNotice.show(element) shows it after an action.
+ */
+import Icon from './Icon.astro';
+
+interface Props {
+  status?: 'ok' | 'warn' | 'error';
+  title: string;
+  close?: boolean;
+  timeout?: number;
+  id?: string;
+  hidden?: boolean;
+  /** "status" after an action, "alert" for an error after an action. */
+  role?: 'status' | 'alert';
+  closeLabel?: string;
+  sprite?: string;
+}
+const icons = { ok: 'check', warn: 'warn', error: 'close', info: 'info' } as const;
+const {
+  status,
+  title,
+  close = false,
+  timeout,
+  id,
+  hidden,
+  role,
+  closeLabel = 'Fechar o aviso',
+  sprite,
+} = Astro.props;
+const ring =
+  'M12 3.2C17.2 3 21 7 20.8 12.2C20.6 17.2 16.8 20.9 11.8 20.8C6.9 20.7 3.1 16.8 3.2 11.8C3.3 7 6.9 3.4 12.6 3.5';
+const hasTools = close || Boolean(timeout);
+const text = Astro.slots.has('default');
+---
+<div class="feitio-notice" data-status={status} id={id} role={role} data-timeout={timeout} hidden={hidden}>
+  <Icon name={icons[status ?? 'info']} sprite={sprite} />
+  <strong>{title}</strong>
+  {text && <p><slot /></p>}
+  {
+    hasTools && (
+      <span class="tools">
+        <button type="button" class="close" aria-label={closeLabel}>
+          {timeout && (
+            <svg class="ring" viewBox="0 0 24 24" aria-hidden="true">
+              <path pathLength="100" d={ring} />
+            </svg>
+          )}
+          <Icon name="close" sprite={sprite} />
+        </button>
+      </span>
+    )
+  }
+</div>
+<script>
+  import { notices } from '@feitio/vanilla/notice/source';
+  (window as Window & { feitioNotice?: ReturnType<typeof notices> }).feitioNotice ??= notices(window);
+</script>

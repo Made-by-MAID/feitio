@@ -10,7 +10,7 @@ Rules for anyone changing this repository, people and AI agents alike. Read the
   `bun run build`.
 - Write a color, size or duration directly in CSS. Every value comes from a token, read as
   `var(--feitio-...)`. A missing value is a new token, not a literal.
-- Write a component's HTML twice. The Astro components (`@feitio/astro`, coming) are the single
+- Write a component's HTML twice. The Astro components (`@feitio/astro`) are the single
   source of the markup; `@feitio/vanilla` holds only behavior, and every port (React) must match the
   Astro HTML.
 - Add a theme that changes anything but colors.
@@ -18,8 +18,16 @@ Rules for anyone changing this repository, people and AI agents alike. Read the
 
 ## Packages
 
-- A Bun workspace: `packages/core` (`@feitio/core`: tokens, base CSS, icons, illustrations) and
-  `packages/vanilla` (`@feitio/vanilla`: component behaviors). Root scripts run for all of them.
+- A Bun workspace: `packages/core` (`@feitio/core`: tokens, base CSS, component CSS, icons,
+  illustrations), `packages/vanilla` (`@feitio/vanilla`: component behaviors), `packages/astro`
+  (`@feitio/astro`: the components' HTML) and `apps/docs` (the site, private). Root scripts run for
+  all of them.
+- A component is three files at most: its HTML in `packages/astro/src/<Name>.astro`, its styles in
+  `packages/core/css/components.css`, its behavior (if any) in `packages/vanilla/src/<name>/`. Its
+  docs page lives in `apps/docs/src/pages/[lang]/components/`, with its words per language in
+  `apps/docs/src/content/`; examples render the component itself (`renderHtml`), so "Show code"
+  always shows what runs.
+- Every docs page exists in all five languages (PT, EN, ES, FR, DE). New words go in all five.
 - All published packages share one version (the `fixed` group in `.changeset/config.json`). A pull
   request that changes a published package adds a changeset: `bun run changeset`.
 - Behaviors take the page as a parameter (`window`, a root), never a global, so a test hands in a

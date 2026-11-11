@@ -1,0 +1,14 @@
+---
+/**
+ * Icon: a drawing from the sprite, next to a word. It is decoration (aria-hidden): the word, or the
+ * aria-label of an icon-only button, names it.
+ */
+interface Props {
+  /** The icon's name in the sprite, like "check" or "search". */
+  name: string;
+  /** Where the sprite is served. */
+  sprite?: string;
+}
+const { name, sprite = '/feitio/icons/sprite.svg' } = Astro.props;
+---
+<svg class="feitio-icon" aria-hidden="true"><use href={`${sprite}#feitio-${name}`} /></svg>

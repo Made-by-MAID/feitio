@@ -1,0 +1,28 @@
+{
+  "name": "@feitio/astro",
+  "version": "0.0.0",
+  "description": "Feitio's components for Astro: the single source of each component's HTML.",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Made-by-MAID/feitio.git",
+    "directory": "packages/astro"
+  },
+  "files": [
+    "src"
+  ],
+  "exports": {
+    "./*": "./src/*"
+  },
+  "peerDependencies": {
+    "astro": ">=7"
+  },
+  "dependencies": {
+    "@feitio/core": "workspace:*",
+    "@feitio/vanilla": "workspace:*"
+  },
+  "devDependencies": {
+    "astro": "7.4.11"
+  }
+}

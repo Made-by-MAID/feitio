@@ -16,7 +16,8 @@
   ],
   "exports": {
     ".": "./dist/feitio.js",
-    "./notice": "./dist/notice.js"
+    "./notice": "./dist/notice.js",
+    "./notice/source": "./src/notice/index.ts"
   },
   "scripts": {
     "build": "bun build src/index.ts src/notice/index.ts --outdir dist --format esm --entry-naming [dir]/[name].[ext] --root src && bun run rename",

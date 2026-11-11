@@ -1,0 +1,27 @@
+---
+/**
+ * Example: the live component, with its HTML underneath, closed until asked. Both come from the same
+ * render (renderHtml), so the code shown is always what runs.
+ */
+import Icon from '@feitio/astro/Icon.astro';
+import { type Locale, WORDS } from '../i18n/ui.ts';
+import CodeBlock from './CodeBlock.astro';
+
+interface Props {
+  id: string;
+  title: string;
+  description: string;
+  html: string;
+  lang: Locale;
+}
+const { id, title, description, html, lang } = Astro.props;
+const sprite = `${import.meta.env.BASE_URL}feitio/icons/sprite.svg`;
+---
+<div class="feitio-example">
+  <div class="live" set:html={html} />
+  <div class="about">
+    <h3 id={id}>{title}</h3>
+    <p>{description}</p>
+    <details><summary><Icon name="chevron-right" sprite={sprite} />{WORDS[lang].showCode}</summary><CodeBlock code={html} lang={lang} /></details>
+  </div>
+</div>
