@@ -5,4 +5,4 @@ exact = true
 [test]
 coverageThreshold = { lines = 1.0, functions = 1.0 }
 coverageSkipTestFiles = true
-coveragePathIgnorePatterns = ["src/**/actions/**", "src/flows/**"]
+coveragePathIgnorePatterns = ["packages/*/src/**/actions/**", "packages/*/src/flows/**", "e2e/**"]

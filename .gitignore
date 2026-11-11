@@ -2,3 +2,4 @@ node_modules/
 coverage/
 e2e/screenshots/
 _site/
+dist/

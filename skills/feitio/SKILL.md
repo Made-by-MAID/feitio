@@ -11,8 +11,9 @@ Feitio decides how things look. Your job is to use it, not to invent style. Read
 
 ## Setup
 
-Load `css/fonts.css` (or host Alegreya and Alegreya Sans) and `css/feitio.css`. Icons are in
-`icons/sprite.svg`. In a framework port, use the port's components; this skill covers what they
+Load `css/fonts.css` (or host Alegreya and Alegreya Sans) and `css/feitio.css` from `@feitio/core`
+(`packages/core/` in the repository). Icons are in its `icons/sprite.svg`. Behaviors (the timed
+Notice) come from `@feitio/vanilla`. In a framework port, use the port's components; this skill covers what they
 share.
 
 ## Rules
@@ -56,7 +57,7 @@ share.
 ## A theme for outside work
 
 When the work is for someone else (a shop's landing page), add
-`tokens/themes/<name>.light.tokens.json` with every color role of `casa`, in OKLCH, run
+`packages/core/tokens/themes/<name>.light.tokens.json` with every color role of `casa`, in OKLCH, run
 `bun run build` and `bun run check` (contrast must pass), and set `data-theme="<name>"`. Only colors
 change. If the brief needs other type or shapes, do not bend Feitio: build outside it.
 

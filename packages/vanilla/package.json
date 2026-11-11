@@ -1,0 +1,28 @@
+{
+  "name": "@feitio/vanilla",
+  "version": "0.0.0",
+  "description": "Feitio's component behaviors in plain JavaScript, for any HTML: the timed Notice, and more to come.",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Made-by-MAID/feitio.git",
+    "directory": "packages/vanilla"
+  },
+  "files": [
+    "dist",
+    "src",
+    "!src/**/*.spec.ts"
+  ],
+  "exports": {
+    ".": "./dist/feitio.js",
+    "./notice": "./dist/notice.js"
+  },
+  "scripts": {
+    "build": "bun build src/index.ts src/notice/index.ts --outdir dist --format esm --entry-naming [dir]/[name].[ext] --root src && bun run rename",
+    "rename": "mv dist/index.js dist/feitio.js && mv dist/notice/index.js dist/notice.js && rmdir dist/notice"
+  },
+  "dependencies": {
+    "@feitio/core": "workspace:*"
+  }
+}

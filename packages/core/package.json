@@ -1,0 +1,29 @@
+{
+  "name": "@feitio/core",
+  "version": "0.0.0",
+  "description": "Feitio's foundation: design tokens, the layered base CSS, the hand-drawn icons and illustrations.",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Made-by-MAID/feitio.git",
+    "directory": "packages/core"
+  },
+  "files": [
+    "tokens",
+    "css",
+    "js",
+    "icons",
+    "illustrations"
+  ],
+  "exports": {
+    "./css/*": "./css/*",
+    "./js/tokens.ts": "./js/tokens.ts",
+    "./icons/*": "./icons/*",
+    "./illustrations/*": "./illustrations/*",
+    "./tokens/*": "./tokens/*"
+  },
+  "scripts": {
+    "build": "bun src/flows/build-tokens.ts"
+  }
+}

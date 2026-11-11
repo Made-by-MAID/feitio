@@ -1,32 +1,31 @@
 {
-  "name": "@made-by-maid/feitio",
+  "name": "feitio-monorepo",
+  "private": true,
   "version": "0.0.0",
-  "description": "A handmade, humanist design system: guidelines, tokens and base CSS.",
-  "license": "MIT",
   "type": "module",
-  "files": [
-    "tokens",
-    "css",
-    "js",
-    "icons",
-    "illustrations",
-    "docs",
-    "skills"
+  "description": "Feitio, a handmade, humanist design system: the packages, the docs and the showcase.",
+  "license": "MIT",
+  "workspaces": [
+    "packages/*"
   ],
   "scripts": {
-    "build": "bun src/flows/build-tokens.ts",
+    "build": "bun run --filter '@feitio/core' build",
     "fmt": "biome check --write .",
     "check:style": "biome ci --error-on-warnings .",
     "check:types": "tsc --noEmit",
     "test": "bun test",
     "test:coverage": "bun test --coverage",
     "check": "bun run check:style && bun run check:types && bun test --coverage",
-    "test:e2e": "bun e2e/run.ts"
+    "test:e2e": "bun e2e/run.ts",
+    "changeset": "changeset",
+    "version": "changeset version && bun install"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.3",
+    "@changesets/cli": "3.0.3",
     "@types/bun": "1.4.4",
     "axe-core": "4.14.0",
+    "happy-dom": "21.0.4",
     "playwright": "1.65.0",
     "typescript": "7.0.2"
   }

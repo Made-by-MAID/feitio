@@ -5,30 +5,43 @@ Rules for anyone changing this repository, people and AI agents alike. Read the
 
 ## Never
 
-- Edit generated files by hand: `css/tokens.css`, `js/tokens.ts`, `icons/sprite.svg`. Change
-  `tokens/` or `icons/` and run `bun run build`.
+- Edit generated files by hand: `packages/core/css/tokens.css`, `packages/core/js/tokens.ts`,
+  `packages/core/icons/sprite.svg`. Change `packages/core/tokens/` or `packages/core/icons/` and run
+  `bun run build`.
 - Write a color, size or duration directly in CSS. Every value comes from a token, read as
   `var(--feitio-...)`. A missing value is a new token, not a literal.
-- Add a component here. Components belong to the framework ports.
+- Write a component's HTML twice. The Astro components (`@feitio/astro`, coming) are the single
+  source of the markup; `@feitio/vanilla` holds only behavior, and every port (React) must match the
+  Astro HTML.
 - Add a theme that changes anything but colors.
 - Draw an icon as a single continuous line (see [iconography](docs/guidelines/iconography.md)).
 
+## Packages
+
+- A Bun workspace: `packages/core` (`@feitio/core`: tokens, base CSS, icons, illustrations) and
+  `packages/vanilla` (`@feitio/vanilla`: component behaviors). Root scripts run for all of them.
+- All published packages share one version (the `fixed` group in `.changeset/config.json`). A pull
+  request that changes a published package adds a changeset: `bun run changeset`.
+- Behaviors take the page as a parameter (`window`, a root), never a global, so a test hands in a
+  happy-dom window. The DOM actions are tested with happy-dom; anything that needs layout, focus or
+  the top layer is tested in a real browser.
+
 ## Tokens
 
-- The source of truth is `tokens/`, in the Design Tokens format 2025.10. Colors are OKLCH:
+- The source of truth is `packages/core/tokens/`, in the Design Tokens format 2025.10. Colors are OKLCH:
   `{ "colorSpace": "oklch", "components": [lightness 0..1, chroma, hue] }`.
-- A theme is `tokens/themes/<name>.<light|dark>.tokens.json` and fills the color roles of
+- A theme is `packages/core/tokens/themes/<name>.<light|dark>.tokens.json` and fills the color roles of
   `casa.light.tokens.json`, no more, no fewer. Day and night are designed apart; night is never the
   day inverted.
-- The pairs that must stay readable are listed in `src/tokens/data/contrast-requirements.ts`. A new
+- The pairs that must stay readable are listed in `packages/core/src/tokens/data/contrast-requirements.ts`. A new
   role that carries text or meaning gets its pair there.
 - After any change: `bun run build`, then `bun run check`.
 
 ## Icons and illustrations
 
-- Icons: `icons/<name>.svg`, on the 24 by 24 grid, `stroke="currentColor"`, drawn with `<path>`
+- Icons: `packages/core/icons/<name>.svg`, on the 24 by 24 grid, `stroke="currentColor"`, drawn with `<path>`
   only, `aria-hidden="true"` on the root. The tests enforce the grid, the color and the paths.
-- Illustrations: `illustrations/<name>.svg`, ink in `currentColor`, the orange touch on paths with
+- Illustrations: `packages/core/illustrations/<name>.svg`, ink in `currentColor`, the orange touch on paths with
   `class="feitio-hot"`.
 
 ## Code
