@@ -5,17 +5,47 @@ on:
     branches: [main]
   pull_request:
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.4
+      - uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+      - run: bun install --frozen-lockfile
+      # Style, types and every test of every package (contrast, icons, the Notice...).
+      - run: bun run check
+      # Every package builds, as it will be published.
+      - run: bun run --filter '@feitio/*' build
+      # A pull request that changes a published package says how in a changeset.
+      - if: github.event_name == 'pull_request'
+        run: bunx changeset status --since=origin/${{ github.base_ref }}
+
+  e2e:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: 1.4.4
+      - uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
       - run: bun install --frozen-lockfile
-      - run: bun run check
       - run: bunx playwright install --with-deps chromium
+      # The showcase in a real browser: no broken request, no axe violation, no sideways scroll.
       - run: bun run test:e2e
       - uses: actions/upload-artifact@v4
         if: always()
