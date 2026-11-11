@@ -1,0 +1,1234 @@
+/* O site de documentação do Feitio: o modelo da página (DocPage) e os componentes que só o site usa. */
+/*
+ * Rascunho do site de documentação do Feitio: o modelo da página, mobile first, e os
+ * componentes que só o site pede por enquanto (Anchor, CodeBlock, Example, SegmentedControl,
+ * LinkCard, a busca). Os do Feitio que já têm guia vêm resumidos aqui.
+ */
+
+@layer feitio.components {
+  .feitio-nav {
+    display: grid;
+    gap: var(--feitio-space-5);
+    font: var(--feitio-font-size-small) var(--feitio-font-ui);
+    align-content: start;
+  }
+  .feitio-nav .group {
+    display: grid;
+    gap: var(--feitio-space-2);
+  }
+  .feitio-nav .group-title {
+    margin: 0;
+    padding-inline: var(--feitio-space-3);
+    font-weight: var(--feitio-font-weight-bold);
+    color: var(--feitio-color-text-soft);
+  }
+  .feitio-nav ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: var(--feitio-space-1);
+  }
+  .feitio-nav a {
+    display: flex;
+    align-items: center;
+    min-block-size: 36px;
+    padding: 0 var(--feitio-space-3);
+    border: var(--feitio-border-width) solid transparent;
+    border-radius: var(--feitio-radius);
+    color: var(--feitio-color-text);
+    text-decoration: none;
+  }
+  .feitio-nav a:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+  .feitio-nav a[aria-current="page"] {
+    font-weight: var(--feitio-font-weight-bold);
+    background: var(--feitio-color-surface-top);
+    border-color: var(--feitio-color-text);
+  }
+  .feitio-drawer {
+    margin: 0;
+    inset: 0 0 0 auto;
+    inline-size: min(20rem, 85vw);
+    block-size: 100dvh;
+    max-block-size: none;
+    padding: 0;
+    color: var(--feitio-color-text);
+    background: var(--feitio-color-surface);
+    border: 0;
+    border-inline-start: var(--feitio-border-width) solid var(--feitio-color-text);
+    font-family: var(--feitio-font-ui);
+    translate: 105% 0;
+    transition:
+      translate var(--feitio-duration-change) var(--feitio-easing-change),
+      display var(--feitio-duration-change) allow-discrete,
+      overlay var(--feitio-duration-change) allow-discrete;
+  }
+  .feitio-drawer:popover-open {
+    display: flex;
+    flex-direction: column;
+    translate: 0 0;
+  }
+  @starting-style {
+    .feitio-drawer:popover-open {
+      translate: 105% 0;
+    }
+  }
+  .feitio-drawer::backdrop {
+    background: color-mix(in oklch, var(--feitio-color-shadow) 45%, transparent);
+  }
+  .feitio-drawer .drawer-header {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: var(--feitio-space-3);
+    padding: var(--feitio-space-2) var(--feitio-space-3) var(--feitio-space-2) var(--feitio-space-4);
+    border-bottom: var(--feitio-border-width) solid var(--feitio-color-line);
+  }
+  .feitio-drawer .drawer-header h2 {
+    margin: 0;
+    font: var(--feitio-font-weight-bold) var(--feitio-font-size-h3) var(--feitio-font-ui);
+  }
+  .feitio-drawer .drawer-header .close {
+    margin-inline-start: auto;
+  }
+  .feitio-drawer .drawer-body {
+    flex: 1 1 auto;
+    min-block-size: 0;
+    overflow-y: auto;
+    padding: var(--feitio-space-4);
+    display: grid;
+    align-content: start;
+    gap: var(--feitio-space-5);
+  }
+  .feitio-dialog {
+    inline-size: calc(100% - var(--feitio-space-3) * 2);
+    max-inline-size: 36rem;
+    max-block-size: calc(100dvh - var(--feitio-space-3) * 2);
+    margin: auto;
+    padding: var(--feitio-space-4);
+    color: var(--feitio-color-text);
+    background: var(--feitio-color-surface-top);
+    border: var(--feitio-border-width) solid var(--feitio-color-text);
+    border-radius: var(--feitio-radius);
+    box-shadow: var(--feitio-shadow-lift);
+    font-family: var(--feitio-font-ui);
+    opacity: 0;
+    translate: 0 var(--feitio-space-3);
+    transition:
+      opacity var(--feitio-duration-place) var(--feitio-easing-place),
+      translate var(--feitio-duration-place) var(--feitio-easing-place),
+      display var(--feitio-duration-place) allow-discrete,
+      overlay var(--feitio-duration-place) allow-discrete;
+  }
+  .feitio-dialog[open] {
+    opacity: 1;
+    translate: 0 0;
+  }
+  @starting-style {
+    .feitio-dialog[open] {
+      opacity: 0;
+      translate: 0 var(--feitio-space-3);
+    }
+  }
+  .feitio-dialog::backdrop {
+    background: color-mix(in oklch, var(--feitio-color-shadow) 45%, transparent);
+  }
+  .feitio-input {
+    inline-size: 100%;
+    min-block-size: var(--feitio-control-min-size);
+    padding: 0 var(--feitio-space-3);
+    font: var(--feitio-font-size-body) var(--feitio-font-ui);
+    color: var(--feitio-color-text);
+    background: var(--feitio-color-surface);
+    border: var(--feitio-border-width) solid var(--feitio-color-text);
+    border-radius: var(--feitio-radius);
+  }
+
+  /* SegmentedControl: uma escolha entre poucas opções vizinhas, sempre à vista (dia e noite,
+     idioma). Um grupo de botões; o escolhido leva aria-pressed e fica em tinta. */
+  .feitio-segmented {
+    display: inline-flex;
+    padding: 2px;
+    gap: 2px;
+    border: var(--feitio-border-width) solid var(--feitio-color-text);
+    border-radius: var(--feitio-radius);
+    font: var(--feitio-font-weight-bold) 0.85rem var(--feitio-font-ui);
+  }
+  .feitio-segmented button {
+    position: relative;
+    min-block-size: 28px;
+    padding: 0 var(--feitio-space-2);
+    color: var(--feitio-color-text);
+    background: transparent;
+    border: 0;
+    border-radius: calc(var(--feitio-radius-top-left) - 2px);
+    cursor: pointer;
+  }
+  .feitio-segmented button::after {
+    content: "";
+    position: absolute;
+    inset: -6px -1px;
+  }
+  .feitio-segmented button[aria-pressed="true"] {
+    color: var(--feitio-color-surface);
+    background: var(--feitio-color-text);
+  }
+
+  /* Anchor: o índice da página, que acompanha a rolagem. O trecho atual fica em tinta e negrito,
+     com a seta à mão na frente: sem faixa colorida do lado. */
+  .feitio-anchor {
+    font: var(--feitio-font-size-small) var(--feitio-font-ui);
+  }
+  .feitio-anchor .title {
+    margin: 0 0 var(--feitio-space-2);
+    font-weight: var(--feitio-font-weight-bold);
+  }
+  .feitio-anchor ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: var(--feitio-space-1);
+  }
+  .feitio-anchor ul ul {
+    padding-inline-start: var(--feitio-space-3);
+    margin-block-start: var(--feitio-space-1);
+  }
+  .feitio-anchor a {
+    display: grid;
+    grid-template-columns: 0.9em minmax(0, 1fr);
+    gap: var(--feitio-space-1);
+    align-items: baseline;
+    padding-block: 0.15rem;
+    color: var(--feitio-color-text-soft);
+    text-decoration: none;
+    line-height: var(--feitio-line-height-heading);
+  }
+  .feitio-anchor a:hover {
+    color: var(--feitio-color-text);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+  .feitio-anchor a .feitio-icon {
+    inline-size: 0.8em;
+    block-size: 0.8em;
+    align-self: center;
+    opacity: 0;
+    transition: opacity var(--feitio-duration-change) var(--feitio-easing-change);
+  }
+  .feitio-anchor a[aria-current="location"] {
+    color: var(--feitio-color-text);
+    font-weight: var(--feitio-font-weight-bold);
+  }
+  .feitio-anchor a[aria-current="location"] .feitio-icon {
+    opacity: 1;
+  }
+
+  /* CodeBlock: código com o botão Copiar, que diz "Copiado" no próprio lugar. */
+  .feitio-code {
+    position: relative;
+    border-radius: var(--feitio-radius);
+    background: var(--feitio-color-surface-raised);
+  }
+  .feitio-code .bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--feitio-space-3);
+    padding: var(--feitio-space-2) var(--feitio-space-2) var(--feitio-space-2) var(--feitio-space-4);
+    border-bottom: var(--feitio-border-width) solid var(--feitio-color-line);
+    font: var(--feitio-font-weight-bold) 0.8rem var(--feitio-font-ui);
+    color: var(--feitio-color-text-soft);
+  }
+  .feitio-code .copy {
+    background: var(--feitio-color-surface-top);
+  }
+  .feitio-code pre {
+    margin: 0;
+    padding: var(--feitio-space-4);
+    overflow-x: auto;
+    font:
+      0.88rem / 1.6 ui-monospace,
+      "SF Mono",
+      Menlo,
+      monospace;
+    tab-size: 2;
+  }
+  /* As cores do código saem dos papéis do Feitio: a tag no laranja de texto, o atributo em
+     musgo, o valor na tinta, os sinais e os comentários na tinta suave. */
+  .feitio-code .c-tag {
+    color: var(--feitio-color-accent-strong);
+    font-weight: 600;
+  }
+  .feitio-code .c-attr {
+    color: var(--feitio-color-ok);
+  }
+  .feitio-code .c-value {
+    color: var(--feitio-color-text);
+  }
+  .feitio-code .c-punct,
+  .feitio-code .c-comment {
+    color: var(--feitio-color-text-soft);
+  }
+  .feitio-code .c-comment {
+    font-style: italic;
+  }
+  .feitio-code .copy[data-done] {
+    color: var(--feitio-color-ok);
+    border-color: var(--feitio-color-ok);
+  }
+
+  /* Example: o exemplo ao vivo, com o código dele embaixo, fechado até pedir. */
+  .feitio-example {
+    border: var(--feitio-border-width) solid var(--feitio-color-line);
+    border-radius: var(--feitio-radius);
+  }
+  .feitio-example .live {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--feitio-space-3);
+    padding: var(--feitio-space-5) var(--feitio-space-4);
+  }
+  .feitio-example .about {
+    padding: var(--feitio-space-3) var(--feitio-space-4);
+    border-top: var(--feitio-border-width) solid var(--feitio-color-line);
+    font: var(--feitio-font-size-small) var(--feitio-font-ui);
+  }
+  .feitio-example .about h3 {
+    margin: 0;
+    font: var(--feitio-font-weight-bold) var(--feitio-font-size-body) var(--feitio-font-ui);
+  }
+  .feitio-example .about p {
+    margin: var(--feitio-space-1) 0 0;
+    color: var(--feitio-color-text-soft);
+  }
+  .feitio-example details summary {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--feitio-space-2);
+    min-block-size: 40px;
+    margin-block-start: var(--feitio-space-2);
+    cursor: pointer;
+    list-style: none;
+    font-weight: var(--feitio-font-weight-bold);
+    color: var(--feitio-color-accent-strong);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+  .feitio-example details summary::-webkit-details-marker {
+    display: none;
+  }
+  .feitio-example details summary .feitio-icon {
+    inline-size: 1em;
+    block-size: 1em;
+    transition: rotate var(--feitio-duration-change) var(--feitio-easing-change);
+  }
+  .feitio-example details[open] summary .feitio-icon {
+    rotate: 90deg;
+  }
+  .feitio-example details .feitio-code {
+    margin-block-start: var(--feitio-space-2);
+  }
+
+  /* LinkCard: uma porta para outra área, com título, uma frase e a seta. O cartão inteiro é o link. */
+  .feitio-link-card {
+    display: grid;
+    gap: var(--feitio-space-2);
+    align-content: start;
+    padding: var(--feitio-space-4);
+    color: var(--feitio-color-text);
+    text-decoration: none;
+    background: var(--feitio-color-surface-top);
+    border: var(--feitio-border-width) solid var(--feitio-color-text);
+    border-radius: var(--feitio-radius);
+    transition:
+      box-shadow var(--feitio-duration-place) var(--feitio-easing-place),
+      translate var(--feitio-duration-place) var(--feitio-easing-place);
+  }
+  .feitio-link-card:hover {
+    box-shadow: var(--feitio-shadow-lift);
+    translate: -2px -2px;
+  }
+  .feitio-link-card strong {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--feitio-space-2);
+    font: var(--feitio-font-weight-bold) var(--feitio-font-size-h3) var(--feitio-font-ui);
+  }
+  .feitio-link-card span {
+    font: var(--feitio-font-size-small) var(--feitio-font-ui);
+    line-height: var(--feitio-line-height-text);
+    color: var(--feitio-color-text-soft);
+  }
+
+  /* ScrollFade e BackToTop, como no guia da estrutura. */
+  .feitio-scroll-fade {
+    position: sticky;
+    inset-block-end: 0;
+    z-index: 1;
+    display: block;
+    block-size: 3rem;
+    margin-block-start: -3rem;
+    margin-inline: calc(var(--feitio-scroll-fade-bleed, 0px) * -1);
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      var(--feitio-scroll-fade-to, var(--feitio-color-surface))
+    );
+    opacity: 0;
+    transition: opacity var(--feitio-duration-change) var(--feitio-easing-change);
+  }
+  .feitio-scroll-fade[data-visible] {
+    opacity: 1;
+  }
+  .feitio-button.feitio-back-to-top {
+    position: sticky;
+    inset-block-end: var(--feitio-space-3);
+    z-index: 2;
+    display: flex;
+    inline-size: fit-content;
+    margin: var(--feitio-space-5) 0 var(--feitio-space-3) auto;
+    background: var(--feitio-color-surface-top);
+    box-shadow: var(--feitio-shadow-lift);
+    opacity: 0;
+    visibility: hidden;
+    translate: 0 var(--feitio-space-3);
+    transition:
+      opacity var(--feitio-duration-change) var(--feitio-easing-change),
+      translate var(--feitio-duration-change) var(--feitio-easing-change),
+      visibility var(--feitio-duration-change) allow-discrete;
+  }
+  .feitio-button.feitio-back-to-top .feitio-icon {
+    rotate: 180deg;
+  }
+  .feitio-button.feitio-back-to-top[data-visible] {
+    opacity: 1;
+    visibility: visible;
+    translate: 0 0;
+  }
+
+  /* Busca: um botão no cabeçalho abre um Dialog com o campo e os resultados, que são links. */
+  .search-open kbd {
+    padding: 0 0.35em;
+    font:
+      0.8rem ui-monospace,
+      monospace;
+    border: var(--feitio-border-width) solid var(--feitio-color-line);
+    border-radius: 4px;
+    color: var(--feitio-color-text-soft);
+  }
+  /* Busca: o campo em cima, os resultados numa linha cada (o nome e a área), as teclas embaixo.
+     Seletores com as duas classes, para nada de outro Dialog entrar aqui. */
+  .feitio-dialog.search-dialog {
+    inset-block-start: 10dvh;
+    margin-block-start: 0;
+    padding: 0;
+    max-inline-size: 36rem;
+  }
+  .feitio-dialog.search-dialog .search-head {
+    display: flex;
+    align-items: center;
+    gap: var(--feitio-space-2);
+    padding: var(--feitio-space-2) var(--feitio-space-2) var(--feitio-space-2) var(--feitio-space-4);
+    border-bottom: var(--feitio-border-width) solid var(--feitio-color-line);
+  }
+  .feitio-dialog.search-dialog .search-head > .feitio-icon {
+    inline-size: 1.2rem;
+    block-size: 1.2rem;
+    flex: none;
+    color: var(--feitio-color-text-soft);
+  }
+  .feitio-dialog.search-dialog .search-field {
+    flex: 1;
+    min-inline-size: 0;
+    min-block-size: 40px;
+    padding: 0;
+    font: var(--feitio-font-size-body) var(--feitio-font-ui);
+    color: var(--feitio-color-text);
+    background: transparent;
+    border: 0;
+    outline: none;
+  }
+  .feitio-dialog.search-dialog .results {
+    margin: 0;
+    padding: var(--feitio-space-2);
+    list-style: none;
+    display: grid;
+    gap: var(--feitio-space-1);
+    max-block-size: 50dvh;
+    overflow-y: auto;
+  }
+  .feitio-dialog.search-dialog .results:empty {
+    display: none;
+  }
+  .feitio-dialog.search-dialog .results a {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--feitio-space-3);
+    padding: var(--feitio-space-2) var(--feitio-space-3);
+    color: var(--feitio-color-text);
+    text-decoration: none;
+    border: var(--feitio-border-width) solid transparent;
+    border-radius: var(--feitio-radius);
+    font-size: var(--feitio-font-size-small);
+  }
+  .feitio-dialog.search-dialog .results a:hover,
+  .feitio-dialog.search-dialog .results a:focus-visible,
+  .feitio-dialog.search-dialog .results a[data-active] {
+    background: var(--feitio-color-surface);
+    border-color: var(--feitio-color-text);
+    outline: none;
+  }
+  .feitio-dialog.search-dialog .results small {
+    flex: none;
+    color: var(--feitio-color-text-soft);
+  }
+  .feitio-dialog.search-dialog .empty {
+    margin: 0;
+    padding: var(--feitio-space-4);
+    color: var(--feitio-color-text-soft);
+    font-size: var(--feitio-font-size-small);
+  }
+  .feitio-dialog.search-dialog .foot {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--feitio-space-1) var(--feitio-space-4);
+    padding: var(--feitio-space-2) var(--feitio-space-4);
+    border-top: var(--feitio-border-width) solid var(--feitio-color-line);
+    color: var(--feitio-color-text-soft);
+    font-size: 0.85rem;
+  }
+  .feitio-dialog.search-dialog kbd {
+    display: inline-block;
+    min-inline-size: 1.4em;
+    padding: 0 0.3em;
+    text-align: center;
+    font:
+      0.8rem ui-monospace,
+      monospace;
+    border: var(--feitio-border-width) solid var(--feitio-color-line);
+    border-radius: 4px;
+  }
+}
+
+/* ---- O modelo da página do site. Mobile first: cabeçalho, conteúdo, e o índice da página
+   num "Nesta página" fechado no topo; a navegação da área e as escolhas do site ficam no
+   Drawer. Largo: as áreas no cabeçalho, a navegação à esquerda, o índice à direita. */
+body {
+  margin: 0;
+}
+.site-header {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: var(--feitio-space-3);
+  padding: var(--feitio-space-2) var(--feitio-space-3);
+  background: var(--feitio-color-surface);
+  border-bottom: var(--feitio-border-width) solid var(--feitio-color-text);
+  font-family: var(--feitio-font-ui);
+  transition: translate var(--feitio-duration-change) var(--feitio-easing-change);
+}
+.site-header[data-hidden] {
+  translate: 0 calc(-100% - 2px);
+}
+.site-header .brand {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--feitio-space-2);
+  color: var(--feitio-color-text);
+  text-decoration: none;
+  font: var(--feitio-font-weight-bold) 1.45rem var(--feitio-font-ui);
+}
+.site-header .areas {
+  display: none;
+}
+.site-header .tools {
+  margin-inline-start: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--feitio-space-2);
+}
+.site-header .wide-only {
+  display: none;
+}
+.site-drawer .choices {
+  display: grid;
+  gap: var(--feitio-space-3);
+  font: var(--feitio-font-size-small) var(--feitio-font-ui);
+}
+.site-drawer .choices div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--feitio-space-2);
+}
+
+.site-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--feitio-space-6);
+  padding: var(--feitio-space-5) var(--feitio-space-4) var(--feitio-space-7);
+  max-inline-size: 90rem;
+  margin-inline: auto;
+}
+.site-side {
+  display: none;
+}
+.site-main {
+  min-inline-size: 0;
+  max-inline-size: 46rem;
+}
+.site-main > * + * {
+  margin-block-start: var(--feitio-space-4);
+}
+.site-main > h2 {
+  margin-block-start: var(--feitio-space-7);
+  font-size: var(--feitio-font-size-h1);
+  scroll-margin-block-start: var(--feitio-space-6);
+}
+.site-main > h3 {
+  margin-block-start: var(--feitio-space-6);
+  scroll-margin-block-start: var(--feitio-space-6);
+}
+.site-main > ul {
+  padding-inline-start: 1.2rem;
+  display: grid;
+  gap: var(--feitio-space-2);
+}
+.site-main .crumb {
+  font: var(--feitio-font-size-small) var(--feitio-font-ui);
+  color: var(--feitio-color-text-soft);
+}
+.site-main .lede {
+  font-size: var(--feitio-font-size-h3);
+  color: var(--feitio-color-text-soft);
+}
+.site-main > h1 ~ .lede {
+  margin-block-start: var(--feitio-space-3);
+}
+.toc-mobile {
+  border: var(--feitio-border-width) solid var(--feitio-color-line);
+  border-radius: var(--feitio-radius);
+  padding: 0 var(--feitio-space-3);
+  font-family: var(--feitio-font-ui);
+}
+.toc-mobile summary {
+  display: flex;
+  align-items: center;
+  gap: var(--feitio-space-2);
+  min-block-size: 44px;
+  cursor: pointer;
+  list-style: none;
+  font: var(--feitio-font-weight-bold) var(--feitio-font-size-small) var(--feitio-font-ui);
+}
+.toc-mobile summary::-webkit-details-marker {
+  display: none;
+}
+.toc-mobile summary .feitio-icon {
+  inline-size: 1em;
+  block-size: 1em;
+  transition: rotate var(--feitio-duration-change) var(--feitio-easing-change);
+}
+.toc-mobile[open] summary .feitio-icon {
+  rotate: 90deg;
+}
+.toc-mobile .feitio-anchor {
+  padding-block-end: var(--feitio-space-3);
+}
+.toc-mobile .feitio-anchor .title {
+  display: none;
+}
+.site-toc {
+  display: none;
+}
+.attrs {
+  overflow-x: auto;
+}
+.attrs table {
+  inline-size: 100%;
+  border-collapse: collapse;
+  font: var(--feitio-font-size-small) var(--feitio-font-ui);
+}
+.attrs th,
+.attrs td {
+  text-align: start;
+  vertical-align: top;
+  padding: var(--feitio-cell-padding-block) var(--feitio-cell-padding-inline);
+  border-bottom: var(--feitio-border-width) solid var(--feitio-color-line);
+}
+.attrs th {
+  color: var(--feitio-color-text-soft);
+  border-bottom-color: var(--feitio-color-text);
+}
+code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.92em;
+}
+.pair {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: var(--feitio-space-4);
+}
+.verdict {
+  display: flex;
+  align-items: center;
+  gap: var(--feitio-space-2);
+  margin: 0;
+  padding: var(--feitio-space-2) var(--feitio-space-3);
+  font: var(--feitio-font-weight-bold) var(--feitio-font-size-small) var(--feitio-font-ui);
+}
+.do .verdict {
+  color: var(--feitio-color-ok);
+  background: var(--feitio-color-ok-surface);
+}
+.dont .verdict {
+  color: var(--feitio-color-error);
+  background: var(--feitio-color-error-surface);
+}
+.do,
+.dont {
+  border: var(--feitio-border-width) solid var(--feitio-color-line);
+  border-radius: var(--feitio-radius);
+  overflow: hidden;
+}
+.do .demo,
+.dont .demo {
+  padding: var(--feitio-space-4);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--feitio-space-2);
+}
+.do .why,
+.dont .why {
+  margin: 0;
+  padding: 0 var(--feitio-space-4) var(--feitio-space-4);
+  font: var(--feitio-font-size-small) var(--feitio-font-ui);
+  color: var(--feitio-color-text-soft);
+}
+
+@media (min-width: 64rem) {
+  .site-header {
+    position: static;
+    padding: var(--feitio-space-3) var(--feitio-space-5);
+    gap: var(--feitio-space-5);
+  }
+  .site-header .areas {
+    display: flex;
+    gap: var(--feitio-space-1);
+  }
+  .site-header .areas a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: 36px;
+    padding: 0 var(--feitio-space-3);
+    border: var(--feitio-border-width) solid transparent;
+    border-radius: var(--feitio-radius);
+    color: var(--feitio-color-text);
+    text-decoration: none;
+    font: var(--feitio-font-weight-bold) var(--feitio-font-size-small) var(--feitio-font-ui);
+  }
+  .site-header .areas a:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+  .site-header .areas a[aria-current="true"] {
+    background: var(--feitio-color-surface-top);
+    border-color: var(--feitio-color-text);
+  }
+  .site-header .wide-only {
+    display: inline-flex;
+  }
+  .site-header .menu {
+    display: none;
+  }
+  .site-body.has-side {
+    grid-template-columns: 14rem minmax(0, 1fr);
+  }
+  /* A coluna vai até o footer, com a linha fina; a lista fica presa na tela e rola sozinha,
+     com o próprio ScrollFade, acima do esmaecido da página. */
+  .site-body.has-side {
+    padding-block-end: 0;
+  }
+  .site-body.has-side .site-main {
+    padding-block-end: var(--feitio-space-7);
+  }
+  .site-side {
+    display: block;
+    padding-inline-end: var(--feitio-space-3);
+    border-inline-end: var(--feitio-border-width) solid var(--feitio-color-line);
+  }
+  .site-side .side-inner,
+  .site-toc .side-inner {
+    position: sticky;
+    inset-block-start: var(--feitio-space-5);
+    max-block-size: calc(100dvh - var(--feitio-space-5) - 3rem);
+    overflow-y: auto;
+    padding: 0 var(--feitio-space-2);
+    margin-inline: calc(var(--feitio-space-2) * -1);
+    --feitio-scroll-fade-bleed: var(--feitio-space-2);
+  }
+  /* O respiro de cima mora no conteúdo, não na caixa que rola: assim o esmaecido encosta na borda de baixo. */
+  .site-side .side-inner > :first-child,
+  .site-toc .side-inner > :first-child {
+    padding-block-start: var(--feitio-space-2);
+  }
+  .site-side .side-inner > :first-child,
+  .site-toc .side-inner > :first-child {
+    padding-block-end: var(--feitio-space-4);
+  }
+}
+@media (min-width: 80rem) {
+  .site-body.has-side.has-toc {
+    grid-template-columns: 14rem minmax(0, 1fr) 13rem;
+  }
+  .site-toc {
+    display: block;
+  }
+  .toc-mobile {
+    display: none;
+  }
+}
+.feitio-example h3[id] {
+  scroll-margin-block-start: var(--feitio-space-6);
+}
+
+/* O ScrollFade da página é filho do body, e o Topo é o último do conteúdo: os dois não entram no
+   espaçamento entre irmãos. */
+/* O Topo da página é filho do body, depois do conteúdo: preso no canto inferior direito da janela. */
+body > .feitio-button.feitio-back-to-top {
+  margin: 0 var(--feitio-space-4) var(--feitio-space-4) auto;
+}
+/* Marca de terceiros: entra como é, na cor da tinta. */
+.brand-mark {
+  display: inline-grid;
+  place-items: center;
+  position: relative;
+  inline-size: 32px;
+  block-size: 32px;
+  color: var(--feitio-color-text);
+  border-radius: var(--feitio-radius);
+}
+.brand-mark::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+}
+.brand-mark svg {
+  inline-size: 22px;
+  block-size: 22px;
+  fill: currentColor;
+}
+.brand-mark:hover {
+  color: var(--feitio-color-accent-strong);
+}
+main[tabindex="-1"]:focus {
+  outline: none;
+}
+.feitio-code pre[hidden] {
+  display: none;
+}
+/* "Em breve": uma etiqueta miúda de traço suave, ao lado do nome, que nunca quebra a linha dele. */
+.soon {
+  display: inline-flex;
+  align-items: center;
+  margin-inline-start: var(--feitio-space-2);
+  padding: 0 var(--feitio-space-1);
+  font: var(--feitio-font-weight-bold) 0.75rem / 1.5 var(--feitio-font-ui);
+  color: var(--feitio-color-text-soft);
+  border: var(--feitio-border-width) solid var(--feitio-color-text-soft);
+  border-radius: var(--feitio-radius);
+  white-space: nowrap;
+  vertical-align: 0.2em;
+}
+.feitio-nav a .soon {
+  margin-inline-start: auto;
+}
+
+/* ---- Layout: Stack, Inline e Grid. O espaço entre as peças é do pai, e só da régua (data-gap de 1 a 7). */
+@layer feitio.components {
+  .feitio-stack {
+    display: flex;
+    flex-direction: column;
+  }
+  .feitio-inline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .feitio-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(var(--feitio-grid-min, 15rem), 100%), 1fr));
+  }
+  .feitio-stack,
+  .feitio-inline,
+  .feitio-grid {
+    gap: var(--feitio-gap, var(--feitio-space-4));
+  }
+  .feitio-stack > *,
+  .feitio-inline > *,
+  .feitio-grid > * {
+    margin: 0;
+    min-inline-size: 0;
+  }
+  [data-gap="1"] {
+    --feitio-gap: var(--feitio-space-1);
+  }
+  [data-gap="2"] {
+    --feitio-gap: var(--feitio-space-2);
+  }
+  [data-gap="3"] {
+    --feitio-gap: var(--feitio-space-3);
+  }
+  [data-gap="4"] {
+    --feitio-gap: var(--feitio-space-4);
+  }
+  [data-gap="5"] {
+    --feitio-gap: var(--feitio-space-5);
+  }
+  [data-gap="6"] {
+    --feitio-gap: var(--feitio-space-6);
+  }
+  [data-gap="7"] {
+    --feitio-gap: var(--feitio-space-7);
+  }
+  .feitio-stack[data-align="start"] {
+    align-items: flex-start;
+  }
+  .feitio-stack[data-align="center"] {
+    align-items: center;
+  }
+  .feitio-inline[data-justify="between"] {
+    justify-content: space-between;
+  }
+  .feitio-inline[data-justify="end"] {
+    justify-content: flex-end;
+  }
+}
+
+/* ---- Anatomia: a peça limpa, as notas ao lado e as setas desenhadas à mão ligando uma à outra.
+   No mobile, as notas viram uma lista numerada e as setas somem. */
+.is-focus {
+  outline: var(--feitio-focus-width) solid var(--feitio-color-accent);
+  outline-offset: var(--feitio-focus-offset);
+}
+.sketch-anatomy {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  gap: var(--feitio-space-6);
+  align-items: center;
+  padding: var(--feitio-space-5) var(--feitio-space-4);
+  background: var(--feitio-color-surface-raised);
+  border-radius: var(--feitio-radius);
+}
+.sketch-anatomy .notes {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--feitio-space-4);
+  font: var(--feitio-font-size-small) var(--feitio-font-ui);
+  line-height: var(--feitio-line-height-heading);
+  position: relative;
+  z-index: 1;
+}
+.sketch-anatomy .parts {
+  position: relative;
+  z-index: 1;
+  min-inline-size: 0;
+}
+.sketch-anatomy svg.sketch {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+.sketch-anatomy svg.sketch path {
+  fill: none;
+  stroke: var(--feitio-color-text-soft);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+@media (max-width: 44rem) {
+  .sketch-anatomy {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .sketch-anatomy svg.sketch {
+    display: none;
+  }
+  .sketch-anatomy .notes {
+    list-style: decimal;
+    padding-inline-start: 1.2rem;
+  }
+}
+/* A marca: o botão sobre o papel, ao lado do nome. */
+.site-header .brand {
+  align-items: center;
+}
+.brand-logo {
+  inline-size: 1.75rem;
+  block-size: 1.75rem;
+  flex: none;
+  overflow: visible;
+}
+.brand-logo path {
+  fill: none;
+  stroke: var(--feitio-color-text);
+  stroke-width: 5.6;
+  stroke-linecap: round;
+}
+.brand-logo .paper {
+  fill: var(--feitio-color-surface-top);
+  stroke: none;
+}
+.brand-logo .shadow {
+  fill: var(--feitio-color-shadow);
+  stroke: none;
+}
+.brand-logo .hot {
+  stroke: var(--feitio-color-accent);
+}
+
+/* ---- Componentes que o site usava sem nome: agora com nome. */
+@layer feitio.components {
+  /* Breadcrumbs, no topo de cada página: o caminho com links de verdade. */
+  .feitio-breadcrumbs ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--feitio-space-1) var(--feitio-space-2);
+    font: var(--feitio-font-size-small) var(--feitio-font-ui);
+  }
+  .feitio-breadcrumbs li {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--feitio-space-2);
+  }
+  .feitio-breadcrumbs .sep {
+    display: inline-flex;
+    color: var(--feitio-color-text-soft);
+  }
+  .feitio-breadcrumbs .sep .feitio-icon {
+    inline-size: 0.8em;
+    block-size: 0.8em;
+  }
+  .feitio-breadcrumbs a {
+    color: var(--feitio-color-accent-strong);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+  .feitio-breadcrumbs [aria-current="page"] {
+    color: var(--feitio-color-text-soft);
+  }
+  .feitio-breadcrumbs .back .feitio-icon {
+    rotate: 180deg;
+    inline-size: 0.9em;
+    block-size: 0.9em;
+  }
+  .feitio-breadcrumbs .back a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--feitio-space-1);
+  }
+
+  /* Divider: a linha fina que separa partes. O espaço em volta é do pai. */
+  .feitio-divider {
+    margin: 0;
+    border: 0;
+    border-block-start: var(--feitio-border-width) solid var(--feitio-color-line);
+  }
+  .feitio-divider[data-tone="ink"] {
+    border-block-start-color: var(--feitio-color-text);
+  }
+
+  /* Kbd: uma tecla, escrita como no teclado. */
+  .feitio-kbd {
+    display: inline-block;
+    min-inline-size: 1.5em;
+    padding: 0 0.35em;
+    font:
+      0.82em / 1.5 ui-monospace,
+      "SF Mono",
+      Menlo,
+      monospace;
+    text-align: center;
+    color: var(--feitio-color-text);
+    background: var(--feitio-color-surface-top);
+    border: var(--feitio-border-width) solid var(--feitio-color-line);
+    border-block-end-width: 2px;
+    border-radius: 4px;
+  }
+
+  /* Tag pequena: o "em breve", ao lado de um nome, sem quebrar a linha. */
+  .feitio-nav a .feitio-tag[data-size="small"] {
+    margin-inline-start: auto;
+  }
+
+  /* FilterField: o campo que filtra a lista logo abaixo e conta o que sobrou. */
+  .feitio-filter {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--feitio-space-2) var(--feitio-space-4);
+  }
+  .feitio-filter .feitio-input {
+    flex: 1 1 14rem;
+    max-inline-size: 22rem;
+    margin: 0;
+    padding-inline: var(--feitio-space-3);
+  }
+  .feitio-filter .count {
+    font: var(--feitio-font-size-small) var(--feitio-font-ui);
+    color: var(--feitio-color-text-soft);
+  }
+
+  /* Swatch: a amostra de uma cor, com o traço de tinta em volta. */
+  .feitio-swatch {
+    display: inline-block;
+    inline-size: 1em;
+    block-size: 1em;
+    vertical-align: -0.12em;
+    background: var(--swatch);
+    border: var(--feitio-border-width) solid var(--feitio-color-text);
+    border-radius: 3px;
+  }
+
+  /* Footer: a marca, os links e os anos. */
+  .feitio-footer {
+    padding: var(--feitio-space-5) var(--feitio-space-4);
+    border-block-start: var(--feitio-border-width) solid var(--feitio-color-line);
+    font: var(--feitio-font-size-small) var(--feitio-font-ui);
+    color: var(--feitio-color-text-soft);
+  }
+  .feitio-footer .inner {
+    max-inline-size: 90rem;
+    margin-inline: auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--feitio-space-3) var(--feitio-space-5);
+  }
+  .feitio-footer .who {
+    display: flex;
+    align-items: center;
+    gap: var(--feitio-space-2);
+  }
+  .feitio-footer .who strong {
+    color: var(--feitio-color-text);
+    font-weight: var(--feitio-font-weight-heavy);
+  }
+  .feitio-footer .brand-logo {
+    inline-size: 1.4rem;
+    block-size: 1.4rem;
+  }
+  .feitio-footer ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--feitio-space-2) var(--feitio-space-4);
+  }
+  .feitio-footer a {
+    color: var(--feitio-color-text-soft);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+  .feitio-footer a:hover {
+    color: var(--feitio-color-text);
+  }
+}
+.site-main > .feitio-breadcrumbs + h1 {
+  margin-block-start: var(--feitio-space-3);
+}
+
+/* O seletor de idioma é de links (cada idioma é uma página), com a mesma cara do SegmentedControl. */
+.feitio-segmented a {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 28px;
+  padding: 0 var(--feitio-space-2);
+  color: var(--feitio-color-text);
+  text-decoration: none;
+  border-radius: calc(var(--feitio-radius-top-left) - 2px);
+}
+.feitio-segmented a[aria-current="true"] {
+  color: var(--feitio-color-surface);
+  background: var(--feitio-color-text);
+}
+
+/* SkipLink: só aparece com o foco do teclado. */
+.skip {
+  position: absolute;
+  inset: var(--feitio-space-2) auto auto var(--feitio-space-2);
+  z-index: 10;
+  padding: var(--feitio-space-2) var(--feitio-space-3);
+  background: var(--feitio-color-surface-top);
+  border: var(--feitio-border-width) solid var(--feitio-color-text);
+  border-radius: var(--feitio-radius);
+  font: var(--feitio-font-weight-bold) var(--feitio-font-size-small) var(--feitio-font-ui);
+  translate: 0 -200%;
+}
+.skip:focus {
+  translate: 0 0;
+}
+
+/* Atributos: o nome à esquerda, o que faz à direita; no mobile, um embaixo do outro. */
+.attrs {
+  display: grid;
+  gap: 0;
+  margin-inline: 0;
+  margin-block-end: 0;
+  border-block-start: var(--feitio-border-width) solid var(--feitio-color-text);
+  font: var(--feitio-font-size-small) / 1.45 var(--feitio-font-ui);
+}
+.attrs > div {
+  display: grid;
+  grid-template-columns: minmax(8rem, 12rem) minmax(0, 1fr);
+  gap: var(--feitio-space-3);
+  padding: var(--feitio-space-3) 0;
+  border-block-end: var(--feitio-border-width) solid var(--feitio-color-line);
+}
+.attrs dt,
+.attrs dd {
+  margin: 0;
+}
+@media (max-width: 40rem) {
+  .attrs > div {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--feitio-space-1);
+  }
+}
+.live-stack {
+  display: grid;
+  gap: var(--feitio-space-3);
+  inline-size: 100%;
+}
+.live-stack > .feitio-button {
+  justify-self: center;
+}

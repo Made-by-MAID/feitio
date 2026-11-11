@@ -1,0 +1,74 @@
+---
+import Notice from '@feitio/astro/Notice.astro';
+import Example from '../../../components/Example.astro';
+import { componentsNav } from '../../../content/nav.ts';
+import { NOTICE } from '../../../content/notice.ts';
+import { LOCALES, type Locale, WORDS } from '../../../i18n/ui.ts';
+import DocPage from '../../../layouts/DocPage.astro';
+import { renderHtml } from '../../../lib/render.ts';
+
+export function getStaticPaths() {
+  return LOCALES.map((lang) => ({ params: { lang } }));
+}
+const lang = Astro.params.lang as Locale;
+const t = NOTICE[lang];
+const base = import.meta.env.BASE_URL;
+const sprite = `${base}feitio/icons/sprite.svg`;
+const closeLabel = WORDS[lang].closeNotice;
+const s = t.samples;
+const four = (
+  await Promise.all([
+    renderHtml(Notice, { title: s.info[0], sprite }, s.info[1]),
+    renderHtml(Notice, { status: 'ok', title: s.ok[0], sprite }, s.ok[1]),
+    renderHtml(Notice, { status: 'warn', title: s.warn[0], sprite }, s.warn[1]),
+    renderHtml(Notice, { status: 'error', title: s.error[0], sprite }, s.error[1]),
+  ])
+).join('\n');
+const closeHtml = await renderHtml(
+  Notice,
+  { title: s.info[0], close: true, id: 'n-close', closeLabel, sprite },
+  s.info[1],
+);
+const timeHtml = await renderHtml(
+  Notice,
+  { status: 'ok', title: s.ok[0], timeout: 8000, id: 'n-time', role: 'status', closeLabel, sprite },
+  s.ok[1],
+);
+const again = (id: string) =>
+  `<button type="button" class="feitio-button" data-size="small" data-notice-again="${id}">${t.again}</button>`;
+const toc = [
+  {
+    id: 'examples',
+    text: t.examples,
+    children: [
+      { id: 'four', text: t.four[0] },
+      { id: 'with-close', text: t.close[0] },
+      { id: 'with-time', text: t.time[0] },
+    ],
+  },
+  { id: 'close-and-time', text: t.rules[0] },
+  { id: 'attributes', text: t.attrs[0] },
+];
+---
+<DocPage lang={lang} title="Notice" area="comp" nav={componentsNav(lang, base, 'Notice')} toc={toc} lede={t.lede} searchArea={t.area}>
+  <h2 id="examples">{t.examples}</h2>
+  <div class="feitio-stack" data-gap="4">
+    <Example id="four" title={t.four[0]} description={t.four[1]} html={`<div class="live-stack">${four}</div>`} lang={lang} />
+    <Example id="with-close" title={t.close[0]} description={t.close[1]} html={`<div class="live-stack">${closeHtml}${again('n-close')}</div>`} lang={lang} />
+    <Example id="with-time" title={t.time[0]} description={t.time[1]} html={`<div class="live-stack">${timeHtml}${again('n-time')}</div>`} lang={lang} />
+  </div>
+  <h2 id="close-and-time">{t.rules[0]}</h2>
+  <ul>{t.rules[1].map((i) => <li set:html={i} />)}</ul>
+  <h2 id="attributes">{t.attrs[0]}</h2>
+  <dl class="attrs">{t.attrs[1].map(([name, what]) => <div><dt><code>{name}</code></dt><dd>{what}</dd></div>)}</dl>
+</DocPage>
+<script>
+  import { notices } from '@feitio/vanilla/notice/source';
+  const api = ((window as Window & { feitioNotice?: ReturnType<typeof notices> }).feitioNotice ??= notices(window));
+  for (const b of document.querySelectorAll<HTMLElement>('[data-notice-again]')) {
+    b.addEventListener('click', () => {
+      const n = document.getElementById(b.dataset.noticeAgain ?? '');
+      if (n) api.show(n);
+    });
+  }
+</script>

@@ -6,7 +6,8 @@
   "description": "Feitio, a handmade, humanist design system: the packages, the docs and the showcase.",
   "license": "MIT",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "apps/*"
   ],
   "scripts": {
     "build": "bun run --filter '@feitio/core' build",
@@ -18,7 +19,9 @@
     "check": "bun run check:style && bun run check:types && bun test --coverage",
     "test:e2e": "bun e2e/run.ts",
     "changeset": "changeset",
-    "version": "changeset version && bun install"
+    "version": "changeset version && bun install",
+    "docs:dev": "bun run --filter '@feitio/docs' dev",
+    "docs:build": "bun run --filter '@feitio/docs' build"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.3",

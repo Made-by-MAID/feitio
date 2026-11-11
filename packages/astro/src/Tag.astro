@@ -1,0 +1,16 @@
+---
+/**
+ * Tag: an item's status, always with icon and word, never orange. small is for next to a name in a
+ * list or a menu ("soon").
+ */
+import Icon from './Icon.astro';
+
+interface Props {
+  status?: 'ok' | 'warn' | 'error';
+  size?: 'small';
+  sprite?: string;
+}
+const icons = { ok: 'check', warn: 'warn', error: 'close', info: 'info' } as const;
+const { status, size, sprite } = Astro.props;
+---
+<span class="feitio-tag" data-status={status} data-size={size}>{size !== 'small' && <Icon name={icons[status ?? 'info']} sprite={sprite} />}<slot /></span>

@@ -1,4 +1,5 @@
-/* Feitio, all of it: the tokens and the base. Fonts are loaded apart (see css/fonts.css). */
-@layer feitio.reset, feitio.tokens, feitio.base, feitio.shapes;
+/* Feitio, all of it: the tokens, the base and the components. Fonts are loaded apart (see css/fonts.css). */
+@layer feitio.reset, feitio.tokens, feitio.base, feitio.shapes, feitio.components;
 @import url("tokens.css");
 @import url("base.css");
+@import url("components.css");

@@ -1,0 +1,29 @@
+---
+/**
+ * Button: an action on the screen it is on. With href it is a link styled as a button, for
+ * "Get started" kinds of doors; an action is always a <button>.
+ */
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends Omit<HTMLAttributes<'button'>, 'type'> {
+  /** primary is the screen's main action (orange, at most one); danger destroys something. */
+  variant?: 'primary' | 'danger';
+  size?: 'small' | 'large';
+  type?: 'button' | 'submit' | 'reset';
+  /** Makes it a link that looks like a button. */
+  href?: string;
+}
+const { variant, size, type = 'button', href, class: extra, ...rest } = Astro.props;
+const classes = ['feitio-button', extra].filter(Boolean).join(' ');
+---
+{
+  href ? (
+    <a class={classes} href={href} data-variant={variant} data-size={size} {...(rest as HTMLAttributes<'a'>)}>
+      <slot />
+    </a>
+  ) : (
+    <button class={classes} type={type} data-variant={variant} data-size={size} {...rest}>
+      <slot />
+    </button>
+  )
+}

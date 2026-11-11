@@ -60,6 +60,13 @@
     --feitio-cell-padding-block: 0.85rem;
     --feitio-cell-padding-inline: 0.9rem;
     --feitio-control-min-size: 44px;
+    /* The small and large controls, the same in every density: a small button keeps a 40px hit area. */
+    --feitio-control-min-size-small: 32px;
+    --feitio-control-padding-block-small: 0.3rem;
+    --feitio-control-padding-inline-small: 0.75rem;
+    --feitio-control-min-size-large: 52px;
+    --feitio-control-padding-block-large: 0.9rem;
+    --feitio-control-padding-inline-large: 1.75rem;
 
     /* Lets sizes that are auto (a block that grows) transition too, where the browser supports it. */
     interpolate-size: allow-keywords;
