@@ -23,12 +23,15 @@ The guidelines are in [`docs/guidelines/`](docs/guidelines/README.md).
 
 ## Use it
 
-Feitio is plain CSS. Load the fonts (or host them yourself) and the stylesheet:
+Feitio is plain CSS, in the package `@feitio/core`. Load the fonts (or host them yourself) and the
+stylesheet:
 
 ```html
-<link rel="stylesheet" href="css/fonts.css">
-<link rel="stylesheet" href="css/feitio.css">
+<link rel="stylesheet" href="packages/core/css/fonts.css">
+<link rel="stylesheet" href="packages/core/css/feitio.css">
 ```
+
+Once published, the same files come from npm (`@feitio/core/css/feitio.css`) or a CDN that serves npm.
 
 That is enough for a page in the house theme, by day or at night following the system. Pick them
 yourself with attributes on any element, the root or a single block:
@@ -58,35 +61,53 @@ The shared shapes come as classes: `feitio-block`, `feitio-lift` (lifted paper),
 
 ### Icons
 
-Every icon is in `icons/sprite.svg`, as a symbol named `feitio-<name>`:
+Every icon is in `packages/core/icons/sprite.svg`, as a symbol named `feitio-<name>`:
 
 ```html
-<svg class="feitio-icon" aria-hidden="true"><use href="icons/sprite.svg#feitio-search"/></svg>
+<svg class="feitio-icon" aria-hidden="true"><use href="packages/core/icons/sprite.svg#feitio-search"/></svg>
 ```
 
 An icon is decoration: the word next to it, or the `aria-label` of an icon-only button, names it.
 
+### Behaviors
+
+`@feitio/vanilla` brings the little JavaScript some components need, for any HTML. Today, the
+Notice: a close button and, when asked, a time to go away that stops under the pointer or focus.
+
+```js
+import { notices } from '@feitio/vanilla/notice';
+const notice = notices(window);
+notice.show(document.getElementById('saved'));
+```
+
 ### A theme of your own
 
 A theme for outside work (a shop's landing page, a side project) changes **only the colors**. Add
-`tokens/themes/<name>.light.tokens.json` filling the same color roles as `casa`, run the build, and
+`packages/core/tokens/themes/<name>.light.tokens.json` filling the same color roles as `casa`, run the build, and
 use `data-theme="<name>"`. A night version (`<name>.dark.tokens.json`) is optional. The tests fail
 if any pair of roles falls below WCAG 2.2 AA contrast. Work that needs more than new colors is
 better made outside Feitio.
 
 ## What is here
 
-- `tokens/`: the source of truth, in the [Design Tokens](https://www.designtokens.org/) format
-  (2025.10). `base.tokens.json` for what every theme shares; `themes/` for the colors.
-- `css/tokens.css`, `js/tokens.ts`, `icons/sprite.svg`: generated from `tokens/` and `icons/` by the
-  build. Never edit them by hand.
-- `css/base.css`: the page itself and the shared shapes, in the layers `feitio.reset`,
-  `feitio.base` and `feitio.shapes`.
-- `icons/`, `illustrations/`: hand-drawn SVG.
+A Bun workspace. Every published package shares one version.
+
+- `packages/core` (`@feitio/core`): the foundation.
+  - `tokens/`: the source of truth, in the [Design Tokens](https://www.designtokens.org/) format
+    (2025.10). `base.tokens.json` for what every theme shares; `themes/` for the colors.
+  - `css/tokens.css`, `js/tokens.ts`, `icons/sprite.svg`: generated from `tokens/` and `icons/` by
+    the build. Never edit them by hand.
+  - `css/base.css`: the page itself and the shared shapes, in the layers `feitio.reset`,
+    `feitio.base` and `feitio.shapes`.
+  - `icons/`, `illustrations/`: hand-drawn SVG.
+- `packages/vanilla` (`@feitio/vanilla`): component behaviors in plain JavaScript.
 - `docs/guidelines/`: how and why.
 - `site/`: the showcase, in English and Portuguese, published on GitHub Pages straight from `main`
   (the root `index.html` sends visitors there).
 - `skills/feitio/`: a skill for AI coding agents that build interfaces with Feitio.
+
+Coming next: `@feitio/astro` (the components, the single source of their HTML), the documentation
+site built with it, and `@feitio/react`.
 
 ## Work on it
 
@@ -94,7 +115,7 @@ With [Bun](https://bun.sh):
 
 ```sh
 bun install
-bun run build   # tokens and icons into css/, js/ and icons/sprite.svg
+bun run build   # tokens and icons into packages/core: css/, js/ and icons/sprite.svg
 bun run check   # style, types and tests (contrast, gamut, icons, generated files up to date)
 ```
 
