@@ -40,6 +40,12 @@
     font: inherit;
     color: inherit;
   }
+
+  /* Hidden is hidden: a component's own display must never bring back what the hidden attribute hides. */
+  [hidden] {
+    /* biome-ignore lint/complexity/noImportantStyles: an element's own display would otherwise beat the browser's hidden. */
+    display: none !important;
+  }
 }
 
 @layer feitio.base {
@@ -179,6 +185,19 @@
     background: color-mix(in oklch, var(--feitio-color-accent) 30%, transparent);
   }
 
+  /*
+   * Where things move every instant (dragging, drawing, resizing, scrolling a huge list), a piece
+   * cannot wait for a transition: it would lag behind the finger. data-motion="direct" turns motion
+   * off in that area only.
+   */
+  [data-motion="direct"],
+  [data-motion="direct"] * {
+    /* biome-ignore lint/complexity/noImportantStyles: a direct area must beat the transition every element gets. */
+    transition: none !important;
+    /* biome-ignore lint/complexity/noImportantStyles: same as above, for animations. */
+    animation: none !important;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -233,6 +252,9 @@
 
   /* Hand-drawn icons: the line is thick and the drawing leans a little. */
   .feitio-icon {
+    /* Inline, next to the word: the reset makes svg a block. */
+    display: inline-block;
+    vertical-align: -0.25em;
     inline-size: 1.35em;
     block-size: 1.35em;
     flex: none;
