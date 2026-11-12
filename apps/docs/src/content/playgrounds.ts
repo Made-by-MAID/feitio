@@ -13,13 +13,17 @@ import Inline from '@feitio/astro/Inline.astro';
 import Kbd from '@feitio/astro/Kbd.astro';
 import Link from '@feitio/astro/Link.astro';
 import Notice from '@feitio/astro/Notice.astro';
+import Pagination from '@feitio/astro/Pagination.astro';
 import Radios from '@feitio/astro/Radios.astro';
 import SegmentedControl from '@feitio/astro/SegmentedControl.astro';
 import Select from '@feitio/astro/Select.astro';
 import Stack from '@feitio/astro/Stack.astro';
 import StatusOverlay from '@feitio/astro/StatusOverlay.astro';
+import SummaryList from '@feitio/astro/SummaryList.astro';
 import Switch from '@feitio/astro/Switch.astro';
+import Table from '@feitio/astro/Table.astro';
 import Tag from '@feitio/astro/Tag.astro';
+import TaskList from '@feitio/astro/TaskList.astro';
 import Textarea from '@feitio/astro/Textarea.astro';
 import TextInput from '@feitio/astro/TextInput.astro';
 import TimeInput from '@feitio/astro/TimeInput.astro';
@@ -1156,6 +1160,294 @@ export async function playgroundFor(
           { state: st || undefined, label: st ? labels[st] : '', as: 'div' },
           inner,
         ),
+      ),
+    };
+  }
+
+  if (slug === 'table') {
+    const rowsData = [
+      [
+        words(
+          'Backup semanal',
+          'Weekly backup',
+          'Copia semanal',
+          'Sauvegarde hebdomadaire',
+          'Wöchentliche Sicherung',
+        ),
+        words('Domingo, 3h', 'Sunday, 3 am', 'Domingo, 3 h', 'Dimanche, 3 h', 'Sonntag, 3 Uhr'),
+        'ok',
+        words('Em dia', 'On time', 'Al día', 'À jour', 'Pünktlich'),
+        '48',
+      ],
+      [
+        words(
+          'Regar as plantas',
+          'Water the plants',
+          'Regar las plantas',
+          'Arroser les plantes',
+          'Pflanzen gießen',
+        ),
+        words('Terça, 9h', 'Tuesday, 9 am', 'Martes, 9 h', 'Mardi, 9 h', 'Dienstag, 9 Uhr'),
+        'warn',
+        words('Atrasado', 'Late', 'Atrasado', 'En retard', 'Verspätet'),
+        '3',
+      ],
+      [
+        words(
+          'Relatório do mês',
+          'Monthly report',
+          'Informe del mes',
+          'Rapport du mois',
+          'Monatsbericht',
+        ),
+        words('Dia 1, 8h', 'The 1st, 8 am', 'Día 1, 8 h', 'Le 1er, 8 h', 'Am 1., 8 Uhr'),
+        '',
+        words('Pausado', 'Paused', 'En pausa', 'En pause', 'Pausiert'),
+        '1.204',
+      ],
+      [
+        words(
+          'Trocar as fotos',
+          'Replace the photos',
+          'Cambiar las fotos',
+          'Changer les photos',
+          'Fotos ersetzen',
+        ),
+        words('Sexta, 18h', 'Friday, 6 pm', 'Viernes, 18 h', 'Vendredi, 18 h', 'Freitag, 18 Uhr'),
+        'error',
+        words('Falhou', 'Failed', 'Falló', 'Échoué', 'Fehlgeschlagen'),
+        '12',
+      ],
+    ];
+    const edit = words('Editar', 'Edit', 'Editar', 'Modifier', 'Bearbeiten');
+    const columns = [
+      { label: words('Nome', 'Name', 'Nombre', 'Nom', 'Name') },
+      { label: words('Quando', 'When', 'Cuándo', 'Quand', 'Wann') },
+      { label: words('Situação', 'Status', 'Situación', 'Statut', 'Status') },
+      {
+        label: words('Disparos', 'Runs', 'Ejecuciones', 'Exécutions', 'Läufe'),
+        align: 'end' as const,
+      },
+      { label: words('Ações', 'Actions', 'Acciones', 'Actions', 'Aktionen'), hidden: true },
+    ];
+    const rowHtml = async (n: number) =>
+      Promise.all(
+        rowsData
+          .slice(0, n)
+          .map(async ([name, when, st, word, runs]) => [
+            name ?? '',
+            when ?? '',
+            await renderHtml(Tag, { status: st || undefined, sprite }, word),
+            runs ?? '',
+            await renderHtml(
+              Button,
+              { size: 'small', href: '#playground' },
+              `${edit}<span class="feitio-visually-hidden"> ${name}</span>`,
+            ),
+          ]),
+      );
+    return {
+      placeholder: '',
+      text: '',
+      controls: [
+        {
+          name: 'density',
+          label: words('Densidade', 'Density', 'Densidad', 'Densité', 'Dichte'),
+          options: [
+            {
+              value: '',
+              label: words('Confortável', 'Comfortable', 'Cómoda', 'Confortable', 'Bequem'),
+            },
+            {
+              value: 'compact',
+              label: words('Compacta', 'Compact', 'Compacta', 'Compacte', 'Kompakt'),
+            },
+          ],
+        },
+        yesNo('caption', words('Legenda', 'Caption', 'Leyenda', 'Légende', 'Beschriftung')),
+        {
+          name: 'rows',
+          label: words('Linhas', 'Rows', 'Filas', 'Lignes', 'Zeilen'),
+          options: ['2', '4'].map((v) => ({ value: v, label: v })),
+        },
+      ],
+      combos: await combos(
+        [
+          ['', 'compact'],
+          ['yes', ''],
+          ['2', '4'],
+        ],
+        async ([d, c, n]) =>
+          renderHtml(Table, {
+            id: 'pg-table',
+            caption: c
+              ? words('Agendamentos', 'Schedules', 'Citas', 'Rendez-vous', 'Termine')
+              : undefined,
+            columns,
+            rows: await rowHtml(Number(n)),
+            compact: Boolean(d),
+          }),
+      ),
+    };
+  }
+  if (slug === 'summarylist') {
+    const change = words('Alterar', 'Change', 'Cambiar', 'Modifier', 'Ändern');
+    const rows = [
+      {
+        key: words('Nome', 'Name', 'Nombre', 'Nom', 'Name'),
+        value: words(
+          'Regar as plantas',
+          'Water the plants',
+          'Regar las plantas',
+          'Arroser les plantes',
+          'Pflanzen gießen',
+        ),
+      },
+      {
+        key: words('Quando', 'When', 'Cuándo', 'Quand', 'Wann'),
+        value: words(
+          'Toda terça, às 9h',
+          'Every Tuesday, 9 am',
+          'Cada martes, a las 9',
+          'Chaque mardi, à 9 h',
+          'Jeden Dienstag, 9 Uhr',
+        ),
+      },
+      {
+        key: words('Avisar por', 'Notify by', 'Avisar por', 'Prévenir par', 'Benachrichtigen per'),
+        value: 'Discord, e-mail',
+      },
+    ];
+    return {
+      placeholder: '',
+      text: '',
+      controls: [yesNo('change', words('Alterar', 'Change', 'Cambiar', 'Modifier', 'Ändern'))],
+      combos: await combos([['yes', '']], ([c]) =>
+        renderHtml(SummaryList, {
+          rows: rows.map((r) => ({
+            ...r,
+            change: c ? { href: '#playground', label: change } : undefined,
+          })),
+        }),
+      ),
+    };
+  }
+  if (slug === 'tasklist') {
+    const items = [
+      {
+        name: words(
+          'Revisar o contrato do aluguel',
+          'Review the lease',
+          'Revisar el contrato de alquiler',
+          'Relire le bail',
+          'Mietvertrag prüfen',
+        ),
+        href: '#playground',
+        detail: words(
+          'Prazo 10 nov',
+          'Due Nov 10',
+          'Plazo 10 nov',
+          'Échéance 10 nov',
+          'Fällig 10. Nov.',
+        ),
+        status: 'warn' as const,
+        word: words('Esperando', 'Waiting', 'Esperando', 'En attente', 'Wartet'),
+      },
+      {
+        name: words(
+          'Organizar as fotos',
+          'Organize the photos',
+          'Organizar las fotos',
+          'Ranger les photos',
+          'Fotos ordnen',
+        ),
+        href: '#playground',
+        detail: words('Em andamento', 'In progress', 'En curso', 'En cours', 'In Arbeit'),
+        word: words('Fazendo', 'Doing', 'Haciendo', 'En cours', 'In Arbeit'),
+      },
+      {
+        name: words(
+          'Regar as plantas',
+          'Water the plants',
+          'Regar las plantas',
+          'Arroser les plantes',
+          'Pflanzen gießen',
+        ),
+        href: '#playground',
+        detail: words(
+          'Concluída em 7 nov',
+          'Done on Nov 7',
+          'Terminada el 7 nov',
+          'Terminée le 7 nov',
+          'Erledigt am 7. Nov.',
+        ),
+        status: 'ok' as const,
+        word: words('Concluída', 'Done', 'Terminada', 'Terminée', 'Erledigt'),
+      },
+    ];
+    return {
+      placeholder: '',
+      text: '',
+      controls: [yesNo('detail', words('Detalhe', 'Detail', 'Detalle', 'Détail', 'Detail'))],
+      combos: await combos([['yes', '']], ([d]) =>
+        renderHtml(TaskList, {
+          items: items.map((i) => ({ ...i, detail: d ? i.detail : undefined })),
+          sprite,
+        }),
+      ),
+    };
+  }
+  if (slug === 'pagination') {
+    return {
+      placeholder: '',
+      text: '',
+      controls: [
+        {
+          name: 'page',
+          label: words(
+            'Página atual',
+            'Current page',
+            'Página actual',
+            'Page actuelle',
+            'Aktuelle Seite',
+          ),
+          options: ['1', '3', '7'].map((v) => ({ value: v, label: v })),
+        },
+        yesNo('per', words('Por página', 'Per page', 'Por página', 'Par page', 'Pro Seite')),
+      ],
+      combos: await combos(
+        [
+          ['1', '3', '7'],
+          ['yes', ''],
+        ],
+        ([pgn, per]) => {
+          const p = Number(pgn);
+          return renderHtml(Pagination, {
+            label: words(
+              'Páginas dos agendamentos',
+              'Schedule pages',
+              'Páginas de citas',
+              'Pages des rendez-vous',
+              'Terminseiten',
+            ),
+            current: p,
+            total: 7,
+            href: (n: number) => `#playground-${n}`,
+            sprite,
+            previousLabel: words('Anterior', 'Previous', 'Anterior', 'Précédente', 'Zurück'),
+            nextLabel: words('Próxima', 'Next', 'Siguiente', 'Suivante', 'Weiter'),
+            pageLabel: (n: number) => `${words('Página', 'Page', 'Página', 'Page', 'Seite')} ${n}`,
+            count: `${words('Mostrando', 'Showing', 'Mostrando', 'Affichage', 'Zeige')} ${(p - 1) * 20 + 1}–${Math.min(p * 20, 132)} / 132`,
+            perPage: per
+              ? {
+                  label: words('Por página', 'Per page', 'Por página', 'Par page', 'Pro Seite'),
+                  options: [20, 50, 100],
+                  current: 20,
+                  href: (n: number) => `#per-${n}`,
+                }
+              : undefined,
+          });
+        },
       ),
     };
   }

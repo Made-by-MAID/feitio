@@ -1,0 +1,17 @@
+---
+/** TaskList: things to do or follow, each with its status (a Tag) and a link to it. */
+import Tag from './Tag.astro';
+
+interface Props {
+  items: {
+    name: string;
+    href: string;
+    detail?: string;
+    status?: 'ok' | 'warn' | 'error';
+    word: string;
+  }[];
+  sprite?: string;
+}
+const { items, sprite } = Astro.props;
+---
+<ul class="feitio-task-list">{items.map((i) => <li><span class="name"><a class="feitio-link" href={i.href}>{i.name}</a>{i.detail && <small>{i.detail}</small>}</span><Tag status={i.status} sprite={sprite}>{i.word}</Tag></li>)}</ul>

@@ -193,12 +193,6 @@
   grid-column: 2;
   margin: 0;
 }
-.feitio-summary-list {
-  margin-inline: 0;
-  margin-block-end: 0;
-  display: grid;
-  font-family: var(--feitio-font-ui);
-}
 .feitio-summary-list > div {
   display: grid;
   grid-template-columns: minmax(6rem, 1fr) minmax(0, 2fr);
@@ -1782,17 +1776,6 @@
   border: var(--feitio-border-width) solid var(--feitio-color-line);
   border-radius: var(--feitio-radius);
 }
-.feitio-table-scroll {
-  overflow-x: auto;
-  container-type: inline-size;
-}
-.feitio-table {
-  inline-size: 100%;
-  border-collapse: collapse;
-  font: var(--feitio-font-size-small) var(--feitio-font-ui);
-  line-height: 1.35;
-  font-variant-numeric: tabular-nums;
-}
 .feitio-table caption {
   caption-side: top;
   text-align: start;
@@ -1920,11 +1903,6 @@
     content: none;
   }
 }
-.feitio-summary-list {
-  margin-inline: 0;
-  margin-block-end: 0;
-  display: grid;
-}
 .feitio-summary-list > div {
   display: grid;
   grid-template-columns: minmax(8rem, 1fr) minmax(0, 2fr) auto;
@@ -1954,12 +1932,6 @@
     text-align: start;
   }
 }
-.feitio-task-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: grid;
-}
 .feitio-task-list > li {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -1983,12 +1955,6 @@
 .feitio-task-list .name small {
   color: var(--feitio-color-text-soft);
   font-size: var(--feitio-font-size-small);
-}
-.feitio-pagination {
-  display: grid;
-  gap: var(--feitio-space-3);
-  justify-items: start;
-  font: var(--feitio-font-size-small) var(--feitio-font-ui);
 }
 .feitio-pagination ul {
   margin: 0;
@@ -2058,11 +2024,4 @@
 .live .feitio-summary-list,
 .live .feitio-task-list {
   inline-size: 100%;
-}
-.feitio-choice-box {
-  inline-size: 1.15rem;
-  block-size: 1.15rem;
-  margin: 0;
-  accent-color: var(--feitio-color-text);
-  vertical-align: middle;
 }

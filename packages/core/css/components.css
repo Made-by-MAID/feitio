@@ -574,7 +574,6 @@
   .feitio-select select:has(option[value=""]:checked) {
     color: var(--feitio-color-text-soft);
   }
-  /* biome-ignore lint/style/noDescendingSpecificity: a different element than the Notice's icon; the order does not matter. */
   .feitio-select > .feitio-icon {
     position: absolute;
     inset: 0 var(--feitio-space-3) 0 auto;
@@ -1016,6 +1015,300 @@
     margin: 0;
     font-size: var(--feitio-font-size-small);
     color: var(--feitio-color-text-soft);
+  }
+
+  /* Data: Table (cards on a phone), SummaryList, TaskList and Pagination. */
+  /* Table: linhas finas, cabeçalho com o traço de tinta, números à direita. */
+  .feitio-table-scroll {
+    overflow-x: auto;
+    container-type: inline-size;
+  }
+  .feitio-table {
+    inline-size: 100%;
+    border-collapse: collapse;
+    font: var(--feitio-font-size-small) var(--feitio-font-ui);
+    line-height: 1.35;
+    font-variant-numeric: tabular-nums;
+  }
+  .feitio-table caption {
+    caption-side: top;
+    text-align: start;
+    padding-block-end: var(--feitio-space-3);
+    font: var(--feitio-font-weight-bold) var(--feitio-font-size-h3) var(--feitio-font-ui);
+    line-height: var(--feitio-line-height-heading);
+  }
+  .feitio-table th,
+  .feitio-table td {
+    text-align: start;
+    vertical-align: middle;
+    padding: var(--feitio-cell-padding-block) var(--feitio-cell-padding-inline);
+    border-bottom: var(--feitio-border-width) solid var(--feitio-color-line);
+  }
+  .feitio-table thead th {
+    font-weight: var(--feitio-font-weight-bold);
+    color: var(--feitio-color-text-soft);
+    border-bottom-color: var(--feitio-color-text);
+    white-space: nowrap;
+  }
+  .feitio-table tbody tr:hover {
+    background: color-mix(in oklch, var(--feitio-color-text) 4%, transparent);
+  }
+  .feitio-table [data-align="end"] {
+    text-align: end;
+  }
+  .feitio-table .actions {
+    text-align: end;
+    white-space: nowrap;
+  }
+  .feitio-table .actions .feitio-button + .feitio-button {
+    margin-inline-start: var(--feitio-space-2);
+  }
+  .feitio-table thead a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--feitio-space-1);
+  }
+  .feitio-table thead [aria-sort] a {
+    color: var(--feitio-color-text);
+  }
+  .feitio-table thead .feitio-icon {
+    inline-size: 0.95em;
+    block-size: 0.95em;
+  }
+  .feitio-table .select-col {
+    inline-size: 2.5rem;
+  }
+
+  /* No mobile (caixa com menos de 40rem), cada linha vira um cartão: o nome em cima,
+       cada célula com o nome da coluna (data-label) e as ações embaixo. */
+  @container (max-width: 39.99rem) {
+    .feitio-table,
+    .feitio-table tbody,
+    .feitio-table tr,
+    .feitio-table td {
+      display: block;
+    }
+    .feitio-table caption {
+      display: block;
+    }
+    .feitio-table thead {
+      position: absolute;
+      inline-size: 1px;
+      block-size: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+    .feitio-table tbody {
+      display: grid;
+      gap: var(--feitio-space-3);
+    }
+    .feitio-table tbody tr {
+      display: grid;
+      gap: var(--feitio-space-2);
+      padding: var(--feitio-space-3);
+      background: var(--feitio-color-surface-top);
+      border: var(--feitio-border-width) solid var(--feitio-color-text);
+      border-radius: var(--feitio-radius);
+    }
+    .feitio-table tbody tr:hover {
+      background: var(--feitio-color-surface-top);
+    }
+    .feitio-table td {
+      display: grid;
+      grid-template-columns: minmax(6rem, 2fr) minmax(0, 3fr);
+      gap: var(--feitio-space-3);
+      align-items: center;
+      justify-items: start;
+      padding: 0;
+      border: 0;
+    }
+    .feitio-table td::before {
+      content: attr(data-label);
+      font-weight: var(--feitio-font-weight-bold);
+      color: var(--feitio-color-text-soft);
+    }
+    .feitio-table td[data-align="end"] {
+      text-align: start;
+    }
+    .feitio-table td.title {
+      display: block;
+      font-weight: var(--feitio-font-weight-bold);
+      font-size: var(--feitio-font-size-body);
+    }
+    .feitio-table td.title::before,
+    .feitio-table td.actions::before {
+      content: none;
+    }
+    .feitio-table td.actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--feitio-space-2);
+      text-align: start;
+      padding-block-start: var(--feitio-space-1);
+    }
+    .feitio-table td.select {
+      display: flex;
+      align-items: center;
+      gap: var(--feitio-space-2);
+    }
+    .feitio-table td.select::before {
+      content: none;
+    }
+  }
+
+  /* SummaryList: chave e valor, para ler uma configuração inteira de uma vez. */
+  .feitio-summary-list {
+    margin-inline: 0;
+    margin-block-end: 0;
+    display: grid;
+  }
+  .feitio-summary-list > div {
+    display: grid;
+    grid-template-columns: minmax(8rem, 1fr) minmax(0, 2fr) auto;
+    gap: var(--feitio-space-2) var(--feitio-space-4);
+    padding-block: var(--feitio-space-3);
+    border-bottom: var(--feitio-border-width) solid var(--feitio-color-line);
+    align-items: baseline;
+  }
+  .feitio-summary-list > div:first-child {
+    border-top: var(--feitio-border-width) solid var(--feitio-color-line);
+  }
+  .feitio-summary-list dt {
+    font: var(--feitio-font-weight-bold) var(--feitio-font-size-small) var(--feitio-font-ui);
+    line-height: var(--feitio-line-height-heading);
+  }
+  .feitio-summary-list dd {
+    margin: 0;
+    font: var(--feitio-font-size-small) var(--feitio-font-ui);
+    line-height: 1.4;
+  }
+  .feitio-summary-list .change {
+    text-align: end;
+  }
+  @media (max-width: 40rem) {
+    .feitio-summary-list > div {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--feitio-space-1);
+    }
+    .feitio-summary-list .change {
+      text-align: start;
+    }
+  }
+
+  /* TaskList: itens com nome, detalhe e estado; o nome leva ao item. */
+  .feitio-task-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+  }
+  .feitio-task-list > li {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--feitio-space-1) var(--feitio-space-4);
+    align-items: center;
+    padding-block: var(--feitio-space-3);
+    border-bottom: var(--feitio-border-width) solid var(--feitio-color-line);
+  }
+  .feitio-task-list > li:first-child {
+    border-top: var(--feitio-border-width) solid var(--feitio-color-line);
+  }
+  .feitio-task-list .name {
+    display: grid;
+    gap: var(--feitio-space-1);
+    font: var(--feitio-font-size-small) var(--feitio-font-ui);
+    line-height: var(--feitio-line-height-heading);
+  }
+  .feitio-task-list .name a {
+    font-weight: var(--feitio-font-weight-bold);
+  }
+  .feitio-task-list .name small {
+    color: var(--feitio-color-text-soft);
+    font-size: var(--feitio-font-size-small);
+  }
+
+  /* Pagination: anterior, as páginas e próxima, com a página atual marcada. */
+  .feitio-pagination {
+    display: grid;
+    gap: var(--feitio-space-3);
+    justify-items: start;
+    font: var(--feitio-font-size-small) var(--feitio-font-ui);
+  }
+  .feitio-pagination ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--feitio-space-2);
+  }
+  .feitio-pagination a,
+  .feitio-pagination [aria-current] {
+    display: inline-grid;
+    place-items: center;
+    min-inline-size: 40px;
+    min-block-size: 40px;
+    padding: 0 var(--feitio-space-2);
+    border-radius: var(--feitio-radius);
+  }
+  .feitio-pagination a {
+    color: var(--feitio-color-accent-strong);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+  .feitio-pagination [aria-current] {
+    font-weight: var(--feitio-font-weight-bold);
+    color: var(--feitio-color-text);
+    border: var(--feitio-border-width) solid var(--feitio-color-text);
+  }
+  .feitio-pagination .step {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--feitio-space-1);
+  }
+  .feitio-pagination .step .feitio-icon {
+    inline-size: 1em;
+    block-size: 1em;
+  }
+  .feitio-pagination .step.prev .feitio-icon {
+    rotate: 180deg;
+  }
+  .feitio-pagination .gap {
+    color: var(--feitio-color-text-soft);
+    padding: 0 var(--feitio-space-1);
+  }
+  .feitio-pagination .meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--feitio-space-2) var(--feitio-space-5);
+  }
+  .feitio-pagination .count {
+    margin: 0;
+    color: var(--feitio-color-text-soft);
+  }
+  .feitio-pagination .per-page {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--feitio-space-2);
+  }
+  .feitio-pagination .per-page > span:first-child {
+    color: var(--feitio-color-text-soft);
+  }
+  .feitio-choice-box {
+    inline-size: 1.15rem;
+    block-size: 1.15rem;
+    margin: 0;
+    accent-color: var(--feitio-color-text);
+    vertical-align: middle;
   }
 }
 

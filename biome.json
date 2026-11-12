@@ -52,7 +52,11 @@
       }
     },
     {
-      "includes": ["apps/docs/src/styles/site.css", "apps/docs/src/styles/demos.css"],
+      "includes": [
+        "apps/docs/src/styles/site.css",
+        "apps/docs/src/styles/demos.css",
+        "packages/core/css/components.css"
+      ],
       "linter": {
         "rules": {
           "style": {

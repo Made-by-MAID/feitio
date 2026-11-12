@@ -1,0 +1,8 @@
+---
+/** SummaryList: the details of a single thing, key and value, each row with an optional "Change" that edits only it. */
+interface Props {
+  rows: { key: string; value: string; change?: { href: string; label: string } }[];
+}
+const { rows } = Astro.props;
+---
+<dl class="feitio-summary-list">{rows.map((r) => <div><dt>{r.key}</dt><dd>{r.value}</dd>{r.change && <dd class="change"><a class="feitio-link" href={r.change.href}>{r.change.label}<span class="feitio-visually-hidden"> {r.key}</span></a></dd>}</div>)}</dl>

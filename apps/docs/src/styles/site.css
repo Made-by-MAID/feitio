@@ -1235,3 +1235,17 @@ main[tabindex="-1"]:focus {
   border: var(--feitio-border-width) solid var(--feitio-color-line);
   border-radius: var(--feitio-radius);
 }
+.playground
+  .live:has(
+    > div > .feitio-table-scroll,
+    > .feitio-summary-list,
+    > .feitio-task-list,
+    > .feitio-pagination
+  ) {
+  inline-size: 100%;
+}
+.playground .live > .feitio-summary-list,
+.playground .live > .feitio-task-list,
+.playground .live > .feitio-pagination {
+  inline-size: 100%;
+}

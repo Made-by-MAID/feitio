@@ -1,0 +1,52 @@
+---
+/**
+ * Pagination: splits a long list into pages. Previous and Next, the pages around the current one, a
+ * gap to the last, the count of what is shown and, optionally, how many per page.
+ */
+import Icon from './Icon.astro';
+
+interface Props {
+  label: string;
+  current: number;
+  total: number;
+  href: (page: number) => string;
+  count?: string;
+  perPage?: { label: string; options: number[]; current: number; href: (n: number) => string };
+  previousLabel?: string;
+  nextLabel?: string;
+  pageLabel?: (page: number) => string;
+  sprite?: string;
+}
+const {
+  label,
+  current,
+  total,
+  href,
+  count,
+  perPage,
+  previousLabel = 'Anterior',
+  nextLabel = 'Próxima',
+  pageLabel = (p: number) => `Página ${p}`,
+  sprite,
+} = Astro.props;
+const around = [current - 1, current, current + 1].filter((p) => p >= 1 && p <= total);
+const pages = [...new Set([1, ...around, total])].sort((a, b) => a - b);
+---
+<nav class="feitio-pagination" aria-label={label}>
+  <ul>
+    {current > 1 && <li><a class="step prev" href={href(current - 1)} rel="prev"><Icon name="chevron-right" sprite={sprite} />{previousLabel}</a></li>}
+    {pages.map((p, i) => (
+      <>
+        {i > 0 && p - (pages[i - 1] ?? p) > 1 && <li><span class="gap" aria-hidden="true">…</span></li>}
+        <li>{p === current ? <span aria-current="page">{p}</span> : <a href={href(p)} aria-label={pageLabel(p)}>{p}</a>}</li>
+      </>
+    ))}
+    {current < total && <li><a class="step" href={href(current + 1)} rel="next">{nextLabel}<Icon name="chevron-right" sprite={sprite} /></a></li>}
+  </ul>
+  {(count || perPage) && (
+    <div class="meta">
+      {count && <p class="count">{count}</p>}
+      {perPage && <div class="per-page" role="group" aria-label={perPage.label}><span>{perPage.label}</span>{perPage.options.map((n) => n === perPage.current ? <span aria-current="true">{n}</span> : <a href={perPage.href(n)}>{n}</a>)}</div>}
+    </div>
+  )}
+</nav>
