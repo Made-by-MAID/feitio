@@ -338,36 +338,6 @@
   }
 
   /* LinkCard: uma porta para outra área, com título, uma frase e a seta. O cartão inteiro é o link. */
-  .feitio-link-card {
-    display: grid;
-    gap: var(--feitio-space-2);
-    align-content: start;
-    padding: var(--feitio-space-4);
-    color: var(--feitio-color-text);
-    text-decoration: none;
-    background: var(--feitio-color-surface-top);
-    border: var(--feitio-border-width) solid var(--feitio-color-text);
-    border-radius: var(--feitio-radius);
-    transition:
-      box-shadow var(--feitio-duration-place) var(--feitio-easing-place),
-      translate var(--feitio-duration-place) var(--feitio-easing-place);
-  }
-  .feitio-link-card:hover {
-    box-shadow: var(--feitio-shadow-lift);
-    translate: -2px -2px;
-  }
-  .feitio-link-card strong {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--feitio-space-2);
-    font: var(--feitio-font-weight-bold) var(--feitio-font-size-h3) var(--feitio-font-ui);
-  }
-  .feitio-link-card span {
-    font: var(--feitio-font-size-small) var(--feitio-font-ui);
-    line-height: var(--feitio-line-height-text);
-    color: var(--feitio-color-text-soft);
-  }
 
   /* ScrollFade e BackToTop, como no guia da estrutura. */
   .feitio-scroll-fade {
@@ -1054,32 +1024,8 @@ main[tabindex="-1"]:focus {
   }
 
   /* Divider: a linha fina que separa partes. O espaço em volta é do pai. */
-  .feitio-divider {
-    margin: 0;
-    border: 0;
-    border-block-start: var(--feitio-border-width) solid var(--feitio-color-line);
-  }
-  .feitio-divider[data-tone="ink"] {
-    border-block-start-color: var(--feitio-color-text);
-  }
 
   /* Kbd: uma tecla, escrita como no teclado. */
-  .feitio-kbd {
-    display: inline-block;
-    min-inline-size: 1.5em;
-    padding: 0 0.35em;
-    font:
-      0.82em / 1.5 ui-monospace,
-      "SF Mono",
-      Menlo,
-      monospace;
-    text-align: center;
-    color: var(--feitio-color-text);
-    background: var(--feitio-color-surface-top);
-    border: var(--feitio-border-width) solid var(--feitio-color-line);
-    border-block-end-width: 2px;
-    border-radius: 4px;
-  }
 
   /* Tag pequena: o "em breve", ao lado de um nome, sem quebrar a linha. */
   .feitio-nav a .feitio-tag[data-size="small"] {
@@ -1180,22 +1126,6 @@ main[tabindex="-1"]:focus {
 .feitio-segmented a[aria-current="true"] {
   color: var(--feitio-color-surface);
   background: var(--feitio-color-text);
-}
-
-/* SkipLink: só aparece com o foco do teclado. */
-.skip {
-  position: absolute;
-  inset: var(--feitio-space-2) auto auto var(--feitio-space-2);
-  z-index: 10;
-  padding: var(--feitio-space-2) var(--feitio-space-3);
-  background: var(--feitio-color-surface-top);
-  border: var(--feitio-border-width) solid var(--feitio-color-text);
-  border-radius: var(--feitio-radius);
-  font: var(--feitio-font-weight-bold) var(--feitio-font-size-small) var(--feitio-font-ui);
-  translate: 0 -200%;
-}
-.skip:focus {
-  translate: 0 0;
 }
 
 /* Atributos: o nome à esquerda, o que faz à direita; no mobile, um embaixo do outro. */

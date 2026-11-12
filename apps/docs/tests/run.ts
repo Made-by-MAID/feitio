@@ -16,7 +16,22 @@ const dist = join(import.meta.dir, '..', 'dist');
 const shots = join(import.meta.dir, 'screenshots');
 const axeSource = await readFile(join(repo, 'node_modules', 'axe-core', 'axe.min.js'), 'utf8');
 const LOCALES = ['pt', 'en', 'es', 'fr', 'de'];
-const PAGES = ['components/button/', 'components/notice/'];
+const PAGES = [
+  'components/button/',
+  'components/notice/',
+  ...[
+    'link',
+    'linkcard',
+    'heading',
+    'text',
+    'icon',
+    'block',
+    'visually-hidden',
+    'skiplink',
+    'divider',
+    'kbd',
+  ].map((s) => `components/${s}/`),
+];
 
 const server = Bun.serve({
   port: 0,

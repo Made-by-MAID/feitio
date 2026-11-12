@@ -1,0 +1,47 @@
+---
+/** The page of every component documented by data (content/components/): one template, five languages. */
+import Example from '../../../components/Example.astro';
+import { COMPONENTS } from '../../../content/components/index.ts';
+import type { ComponentDoc } from '../../../content/components/types.ts';
+import { componentsNav } from '../../../content/nav.ts';
+import { LOCALES, type Locale, WORDS } from '../../../i18n/ui.ts';
+import DocPage from '../../../layouts/DocPage.astro';
+
+export function getStaticPaths() {
+  return LOCALES.flatMap((lang) =>
+    COMPONENTS.map((doc) => ({ params: { lang, slug: doc.slug }, props: { doc } })),
+  );
+}
+const { doc } = Astro.props as { doc: ComponentDoc };
+const lang = Astro.params.lang as Locale;
+const base = import.meta.env.BASE_URL;
+const sprite = `${base}feitio/icons/sprite.svg`;
+const rendered = await Promise.all(
+  doc.sections.map(async (s) =>
+    s.kind === 'examples' ? Promise.all(s.examples.map((e) => e.render(lang, sprite))) : [],
+  ),
+);
+const toc = doc.sections.map((s) => ({
+  id: s.id,
+  text: s.title[lang],
+  children:
+    s.kind === 'examples' ? s.examples.map((e) => ({ id: e.id, text: e.title[lang] })) : undefined,
+}));
+---
+<DocPage lang={lang} title={doc.name} area="comp" nav={componentsNav(lang, base, doc.name)} toc={toc} lede={doc.lede[lang]} searchArea={WORDS[lang].areas.comp}>
+  {
+    doc.sections.map((s, i) => (
+      <>
+        <h2 id={s.id}>{s.title[lang]}</h2>
+        {s.kind === 'list' && <ul>{s.items.map((item) => <li set:html={item[lang]} />)}</ul>}
+        {s.kind === 'text' && <p set:html={s.body[lang]} />}
+        {s.kind === 'examples' && (
+          <div class="feitio-stack" data-gap="4">
+            {s.examples.map((e, j) => <Example id={e.id} title={e.title[lang]} description={e.description[lang]} html={rendered[i]?.[j] ?? ''} lang={lang} />)}
+          </div>
+        )}
+        {s.kind === 'attrs' && <dl class="attrs">{s.attrs.map(([name, what]) => <div><dt><code>{name}</code></dt><dd>{what[lang]}</dd></div>)}</dl>}
+      </>
+    ))
+  }
+</DocPage>

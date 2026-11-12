@@ -1,0 +1,8 @@
+---
+/** Divider: the hairline between two parts that touch, when space alone is not enough. */
+interface Props {
+  tone?: 'ink';
+}
+const { tone } = Astro.props;
+---
+<hr class="feitio-divider" data-tone={tone} />

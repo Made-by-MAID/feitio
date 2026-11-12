@@ -81,6 +81,88 @@
     vertical-align: -0.1em;
   }
 
+  /* Text: text for reading, at its measure, in the reading face. */
+  .feitio-text {
+    max-inline-size: var(--feitio-measure-reading);
+    font-family: var(--feitio-font-text);
+    font-size: var(--feitio-font-size-body);
+    line-height: var(--feitio-line-height-text);
+  }
+
+  /* LinkCard: a door to another area, with a title, a sentence and the arrow. The whole card is the link. */
+  .feitio-link-card {
+    display: grid;
+    gap: var(--feitio-space-2);
+    align-content: start;
+    padding: var(--feitio-space-4);
+    color: var(--feitio-color-text);
+    text-decoration: none;
+    background: var(--feitio-color-surface-top);
+    border: var(--feitio-border-width) solid var(--feitio-color-text);
+    border-radius: var(--feitio-radius);
+  }
+  .feitio-link-card:hover {
+    box-shadow: var(--feitio-shadow-lift);
+    translate: -2px -2px;
+  }
+  .feitio-link-card:focus-visible {
+    outline: var(--feitio-focus-width) solid var(--feitio-color-accent);
+    outline-offset: var(--feitio-focus-offset);
+  }
+  .feitio-link-card > strong {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--feitio-space-2);
+    font: var(--feitio-font-weight-bold) var(--feitio-font-size-h3) var(--feitio-font-ui);
+  }
+  .feitio-link-card > span {
+    font: var(--feitio-font-size-small) var(--feitio-font-ui);
+    line-height: var(--feitio-line-height-text);
+    color: var(--feitio-color-text-soft);
+  }
+
+  /* SkipLink: the first thing the keyboard reaches; it only shows with the focus. */
+  .feitio-skip-link {
+    position: absolute;
+    inset: var(--feitio-space-2) auto auto var(--feitio-space-2);
+    z-index: 10;
+    padding: var(--feitio-space-2) var(--feitio-space-3);
+    color: var(--feitio-color-text);
+    background: var(--feitio-color-surface-top);
+    border: var(--feitio-border-width) solid var(--feitio-color-text);
+    border-radius: var(--feitio-radius);
+    font: var(--feitio-font-weight-bold) var(--feitio-font-size-small) var(--feitio-font-ui);
+    translate: 0 -200%;
+  }
+  .feitio-skip-link:focus {
+    translate: 0 0;
+  }
+
+  /* Divider: the hairline between two parts that touch; the ink one for a strong boundary. No margin of its own. */
+  .feitio-divider {
+    margin: 0;
+    border: 0;
+    border-block-start: var(--feitio-border-width) solid var(--feitio-color-line);
+  }
+  .feitio-divider[data-tone="ink"] {
+    border-block-start-color: var(--feitio-color-text);
+  }
+
+  /* Kbd: a key, as on the keyboard, with a slightly thicker bottom edge. */
+  .feitio-kbd {
+    display: inline-block;
+    min-inline-size: 1.6em;
+    padding: 0 var(--feitio-space-1);
+    text-align: center;
+    font: var(--feitio-font-weight-bold) 0.85em var(--feitio-font-ui);
+    color: var(--feitio-color-text);
+    background: var(--feitio-color-surface-top);
+    border: var(--feitio-border-width) solid var(--feitio-color-text-soft);
+    border-block-end-width: calc(var(--feitio-border-width) * 2);
+    border-radius: var(--feitio-radius);
+  }
+
   /* VisuallyHidden: text for screen readers only. */
   .feitio-visually-hidden {
     /* biome-ignore lint/complexity/noImportantStyles: a hidden label must stay hidden whatever styles its parent. */
