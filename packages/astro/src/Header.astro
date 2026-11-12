@@ -1,11 +1,21 @@
 ---
-/** Header: a site's header: the brand, the big areas (the current one in placed paper) and the tools. On mobile the areas go into the Menu. */
+/**
+ * Header: a site's header: the brand, the big areas (the current one in placed paper) and the tools.
+ * It answers to the width it has, not the window's: narrow, the brand, the tools without wide-only
+ * and the Menu; wide, the areas and every tool. Tools go in the slot; mark with class="wide-only"
+ * the ones that move into the Menu when narrow.
+ */
+import Icon from './Icon.astro';
+
 interface Props {
   brand: string;
   brandHref: string;
   areas: { text: string; href: string; current?: boolean }[];
   label?: string;
+  /** The Menu button's words and the id of the Drawer it opens; without it, no Menu. */
+  menu?: { label: string; target: string };
+  sprite?: string;
 }
-const { brand, brandHref, areas, label } = Astro.props;
+const { brand, brandHref, areas, label, menu, sprite } = Astro.props;
 ---
-<header class="site-header"><a class="brand" href={brandHref}><slot name="logo" />{brand}</a><nav class="areas" aria-label={label}>{areas.map((a) => <a href={a.href} aria-current={a.current ? 'true' : undefined}>{a.text}</a>)}</nav><div class="tools"><slot /></div></header>
+<div class="feitio-header-wrap"><header class="feitio-header"><a class="brand" href={brandHref}><slot name="logo" />{brand}</a><nav class="areas" aria-label={label}>{areas.map((a) => <a href={a.href} aria-current={a.current ? 'true' : undefined}>{a.text}</a>)}</nav><div class="tools"><slot />{menu && <button type="button" class="feitio-button menu" data-size="small" popovertarget={menu.target} aria-controls={menu.target}>{menu.label}<Icon name="menu" sprite={sprite} /></button>}</div></header></div>

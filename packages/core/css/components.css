@@ -1815,6 +1815,75 @@
   .feitio-footer a:hover {
     color: var(--feitio-color-text);
   }
+
+  /* Header: the brand, the big areas and the tools. It answers to its own width (a container), not
+     the window's: narrow, only the brand, the tools marked to stay, and the Menu; wide, the areas
+     and every tool. */
+  .feitio-header-wrap {
+    container-type: inline-size;
+  }
+  .feitio-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--feitio-space-2) var(--feitio-space-3);
+    padding: var(--feitio-space-2) var(--feitio-space-3);
+    color: var(--feitio-color-text);
+    background: var(--feitio-color-surface);
+    border-block-end: var(--feitio-border-width) solid var(--feitio-color-text);
+    font-family: var(--feitio-font-ui);
+  }
+  .feitio-header .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--feitio-space-2);
+    color: var(--feitio-color-text);
+    text-decoration: none;
+    font: var(--feitio-font-weight-bold) var(--feitio-font-size-h3) var(--feitio-font-ui);
+  }
+  .feitio-header .areas {
+    display: none;
+    gap: var(--feitio-space-1);
+  }
+  .feitio-header .areas a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--feitio-control-min-size-small);
+    padding: 0 var(--feitio-space-2);
+    color: var(--feitio-color-text);
+    text-decoration: none;
+    font: var(--feitio-font-weight-bold) var(--feitio-font-size-small) var(--feitio-font-ui);
+    border: var(--feitio-border-width) solid transparent;
+    border-radius: var(--feitio-radius);
+  }
+  .feitio-header .areas a:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+  .feitio-header .areas a[aria-current="true"] {
+    background: var(--feitio-color-surface-top);
+    border-color: var(--feitio-color-text);
+  }
+  .feitio-header .tools {
+    margin-inline-start: auto;
+    display: flex;
+    align-items: center;
+    gap: var(--feitio-space-2);
+  }
+  .feitio-header .wide-only {
+    display: none;
+  }
+  @container (min-width: 40rem) {
+    .feitio-header .areas {
+      display: flex;
+    }
+    .feitio-header .wide-only {
+      display: inline-flex;
+    }
+    .feitio-header .menu {
+      display: none;
+    }
+  }
 }
 
 @keyframes feitio-filter-wait {

@@ -1184,3 +1184,11 @@ main[tabindex="-1"]:focus {
   opacity: 1;
   translate: none;
 }
+/* The Header sample: the whole border, so it reads as a piece on the stage. */
+.playground .live:has(> .header-sample) {
+  inline-size: 100%;
+}
+.header-sample .feitio-header {
+  border: var(--feitio-border-width) solid var(--feitio-color-text);
+  border-radius: var(--feitio-radius);
+}

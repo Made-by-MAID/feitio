@@ -16,6 +16,7 @@ import Footer from '@feitio/astro/Footer.astro';
 import Grid from '@feitio/astro/Grid.astro';
 import Header from '@feitio/astro/Header.astro';
 import Heading from '@feitio/astro/Heading.astro';
+import Icon from '@feitio/astro/Icon.astro';
 import Inline from '@feitio/astro/Inline.astro';
 import Kbd from '@feitio/astro/Kbd.astro';
 import Link from '@feitio/astro/Link.astro';
@@ -1787,9 +1788,9 @@ export async function playgroundFor(
     const search = await renderHtml(
       Button,
       { size: 'small' },
-      words('Buscar', 'Search', 'Buscar', 'Rechercher', 'Suchen'),
+      `${await renderHtml(Icon, { name: 'search', sprite })}${words('Buscar', 'Search', 'Buscar', 'Rechercher', 'Suchen')}`,
     );
-    const menu = await renderHtml(Button, { size: 'small', class: 'menu' }, 'Menu');
+    const lang = await renderHtml(Button, { size: 'small', class: 'wide-only' }, 'PT');
     return {
       placeholder: '',
       text: '',
@@ -1806,7 +1807,7 @@ export async function playgroundFor(
       combos: await combos(
         [['wide', 'narrow']],
         async ([wd]) =>
-          `<div class="header-frame ${wd === 'narrow' ? 'is-narrow' : 'is-wide'}">${(await renderHtml(Header, { brand: 'Feitio', brandHref: '#playground', areas: areas.map((t, i) => ({ text: t, href: '#playground', current: i === 2 })), label: words('Áreas', 'Areas', 'Áreas', 'Zones', 'Bereiche') }, `${search}${menu}`)).replace('class="site-header"', `class="site-header header-demo${wd === 'wide' ? ' wide' : ''}"`)}</div>`,
+          `<div class="header-sample" style="inline-size: ${wd === 'narrow' ? 'min(100%, 22rem)' : '100%'}">${await renderHtml(Header, { brand: 'Feitio', brandHref: '#playground', areas: areas.map((t, i) => ({ text: t, href: '#playground', current: i === 2 })), label: words('Áreas', 'Areas', 'Áreas', 'Zones', 'Bereiche'), menu: { label: words('Menu', 'Menu', 'Menú', 'Menu', 'Menü'), target: 'pg-header-menu' }, sprite }, `${search}${lang}`)}</div>`,
       ),
     };
   }
