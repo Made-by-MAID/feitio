@@ -28,6 +28,10 @@ Rules for anyone changing this repository, people and AI agents alike. Read the
   `apps/docs/src/content/`; examples render the component itself (`renderHtml`), so "Show code"
   always shows what runs.
 - Every docs page exists in all five languages (PT, EN, ES, FR, DE). New words go in all five.
+- A component enters with its tests in `apps/docs/tests/run.ts`, a real browser over the built site:
+  axe by day and at night in every language, no sideways scroll on a phone, and its behavior
+  (clicks, keyboard, focus). `bun run test:docs` builds the site and runs them. A component page
+  with props worth trying gets a Playground (every combination rendered by the component itself).
 - All published packages share one version (the `fixed` group in `.changeset/config.json`). A pull
   request that changes a published package adds a changeset: `bun run changeset`.
 - Behaviors take the page as a parameter (`window`, a root), never a global, so a test hands in a
