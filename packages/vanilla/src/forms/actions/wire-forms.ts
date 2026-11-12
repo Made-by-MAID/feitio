@@ -26,14 +26,12 @@ export function wireForms(window: Window, root: Document | HTMLElement): void {
     const period = target.closest<HTMLButtonElement>('.feitio-time-field .period');
     if (period && !period.disabled) period.textContent = togglePeriod(period.textContent ?? 'AM');
   });
-  root.addEventListener('input', (event) => {
-    const field = event.target as HTMLInputElement;
-    const listId = field.dataset?.filter;
-    if (!listId) return;
+  const timers = new WeakMap<HTMLElement, number>();
+  function filterNow(field: HTMLInputElement, list: HTMLElement): void {
     const document = window.document;
-    const list = document.getElementById(listId);
-    if (!list) return;
+    const listId = list.id;
     const items = [...list.querySelectorAll<HTMLElement>('[data-search]')];
+    list.dataset.filtering = '';
     let shown = 0;
     for (const item of items) {
       const match = matchesFilter(item.dataset.search ?? item.textContent ?? '', field.value);
@@ -44,5 +42,51 @@ export function wireForms(window: Window, root: Document | HTMLElement): void {
     if (count) count.textContent = field.value.trim() ? `${shown} / ${items.length}` : '';
     const empty = document.querySelector<HTMLElement>(`[data-empty="${listId}"]`);
     if (empty) empty.hidden = shown > 0;
+  }
+  /**
+   * Runs the search: on the list here, or, with data-async, by telling the page (a feitio-filter event
+   * with the query and a done() to call when its results are in) while the field shows it is busy.
+   */
+  function run(field: HTMLInputElement, box: HTMLElement | null): void {
+    const list = window.document.getElementById(field.dataset.filter ?? '');
+    if (field.dataset.async === undefined) {
+      if (box) delete box.dataset.state;
+      if (list) filterNow(field, list);
+      return;
+    }
+    if (box) box.dataset.state = 'busy';
+    const busy = window.document.querySelector(`[data-count="${field.dataset.filter}"]`);
+    if (busy && field.dataset.busyLabel) busy.textContent = field.dataset.busyLabel;
+    const query = field.value;
+    const done = (): void => {
+      if (field.value !== query) return;
+      if (box) delete box.dataset.state;
+      if (list) filterNow(field, list);
+    };
+    field.dispatchEvent(
+      new CustomEvent('feitio-filter', { bubbles: true, detail: { query, done } }),
+    );
+  }
+  root.addEventListener('input', (event) => {
+    const field = event.target as HTMLInputElement;
+    if (!field.dataset?.filter) return;
+    const box = field.closest<HTMLElement>('.feitio-filter');
+    const wait = Number(field.dataset.debounce ?? 0);
+    window.clearTimeout(timers.get(field));
+    if (!(wait > 0)) {
+      run(field, box);
+      return;
+    }
+    // Debounce: the line under the field fills while the search waits for the typing to stop.
+    if (box) {
+      box.style.setProperty('--feitio-filter-debounce', `${wait}ms`);
+      delete box.dataset.state;
+      void box.offsetWidth;
+      box.dataset.state = 'waiting';
+    }
+    timers.set(
+      field,
+      window.setTimeout(() => run(field, box), wait),
+    );
   });
 }

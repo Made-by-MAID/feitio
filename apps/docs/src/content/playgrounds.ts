@@ -769,13 +769,49 @@ export async function playgroundFor(
       ),
     ];
     const list = `<ul class="feitio-task-list" id="pg-filter-list">${items.map((i) => `<li data-search="${i}"><span class="name">${i}</span></li>`).join('')}</ul>`;
+    const offOn = (name: string, label: string, on: string) => ({
+      name,
+      label,
+      options: [
+        { value: '', label: words('Desligada', 'Off', 'Apagada', 'Désactivée', 'Aus') },
+        { value: 'on', label: on },
+      ],
+    });
     return {
       placeholder: '',
       text: '',
-      controls: [],
-      combos: {
-        '': `<div class="feitio-stack" data-gap="3" style="inline-size: min(100%, 26rem)">${await renderHtml(FilterField, { id: 'pg-filter', list: 'pg-filter-list', label: words('Filtrar', 'Filter', 'Filtrar', 'Filtrer', 'Filtern'), placeholder: words('plantas, backup…', 'plants, backup…', 'plantas, copia…', 'plantes, sauvegarde…', 'Pflanzen, Sicherung…') })}${list}</div>`,
-      },
+      controls: [
+        offOn(
+          'debounce',
+          words('Espera', 'Debounce', 'Espera', 'Attente', 'Verzögerung'),
+          '600 ms',
+        ),
+        offOn(
+          'async',
+          words(
+            'Busca assíncrona',
+            'Async search',
+            'Búsqueda asíncrona',
+            'Recherche asynchrone',
+            'Asynchrone Suche',
+          ),
+          words(
+            'Ligada (demo: 1 s)',
+            'On (demo: 1 s)',
+            'Encendida (demo: 1 s)',
+            'Activée (démo : 1 s)',
+            'An (Demo: 1 s)',
+          ),
+        ),
+      ],
+      combos: await combos(
+        [
+          ['', 'on'],
+          ['', 'on'],
+        ],
+        async ([d, a]) =>
+          `<div class="feitio-stack" data-gap="3" style="inline-size: min(100%, 26rem)" ${a ? 'data-demo-async' : ''}>${await renderHtml(FilterField, { id: 'pg-filter', list: 'pg-filter-list', label: words('Filtrar', 'Filter', 'Filtrar', 'Filtrer', 'Filtern'), placeholder: words('plantas, backup…', 'plants, backup…', 'plantas, copia…', 'plantes, sauvegarde…', 'Pflanzen, Sicherung…'), debounce: d ? 600 : undefined, async: Boolean(a), busyLabel: words('Buscando…', 'Searching…', 'Buscando…', 'Recherche…', 'Suche…') })}${list}</div>`,
+      ),
     };
   }
   return undefined;

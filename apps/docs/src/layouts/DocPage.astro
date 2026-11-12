@@ -133,6 +133,11 @@ const GH =
   const page = window as Window & { feitioNotice?: ReturnType<typeof notices> };
   page.feitioNotice ??= notices(window);
   forms(window);
+  // The docs' stand-in for a server: an asynchronous FilterField in a demo answers after a second.
+  document.addEventListener('feitio-filter', (event) => {
+    const target = event.target as HTMLElement;
+    if (target.closest('[data-demo-async]')) window.setTimeout((event as CustomEvent<{ done: () => void }>).detail.done, 1000);
+  });
   for (const b of document.querySelectorAll<HTMLElement>('[data-notice-show]')) {
     b.addEventListener('click', () => {
       const n = document.getElementById(b.dataset.noticeShow ?? '');

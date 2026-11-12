@@ -799,6 +799,77 @@
     font: var(--feitio-font-size-small) var(--feitio-font-ui);
     color: var(--feitio-color-text-soft);
   }
+  /* The field and what waits under and inside it: a line filling while the search waits (debounce),
+     a stroke turning while an asynchronous search runs. */
+  .feitio-filter .box {
+    position: relative;
+    display: flex;
+    flex: 1 1 14rem;
+    max-inline-size: 22rem;
+  }
+  .feitio-filter .box .feitio-input {
+    max-inline-size: none;
+    padding-inline-end: calc(var(--feitio-space-3) * 2 + 1em);
+  }
+  /* The browser's own clear button is off the design; Esc still clears the field. */
+  .feitio-filter input[type="search"]::-webkit-search-cancel-button {
+    appearance: none;
+  }
+  /* The count keeps its room, so the field does not shrink when "Searching…" shows. */
+  .feitio-filter .count {
+    min-inline-size: 7em;
+  }
+  .feitio-filter .wait {
+    position: absolute;
+    inset: auto var(--feitio-space-2) calc(var(--feitio-border-width) * -3);
+    block-size: calc(var(--feitio-border-width) * 2);
+    background: var(--feitio-color-text-soft);
+    border-radius: var(--feitio-border-width);
+    transform-origin: left center;
+    scale: 0 1;
+    opacity: 0;
+  }
+  .feitio-filter[data-state="waiting"] .wait {
+    opacity: 1;
+    animation: feitio-filter-wait var(--feitio-filter-debounce, 0ms) linear forwards;
+  }
+  .feitio-filter .busy {
+    position: absolute;
+    inset: 0 var(--feitio-space-3) 0 auto;
+    margin-block: auto;
+    inline-size: 1em;
+    block-size: 1em;
+    fill: none;
+    stroke: var(--feitio-color-text);
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    opacity: 0;
+  }
+  .feitio-filter .busy path {
+    stroke-dasharray: 0.62 0.38;
+  }
+  .feitio-filter[data-state="busy"] .busy {
+    opacity: 1;
+    animation: feitio-filter-spin 1.1s linear infinite;
+  }
+  /* The items the filter hides close their space and the ones it brings back open it: a slide, never a jump. */
+  [data-search] {
+    overflow: clip;
+    transition-property: opacity, block-size, padding-block, display;
+    transition-behavior: allow-discrete;
+  }
+  [data-search][hidden] {
+    opacity: 0;
+    block-size: 0;
+    padding-block: 0;
+  }
+  /* Only while filtering: a list must not grow in when the page loads. */
+  @starting-style {
+    [data-filtering] [data-search]:not([hidden]) {
+      opacity: 0;
+      block-size: 0;
+    }
+  }
   .feitio-segmented a {
     position: relative;
     display: inline-flex;
@@ -812,6 +883,18 @@
   .feitio-segmented a[aria-current="true"] {
     color: var(--feitio-color-surface);
     background: var(--feitio-color-text);
+  }
+}
+
+@keyframes feitio-filter-wait {
+  to {
+    scale: 1 1;
+  }
+}
+
+@keyframes feitio-filter-spin {
+  to {
+    rotate: 360deg;
   }
 }
 

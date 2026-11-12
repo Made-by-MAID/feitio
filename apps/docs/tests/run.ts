@@ -207,6 +207,34 @@ for (const lang of process.env.ONLY === 'behavior' ? [] : LOCALES) {
     ((await page.locator('[data-count="pg-filter-list"]').textContent()) ?? '').includes('1'),
     'filterfield: the count did not follow',
   );
+  // With the debounce and the async search on: it waits, then it is busy, then the results arrive.
+  await page.click('[data-prop="debounce"][data-value="on"]');
+  await page.click('[data-prop="async"][data-value="on"]');
+  await page.fill('#pg-filter', 'photos');
+  check(
+    (await page.locator('.playground .feitio-filter').getAttribute('data-state')) === 'waiting',
+    'filterfield: it did not wait (debounce)',
+  );
+  await page.waitForTimeout(800);
+  check(
+    (await page.locator('.playground .feitio-filter').getAttribute('data-state')) === 'busy',
+    'filterfield: it was not busy during the async search',
+  );
+  check(
+    ((await page.locator('[data-count="pg-filter-list"]').textContent()) ?? '').includes(
+      'Searching',
+    ),
+    'filterfield: the count did not say Searching',
+  );
+  await page.waitForTimeout(1300);
+  check(
+    (await page.locator('.playground .feitio-filter').getAttribute('data-state')) === null,
+    'filterfield: it stayed busy after the results',
+  );
+  check(
+    (await page.locator('#pg-filter-list li:not([hidden])').count()) === 1,
+    'filterfield: the async results were not applied',
+  );
   await page.goto(`${origin}/en/components/field/`);
   await page.click('[data-prop="state"][data-value="error"]');
   check(
