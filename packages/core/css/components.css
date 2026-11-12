@@ -476,6 +476,343 @@
     inline-size: 0.9em;
     block-size: 0.9em;
   }
+
+  /* Forms: Field (label, hint, control, error), TextInput, Textarea, Select, the choices (Checkbox,
+     Radios), Switch, TimeInput, Fieldset, SegmentedControl and FilterField. */
+  .feitio-field {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--feitio-space-1);
+    font-family: var(--feitio-font-ui);
+  }
+  .feitio-label {
+    font: var(--feitio-font-weight-bold) var(--feitio-font-size-small) var(--feitio-font-ui);
+  }
+  .feitio-hint {
+    font: var(--feitio-font-size-small) var(--feitio-font-ui);
+    color: var(--feitio-color-text-soft);
+  }
+  .feitio-input,
+  .feitio-textarea {
+    inline-size: 100%;
+    min-block-size: var(--feitio-control-min-size);
+    margin: 0;
+    padding: 0 var(--feitio-space-3);
+    font: var(--feitio-font-size-body) var(--feitio-font-ui);
+    color: var(--feitio-color-text);
+    background: var(--feitio-color-surface-top);
+    border: var(--feitio-border-width) solid var(--feitio-color-text);
+    border-radius: var(--feitio-radius);
+  }
+  .feitio-textarea {
+    padding-block: var(--feitio-space-2);
+    line-height: var(--feitio-line-height-text);
+    resize: vertical;
+  }
+  .feitio-input::placeholder,
+  .feitio-textarea::placeholder {
+    color: var(--feitio-color-text-soft);
+  }
+  .feitio-input:hover,
+  .feitio-textarea:hover {
+    border-color: var(--feitio-color-accent-strong);
+  }
+  .feitio-input[data-width="2"] {
+    inline-size: calc(2ch + var(--feitio-space-3) * 2 + 2px);
+  }
+  .feitio-input[data-width="4"] {
+    inline-size: calc(4ch + var(--feitio-space-3) * 2 + 2px);
+  }
+  .feitio-input[data-width="10"] {
+    inline-size: calc(10ch + var(--feitio-space-3) * 2 + 2px);
+  }
+  .feitio-input[data-width="20"] {
+    inline-size: calc(20ch + var(--feitio-space-3) * 2 + 2px);
+    max-inline-size: 100%;
+  }
+  .feitio-input[data-width="40"] {
+    inline-size: calc(40ch + var(--feitio-space-3) * 2 + 2px);
+    max-inline-size: 100%;
+  }
+  .feitio-input[aria-invalid="true"],
+  .feitio-textarea[aria-invalid="true"],
+  .feitio-select select[aria-invalid="true"] {
+    border-color: var(--feitio-color-error);
+  }
+  .feitio-input:disabled,
+  .feitio-textarea:disabled,
+  .feitio-select select:disabled {
+    color: var(--feitio-color-text-soft);
+    background: var(--feitio-color-surface-raised);
+    border-style: dashed;
+    cursor: not-allowed;
+  }
+  .feitio-error-message {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--feitio-space-1);
+    font: var(--feitio-font-weight-bold) var(--feitio-font-size-small) var(--feitio-font-ui);
+    color: var(--feitio-color-error);
+  }
+  .feitio-select {
+    position: relative;
+    display: inline-grid;
+    inline-size: 100%;
+    max-inline-size: 22rem;
+  }
+  .feitio-select select {
+    appearance: none;
+    inline-size: 100%;
+    min-block-size: var(--feitio-control-min-size);
+    padding: 0 calc(var(--feitio-space-3) + 1.5rem) 0 var(--feitio-space-3);
+    font: var(--feitio-font-size-body) var(--feitio-font-ui);
+    color: var(--feitio-color-text);
+    background: var(--feitio-color-surface-top);
+    border: var(--feitio-border-width) solid var(--feitio-color-text);
+    border-radius: var(--feitio-radius);
+  }
+  .feitio-select select:has(option[value=""]:checked) {
+    color: var(--feitio-color-text-soft);
+  }
+  /* biome-ignore lint/style/noDescendingSpecificity: a different element than the Notice's icon; the order does not matter. */
+  .feitio-select > .feitio-icon {
+    position: absolute;
+    inset: 0 var(--feitio-space-3) 0 auto;
+    margin-block: auto;
+    pointer-events: none;
+  }
+  .feitio-select select {
+    appearance: base-select;
+  }
+  .feitio-select select::picker-icon {
+    display: none;
+  }
+  .feitio-select select::picker(select) {
+    appearance: base-select;
+    padding: var(--feitio-space-1);
+    color: var(--feitio-color-text);
+    background: var(--feitio-color-surface-top);
+    border: var(--feitio-border-width) solid var(--feitio-color-text);
+    border-radius: var(--feitio-radius);
+    box-shadow: var(--feitio-shadow-lift);
+  }
+  .feitio-select option {
+    padding: var(--feitio-space-2) var(--feitio-space-3);
+    border-radius: var(--feitio-radius);
+  }
+  .feitio-select option:checked {
+    font-weight: var(--feitio-font-weight-bold);
+  }
+  .feitio-select option::checkmark {
+    display: none;
+  }
+  .feitio-choices {
+    display: grid;
+    gap: var(--feitio-space-2);
+  }
+  .feitio-choice {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--feitio-space-2);
+    min-block-size: 32px;
+    font: var(--feitio-font-size-body) var(--feitio-font-ui);
+    cursor: pointer;
+  }
+  .feitio-choice input {
+    inline-size: 1.15rem;
+    block-size: 1.15rem;
+    margin: 0;
+    accent-color: var(--feitio-color-text);
+    flex: none;
+  }
+  .feitio-choice:has(input:disabled) {
+    color: var(--feitio-color-text-soft);
+    cursor: not-allowed;
+  }
+  .feitio-fieldset {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-inline-size: 0;
+    display: grid;
+    gap: var(--feitio-space-3);
+  }
+  .feitio-fieldset legend {
+    padding: 0;
+    float: left;
+    inline-size: 100%;
+  }
+  .feitio-fieldset .head {
+    display: grid;
+    gap: var(--feitio-space-1);
+  }
+  .feitio-fieldset > .feitio-error-message {
+    margin-block-start: calc(var(--feitio-space-2) - var(--feitio-space-3));
+  }
+  .feitio-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--feitio-space-3);
+    min-block-size: 40px;
+    font: var(--feitio-font-size-body) var(--feitio-font-ui);
+    cursor: pointer;
+  }
+  .feitio-switch input {
+    appearance: none;
+    position: relative;
+    flex: none;
+    inline-size: 2.75rem;
+    block-size: 1.5rem;
+    margin: 0;
+    background: var(--feitio-color-surface-raised);
+    border: var(--feitio-border-width) solid var(--feitio-color-text);
+    border-radius: 1rem;
+    cursor: pointer;
+  }
+  .feitio-switch input::before {
+    content: "";
+    position: absolute;
+    inset-block: 2px;
+    inset-inline-start: 2px;
+    inline-size: calc(1.5rem - 6px);
+    border-radius: 50%;
+    background: var(--feitio-color-text);
+    transition: translate var(--feitio-duration-change) var(--feitio-easing-change);
+  }
+  .feitio-switch input:checked {
+    background: var(--feitio-color-text);
+  }
+  .feitio-switch input:checked::before {
+    translate: 1.25rem 0;
+    background: var(--feitio-color-surface);
+  }
+  .feitio-switch .state {
+    font-size: var(--feitio-font-size-small);
+    color: var(--feitio-color-text-soft);
+  }
+  .feitio-switch:has(input:disabled) {
+    color: var(--feitio-color-text-soft);
+    cursor: not-allowed;
+  }
+  .feitio-switch:has(input:disabled) input {
+    border-style: dashed;
+  }
+  .feitio-time-field {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.15rem;
+    inline-size: fit-content;
+    min-block-size: var(--feitio-control-min-size);
+    padding: 0 var(--feitio-space-3);
+    background: var(--feitio-color-surface-top);
+    border: var(--feitio-border-width) solid var(--feitio-color-text);
+    border-radius: var(--feitio-radius);
+    font: var(--feitio-font-size-body) var(--feitio-font-ui);
+    font-variant-numeric: tabular-nums;
+  }
+  .feitio-time-field:focus-within {
+    outline: var(--feitio-focus-width) solid var(--feitio-color-accent);
+    outline-offset: var(--feitio-focus-offset);
+  }
+  .feitio-time-field .seg {
+    inline-size: 2ch;
+    padding: 0.1rem 0;
+    text-align: center;
+    font: inherit;
+    color: var(--feitio-color-text);
+    background: transparent;
+    border: 0;
+    border-radius: 4px;
+  }
+  .feitio-time-field .seg:focus {
+    outline: none;
+    background: color-mix(in oklch, var(--feitio-color-accent) 18%, transparent);
+  }
+  .feitio-time-field .seg[aria-invalid="true"] {
+    color: var(--feitio-color-error);
+    text-decoration: underline;
+    text-decoration-color: var(--feitio-color-error);
+  }
+  .feitio-time-field:has(.seg[aria-invalid="true"]) {
+    border-color: var(--feitio-color-error);
+  }
+  .feitio-time-field .sep {
+    font-weight: var(--feitio-font-weight-bold);
+  }
+  .feitio-time-field .period {
+    position: relative;
+    margin-inline-start: var(--feitio-space-2);
+    padding: 0.1rem var(--feitio-space-2);
+    font: var(--feitio-font-weight-bold) var(--feitio-font-size-small) var(--feitio-font-ui);
+    color: var(--feitio-color-text);
+    background: transparent;
+    border: var(--feitio-border-width) solid var(--feitio-color-line);
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .feitio-time-field[data-hour-cycle="24"] .period {
+    display: none;
+  }
+  .feitio-time-field[data-hour-cycle="12"] {
+    padding-inline-end: var(--feitio-space-2);
+  }
+  .feitio-segmented {
+    display: inline-flex;
+    padding: 2px;
+    gap: 2px;
+    border: var(--feitio-border-width) solid var(--feitio-color-text);
+    border-radius: var(--feitio-radius);
+    font: var(--feitio-font-weight-bold) 0.85rem var(--feitio-font-ui);
+  }
+  .feitio-segmented button {
+    position: relative;
+    min-block-size: 28px;
+    padding: 0 var(--feitio-space-2);
+    color: var(--feitio-color-text);
+    background: transparent;
+    border: 0;
+    border-radius: calc(var(--feitio-radius-top-left) - 2px);
+    cursor: pointer;
+  }
+  .feitio-segmented button::after {
+    content: "";
+    position: absolute;
+    inset: -6px -1px;
+  }
+  .feitio-segmented button[aria-pressed="true"] {
+    color: var(--feitio-color-surface);
+    background: var(--feitio-color-text);
+  }
+  .feitio-filter {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--feitio-space-2) var(--feitio-space-4);
+  }
+  .feitio-filter .feitio-input {
+    flex: 1 1 14rem;
+    max-inline-size: 22rem;
+    margin: 0;
+    padding-inline: var(--feitio-space-3);
+  }
+  .feitio-filter .count {
+    font: var(--feitio-font-size-small) var(--feitio-font-ui);
+    color: var(--feitio-color-text-soft);
+  }
+  .feitio-segmented a {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-block-size: 28px;
+    padding: 0 var(--feitio-space-2);
+    color: var(--feitio-color-text);
+    text-decoration: none;
+    border-radius: calc(var(--feitio-radius-top-left) - 2px);
+  }
+  .feitio-segmented a[aria-current="true"] {
+    color: var(--feitio-color-surface);
+    background: var(--feitio-color-text);
+  }
 }
 
 @keyframes feitio-notice-out {

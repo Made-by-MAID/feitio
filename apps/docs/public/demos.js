@@ -1,20 +1,4 @@
 // Os comportamentos dos exemplos do rascunho (abrir Dialog, filtrar, AM/PM...), uma vez cada.
-for (const p of document.querySelectorAll('.feitio-time-field .period'))
-  p.addEventListener('click', () => {
-    p.textContent = p.textContent === 'AM' ? 'PM' : 'AM';
-  });
-for (const s of document.querySelectorAll('.feitio-switch input'))
-  s.addEventListener('change', () => {
-    const st = s.closest('.feitio-switch').querySelector('.state');
-    st.innerHTML = s.checked
-      ? '<span lang="pt-BR">Ligado</span><span lang="en">On</span>'
-      : '<span lang="pt-BR">Desligado</span><span lang="en">Off</span>';
-  });
-for (const b of document.querySelectorAll('[data-seg-demo] button'))
-  b.addEventListener('click', () => {
-    for (const o of b.parentElement.querySelectorAll('button'))
-      o.setAttribute('aria-pressed', String(o === b));
-  });
 for (const b of document.querySelectorAll('[data-cycle-demo]'))
   b.addEventListener('click', () => {
     const f = document.getElementById('tf-demo');
@@ -83,32 +67,6 @@ for (const form of document.querySelectorAll('[data-type-to-confirm]')) {
 }
 
 // Catálogo: filtra enquanto digita e copia o código de cada peça, dizendo "Copiado" no lugar.
-const plainC = (s) =>
-  s
-    .normalize('NFD')
-    .replace(/\p{Diacritic}/gu, '')
-    .toLowerCase();
-for (const input of document.querySelectorAll('[data-filter]')) {
-  const list = document.getElementById(input.dataset.filter);
-  const items = [...list.querySelectorAll('[data-search]')];
-  const count = document.querySelector(`[data-count="${input.dataset.filter}"]`);
-  const empty = document.querySelector(`[data-empty="${input.dataset.filter}"]`);
-  const update = () => {
-    const q = plainC(input.value.trim());
-    let n = 0;
-    for (const it of items) {
-      const ok = !q || plainC(it.dataset.search).includes(q);
-      it.hidden = !ok;
-      if (ok) n++;
-    }
-    const en = document.documentElement.dataset.lang === 'en';
-    count.textContent = en ? `${n} of ${items.length}` : `${n} de ${items.length}`;
-    empty.hidden = n > 0;
-  };
-  input.addEventListener('input', update);
-  for (const b of document.querySelectorAll('[data-lang-set]')) b.addEventListener('click', update);
-  update();
-}
 for (const b of document.querySelectorAll('[data-copy]')) {
   b.addEventListener('click', async () => {
     try {

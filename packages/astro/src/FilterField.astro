@@ -1,0 +1,12 @@
+---
+/** FilterField: filters the list below as the person types, and says how many are left. */
+interface Props {
+  id: string;
+  /** The id of the list it filters; each item carries data-search. */
+  list: string;
+  label: string;
+  placeholder?: string;
+}
+const { id, list, label, placeholder } = Astro.props;
+---
+<div class="feitio-filter"><label class="feitio-visually-hidden" for={id}>{label}</label><input class="feitio-input" id={id} type="search" autocomplete="off" placeholder={placeholder} data-filter={list} /><span class="count" data-count={list} aria-live="polite"></span></div>

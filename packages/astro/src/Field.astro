@@ -1,0 +1,22 @@
+---
+/**
+ * Field: a field's label, hint, control and error, in that order. The control goes in the slot with
+ * the id given in `for`; the hint and the error are tied to it through aria-describedby by the control.
+ */
+import Icon from './Icon.astro';
+
+interface Props {
+  label: string;
+  for: string;
+  hint?: string;
+  error?: string;
+  sprite?: string;
+}
+const { label, for: target, hint, error, sprite } = Astro.props;
+---
+<div class="feitio-field">
+  <label class="feitio-label" for={target}>{label}</label>
+  {hint && <span class="feitio-hint" id={`${target}-hint`}>{hint}</span>}
+  <slot />
+  {error && <span class="feitio-error-message" id={`${target}-error`}><Icon name="close" sprite={sprite} />{error}</span>}
+</div>

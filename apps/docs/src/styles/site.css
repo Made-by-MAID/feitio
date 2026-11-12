@@ -150,33 +150,6 @@
 
   /* SegmentedControl: uma escolha entre poucas opções vizinhas, sempre à vista (dia e noite,
      idioma). Um grupo de botões; o escolhido leva aria-pressed e fica em tinta. */
-  .feitio-segmented {
-    display: inline-flex;
-    padding: 2px;
-    gap: 2px;
-    border: var(--feitio-border-width) solid var(--feitio-color-text);
-    border-radius: var(--feitio-radius);
-    font: var(--feitio-font-weight-bold) 0.85rem var(--feitio-font-ui);
-  }
-  .feitio-segmented button {
-    position: relative;
-    min-block-size: 28px;
-    padding: 0 var(--feitio-space-2);
-    color: var(--feitio-color-text);
-    background: transparent;
-    border: 0;
-    border-radius: calc(var(--feitio-radius-top-left) - 2px);
-    cursor: pointer;
-  }
-  .feitio-segmented button::after {
-    content: "";
-    position: absolute;
-    inset: -6px -1px;
-  }
-  .feitio-segmented button[aria-pressed="true"] {
-    color: var(--feitio-color-surface);
-    background: var(--feitio-color-text);
-  }
 
   /* Anchor: o índice da página, que acompanha a rolagem. O trecho atual fica em tinta e negrito,
      com a seta à mão na frente: sem faixa colorida do lado. */
@@ -1033,22 +1006,6 @@ main[tabindex="-1"]:focus {
   }
 
   /* FilterField: o campo que filtra a lista logo abaixo e conta o que sobrou. */
-  .feitio-filter {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--feitio-space-2) var(--feitio-space-4);
-  }
-  .feitio-filter .feitio-input {
-    flex: 1 1 14rem;
-    max-inline-size: 22rem;
-    margin: 0;
-    padding-inline: var(--feitio-space-3);
-  }
-  .feitio-filter .count {
-    font: var(--feitio-font-size-small) var(--feitio-font-ui);
-    color: var(--feitio-color-text-soft);
-  }
 
   /* Swatch: a amostra de uma cor, com o traço de tinta em volta. */
   .feitio-swatch {
@@ -1113,20 +1070,6 @@ main[tabindex="-1"]:focus {
 }
 
 /* O seletor de idioma é de links (cada idioma é uma página), com a mesma cara do SegmentedControl. */
-.feitio-segmented a {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  min-block-size: 28px;
-  padding: 0 var(--feitio-space-2);
-  color: var(--feitio-color-text);
-  text-decoration: none;
-  border-radius: calc(var(--feitio-radius-top-left) - 2px);
-}
-.feitio-segmented a[aria-current="true"] {
-  color: var(--feitio-color-surface);
-  background: var(--feitio-color-text);
-}
 
 /* Atributos: o nome à esquerda, o que faz à direita; no mobile, um embaixo do outro. */
 .attrs {

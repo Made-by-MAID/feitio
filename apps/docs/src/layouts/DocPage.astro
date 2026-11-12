@@ -128,9 +128,11 @@ const GH =
 <script is:inline src={`${base}demos.js`}></script>
 <script>
   // Every page wires the Notice behavior: the examples come as HTML, not through Notice.astro.
+  import { forms } from '@feitio/vanilla/forms/source';
   import { notices } from '@feitio/vanilla/notice/source';
   const page = window as Window & { feitioNotice?: ReturnType<typeof notices> };
   page.feitioNotice ??= notices(window);
+  forms(window);
   for (const b of document.querySelectorAll<HTMLElement>('[data-notice-show]')) {
     b.addEventListener('click', () => {
       const n = document.getElementById(b.dataset.noticeShow ?? '');

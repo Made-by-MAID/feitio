@@ -1,0 +1,9 @@
+---
+/** Fieldset: groups the fields that answer one question; the legend is that question. */
+interface Props {
+  legend: string;
+  hint?: string;
+}
+const { legend, hint } = Astro.props;
+---
+<fieldset class="feitio-fieldset"><legend class="feitio-label">{legend}</legend>{hint && <span class="feitio-hint">{hint}</span>}<slot /></fieldset>

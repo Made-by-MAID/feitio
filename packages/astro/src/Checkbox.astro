@@ -1,0 +1,12 @@
+---
+/** Checkbox: yes or no, or one of several choices; the whole label is the click target. */
+interface Props {
+  label: string;
+  name?: string;
+  value?: string;
+  checked?: boolean;
+  disabled?: boolean;
+}
+const { label, name, value, checked, disabled } = Astro.props;
+---
+<label class="feitio-choice"><input type="checkbox" name={name} value={value} checked={checked} disabled={disabled} />{label}</label>

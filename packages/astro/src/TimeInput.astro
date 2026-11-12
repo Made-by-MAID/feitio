@@ -1,0 +1,26 @@
+---
+/** TimeInput: hour and minute in a single box, in 24 hours or 12 with AM/PM. */
+interface Props {
+  hour?: string;
+  minute?: string;
+  cycle?: '12' | '24';
+  period?: 'AM' | 'PM';
+  hourLabel?: string;
+  minuteLabel?: string;
+  periodLabel?: string;
+  invalid?: boolean;
+  disabled?: boolean;
+}
+const {
+  hour = '09',
+  minute = '00',
+  cycle = '24',
+  period = 'AM',
+  hourLabel = 'Hora',
+  minuteLabel = 'Minuto',
+  periodLabel = 'AM ou PM',
+  invalid,
+  disabled,
+} = Astro.props;
+---
+<div class="feitio-time-field" data-hour-cycle={cycle}><input class="seg" inputmode="numeric" maxlength="2" value={hour} aria-label={hourLabel} aria-invalid={invalid ? 'true' : undefined} disabled={disabled} /><span class="sep" aria-hidden="true">:</span><input class="seg" inputmode="numeric" maxlength="2" value={minute} aria-label={minuteLabel} disabled={disabled} />{cycle === '12' && <button type="button" class="period" aria-label={periodLabel} disabled={disabled}>{period}</button>}</div>

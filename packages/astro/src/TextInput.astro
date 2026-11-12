@@ -1,0 +1,17 @@
+---
+/**
+ * TextInput: one line of text. invalid marks it with the error (aria-invalid); with a hint or an error
+ * in the Field, describedBy names them.
+ */
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends HTMLAttributes<'input'> {
+  id: string;
+  invalid?: boolean;
+  describedBy?: string;
+  /** The width it is meant for, in characters: 2, 4, 10, 20 or 40. Without it, the whole line. */
+  width?: 2 | 4 | 10 | 20 | 40;
+}
+const { invalid, describedBy, width, class: extra, ...rest } = Astro.props;
+---
+<input class:list={['feitio-input', extra]} aria-invalid={invalid ? 'true' : undefined} aria-describedby={describedBy} data-width={width} {...rest} />

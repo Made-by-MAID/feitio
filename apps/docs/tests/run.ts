@@ -169,6 +169,53 @@ for (const lang of process.env.ONLY === 'behavior' ? [] : LOCALES) {
   await page.close();
 }
 
+// Forms: the Switch says its state, AM/PM swaps once per click, the SegmentedControl marks its choice,
+// the FilterField filters and counts, and the playground re-renders with its controls.
+{
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  await page.goto(`${origin}/en/components/switch/`);
+  await page.click('.playground .live .feitio-switch');
+  check(
+    (await page.locator('.playground .live .feitio-switch .state').textContent())?.trim() === 'On',
+    'switch: the state did not say On',
+  );
+  await page.click('[data-prop="state"][data-value="disabled"]');
+  check(
+    await page.locator('.playground .live .feitio-switch input').isDisabled(),
+    'switch playground: disabled did not apply',
+  );
+  await page.goto(`${origin}/en/components/timeinput/`);
+  await page.click('[data-prop="cycle"][data-value="12"]');
+  const before = (await page.locator('.playground .live .period').textContent())?.trim();
+  await page.click('.playground .live .period');
+  const after = (await page.locator('.playground .live .period').textContent())?.trim();
+  check(before !== after && Boolean(after), `timeinput: AM/PM did not swap (${before} → ${after})`);
+  await page.goto(`${origin}/en/components/segmented/`);
+  await page.click('[data-prop="count"][data-value="3"]');
+  await page.click('.playground .live .feitio-segmented button:nth-child(3)');
+  check(
+    (await page
+      .locator('.playground .live .feitio-segmented button:nth-child(3)')
+      .getAttribute('aria-pressed')) === 'true',
+    'segmented: the choice was not marked',
+  );
+  await page.goto(`${origin}/en/components/filterfield/`);
+  await page.fill('#pg-filter', 'plants');
+  const visible = await page.locator('#pg-filter-list li:not([hidden])').count();
+  check(visible === 1, `filterfield: ${visible} items left instead of 1`);
+  check(
+    ((await page.locator('[data-count="pg-filter-list"]').textContent()) ?? '').includes('1'),
+    'filterfield: the count did not follow',
+  );
+  await page.goto(`${origin}/en/components/field/`);
+  await page.click('[data-prop="state"][data-value="error"]');
+  check(
+    (await page.locator('.playground .live input').getAttribute('aria-invalid')) === 'true',
+    'field playground: the error did not mark the input',
+  );
+  await page.close();
+}
+
 await browser.close();
 server.stop();
 if (problems.length) {
