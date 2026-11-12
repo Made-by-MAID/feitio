@@ -21,11 +21,13 @@
     "./menu": "./dist/menu.js",
     "./menu/source": "./src/menu/index.ts",
     "./forms": "./dist/forms.js",
-    "./forms/source": "./src/forms/index.ts"
+    "./forms/source": "./src/forms/index.ts",
+    "./status": "./dist/status.js",
+    "./status/source": "./src/status/index.ts"
   },
   "scripts": {
-    "build": "bun build src/index.ts src/notice/index.ts src/menu/index.ts src/forms/index.ts --outdir dist --format esm --entry-naming [dir]/[name].[ext] --root src && bun run rename",
-    "rename": "mv dist/index.js dist/feitio.js && for m in notice menu forms; do mv dist/$m/index.js dist/$m.js && rmdir dist/$m; done"
+    "build": "bun build src/index.ts src/notice/index.ts src/menu/index.ts src/forms/index.ts src/status/index.ts --outdir dist --format esm --entry-naming [dir]/[name].[ext] --root src && bun run rename",
+    "rename": "mv dist/index.js dist/feitio.js && for m in notice menu forms status; do mv dist/$m/index.js dist/$m.js && rmdir dist/$m; done"
   },
   "dependencies": {
     "@feitio/core": "workspace:*"

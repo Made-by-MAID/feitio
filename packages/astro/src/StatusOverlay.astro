@@ -1,0 +1,17 @@
+---
+/**
+ * StatusOverlay: the feedback on the container itself. The slot is the container's content; state
+ * shows over it: loading (faded, a stroke turning), ok (a check drawn), error (an X drawn). Set it
+ * from the page with the status() of @feitio/vanilla.
+ */
+interface Props {
+  state?: 'loading' | 'ok' | 'error';
+  label?: string;
+  as?: 'div' | 'form' | 'section';
+}
+const { state, label = '', as: Tag = 'div' } = Astro.props;
+---
+<Tag class="feitio-status-host" data-state={state}>
+  <slot />
+  <div class="feitio-status" role="status"><svg viewBox="0 0 48 48" aria-hidden="true"><g class="loading"><path pathLength="1" d="M24 7 C34 6.5 41.5 14 41 24 C40.6 33 33 41 24 41.2" /><path pathLength="1" d="M25.5 41 C14.5 41.6 6.8 33.5 7.2 23.6 C7.6 14 14.6 7.4 23 6.4" /></g><g class="ok"><path pathLength="1" d="M13 25 L21 33.5" /><path pathLength="1" d="M19.5 34 L36 14.5" /></g><g class="error"><path pathLength="1" d="M15 15 L33.5 33" /><path pathLength="1" d="M33 14.5 L15.5 33.5" /></g></svg><span class="label">{label}</span></div>
+</Tag>

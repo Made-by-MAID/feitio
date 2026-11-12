@@ -1,0 +1,16 @@
+---
+/** EmptyState: what shows instead of an empty list: the drawing, why it is empty, and the next step (the slot). */
+import basket from '@feitio/core/illustrations/empty-basket.svg?raw';
+import torn from '@feitio/core/illustrations/torn-paper.svg?raw';
+
+interface Props {
+  title: string;
+  text?: string;
+  /** "basket" for nothing yet, "torn" for an error. */
+  illustration?: 'basket' | 'torn' | 'none';
+  size?: 'compact';
+}
+const { title, text, illustration = 'basket', size } = Astro.props;
+const art = illustration === 'basket' ? basket : illustration === 'torn' ? torn : '';
+---
+<div class="feitio-empty" data-size={size}>{art && <Fragment set:html={art} />}<h3>{title}</h3>{text && <p>{text}</p>}<slot /></div>

@@ -1228,3 +1228,10 @@ main[tabindex="-1"]:focus {
 .playground .live > .feitio-stack {
   inline-size: 100%;
 }
+.playground .live > .feitio-status-host {
+  inline-size: min(100%, 26rem);
+  padding: var(--feitio-space-4);
+  background: var(--feitio-color-surface-top);
+  border: var(--feitio-border-width) solid var(--feitio-color-line);
+  border-radius: var(--feitio-radius);
+}

@@ -1,6 +1,9 @@
 import Button from '@feitio/astro/Button.astro';
 import Checkbox from '@feitio/astro/Checkbox.astro';
 import Divider from '@feitio/astro/Divider.astro';
+import EmptyState from '@feitio/astro/EmptyState.astro';
+import ErrorMessage from '@feitio/astro/ErrorMessage.astro';
+import ErrorSummary from '@feitio/astro/ErrorSummary.astro';
 import Field from '@feitio/astro/Field.astro';
 import Fieldset from '@feitio/astro/Fieldset.astro';
 import FilterField from '@feitio/astro/FilterField.astro';
@@ -14,6 +17,7 @@ import Radios from '@feitio/astro/Radios.astro';
 import SegmentedControl from '@feitio/astro/SegmentedControl.astro';
 import Select from '@feitio/astro/Select.astro';
 import Stack from '@feitio/astro/Stack.astro';
+import StatusOverlay from '@feitio/astro/StatusOverlay.astro';
 import Switch from '@feitio/astro/Switch.astro';
 import Tag from '@feitio/astro/Tag.astro';
 import Textarea from '@feitio/astro/Textarea.astro';
@@ -918,6 +922,240 @@ export async function playgroundFor(
       combos: await combos(
         [GAP.options.map((o) => o.value), ['6rem', '9rem', '15rem'], ['5', '8']],
         ([g, m, n]) => renderHtml(Grid, { gap: Number(g), min: m }, box(Number(n))),
+      ),
+    };
+  }
+
+  if (slug === 'errormessage') {
+    return {
+      placeholder: PH,
+      text: words(
+        'Use um horário entre 00:00 e 23:59',
+        'Use a time between 00:00 and 23:59',
+        'Usa una hora entre 00:00 y 23:59',
+        'Utilisez une heure entre 00:00 et 23:59',
+        'Nutze eine Uhrzeit zwischen 00:00 und 23:59',
+      ),
+      controls: [],
+      combos: {
+        '': await renderHtml(
+          Field,
+          { label: words('Horário', 'Time', 'Hora', 'Heure', 'Uhrzeit'), for: 'pg-em', sprite },
+          `${await renderHtml(TextInput, { id: 'pg-em', value: '25:00', invalid: true, describedBy: 'pg-em-error', width: 10 })}${await renderHtml(ErrorMessage, { id: 'pg-em-error', sprite }, PH)}`,
+        ),
+      },
+    };
+  }
+  if (slug === 'errorsummary') {
+    const all = [
+      {
+        text: words(
+          'Escreva um nome para o lembrete',
+          'Write a name for the reminder',
+          'Escribe un nombre para el recordatorio',
+          'Écrivez un nom pour le rappel',
+          'Schreib einen Namen für die Erinnerung',
+        ),
+        href: '#playground',
+      },
+      {
+        text: words(
+          'Use um horário entre 00:00 e 23:59',
+          'Use a time between 00:00 and 23:59',
+          'Usa una hora entre 00:00 y 23:59',
+          'Utilisez une heure entre 00:00 et 23:59',
+          'Nutze eine Uhrzeit zwischen 00:00 und 23:59',
+        ),
+        href: '#playground',
+      },
+      {
+        text: words(
+          'Escolha quando repetir',
+          'Choose when to repeat',
+          'Elige cuándo repetir',
+          'Choisissez quand répéter',
+          'Wähle, wann wiederholt wird',
+        ),
+        href: '#playground',
+      },
+    ];
+    const titles = {
+      '1': words(
+        'Corrija 1 campo para salvar',
+        'Fix 1 field to save',
+        'Corrige 1 campo para guardar',
+        'Corrigez 1 champ pour enregistrer',
+        'Korrigiere 1 Feld zum Speichern',
+      ),
+      '2': words(
+        'Corrija 2 campos para salvar',
+        'Fix 2 fields to save',
+        'Corrige 2 campos para guardar',
+        'Corrigez 2 champs pour enregistrer',
+        'Korrigiere 2 Felder zum Speichern',
+      ),
+      '3': words(
+        'Corrija 3 campos para salvar',
+        'Fix 3 fields to save',
+        'Corrige 3 campos para guardar',
+        'Corrigez 3 champs pour enregistrer',
+        'Korrigiere 3 Felder zum Speichern',
+      ),
+    } as Record<string, string>;
+    return {
+      placeholder: '',
+      text: '',
+      controls: [
+        {
+          name: 'count',
+          label: words('Erros', 'Errors', 'Errores', 'Erreurs', 'Fehler'),
+          options: ['1', '2', '3'].map((v) => ({ value: v, label: v })),
+        },
+      ],
+      combos: await combos([['1', '2', '3']], ([n]) =>
+        renderHtml(ErrorSummary, {
+          title: titles[n ?? '1'],
+          errors: all.slice(0, Number(n)),
+          sprite,
+        }),
+      ),
+    };
+  }
+  if (slug === 'emptystate') {
+    const action = await renderHtml(
+      Button,
+      {},
+      words(
+        'Criar lembrete',
+        'Create reminder',
+        'Crear recordatorio',
+        'Créer un rappel',
+        'Erinnerung erstellen',
+      ),
+    );
+    const retry = await renderHtml(
+      Button,
+      {},
+      words('Tentar de novo', 'Try again', 'Intentar de nuevo', 'Réessayer', 'Erneut versuchen'),
+    );
+    return {
+      placeholder: '',
+      text: '',
+      controls: [
+        {
+          name: 'art',
+          label: words('Desenho', 'Drawing', 'Dibujo', 'Dessin', 'Zeichnung'),
+          options: [
+            { value: 'basket', label: words('Cesto', 'Basket', 'Cesta', 'Panier', 'Korb') },
+            {
+              value: 'torn',
+              label: words(
+                'Papel rasgado',
+                'Torn paper',
+                'Papel roto',
+                'Papier déchiré',
+                'Zerrissenes Papier',
+              ),
+            },
+            { value: 'none', label: words('Sem', 'None', 'Sin', 'Aucun', 'Keine') },
+          ],
+        },
+        {
+          name: 'size',
+          label: L.size[lang],
+          options: [
+            { value: '', label: words('Normal', 'Regular', 'Normal', 'Normal', 'Normal') },
+            {
+              value: 'compact',
+              label: words('Compacto', 'Compact', 'Compacto', 'Compact', 'Kompakt'),
+            },
+          ],
+        },
+        yesNo('action', words('Ação', 'Action', 'Acción', 'Action', 'Aktion')),
+      ],
+      combos: await combos(
+        [
+          ['basket', 'torn', 'none'],
+          ['', 'compact'],
+          ['', 'yes'],
+        ],
+        ([a, z, act]) =>
+          renderHtml(
+            EmptyState,
+            {
+              title:
+                a === 'torn'
+                  ? words(
+                      'Não deu para carregar',
+                      'Could not load',
+                      'No se pudo cargar',
+                      'Impossible de charger',
+                      'Konnte nicht laden',
+                    )
+                  : words(
+                      'Nenhum lembrete ainda',
+                      'No reminders yet',
+                      'Aún no hay recordatorios',
+                      'Pas encore de rappels',
+                      'Noch keine Erinnerungen',
+                    ),
+              text:
+                a === 'torn'
+                  ? words(
+                      'A conexão caiu. Tente de novo.',
+                      'The connection dropped. Try again.',
+                      'Se cayó la conexión. Inténtalo de nuevo.',
+                      'La connexion est tombée. Réessayez.',
+                      'Die Verbindung ist abgebrochen. Versuch es noch einmal.',
+                    )
+                  : words(
+                      'Crie o primeiro e ele aparece aqui.',
+                      'Create the first one and it shows up here.',
+                      'Crea el primero y aparecerá aquí.',
+                      'Créez le premier et il apparaîtra ici.',
+                      'Erstelle die erste, dann erscheint sie hier.',
+                    ),
+              illustration: a,
+              size: z || undefined,
+            },
+            act ? (a === 'torn' ? retry : action) : '',
+          ),
+      ),
+    };
+  }
+  if (slug === 'statusoverlay') {
+    const states = ['', 'loading', 'ok', 'error'];
+    const labels: Record<string, string> = {
+      loading: words('Salvando…', 'Saving…', 'Guardando…', 'Enregistrement…', 'Speichern…'),
+      ok: words('Salvo', 'Saved', 'Guardado', 'Enregistré', 'Gespeichert'),
+      error: words(
+        'Não salvou',
+        'Not saved',
+        'No se guardó',
+        'Non enregistré',
+        'Nicht gespeichert',
+      ),
+    };
+    const inner = `<div class="feitio-stack" data-gap="3"><strong>${words('Lembrete', 'Reminder', 'Recordatorio', 'Rappel', 'Erinnerung')}</strong>${await renderHtml(Field, { label: LABEL, for: 'pg-so', sprite }, await renderHtml(TextInput, { id: 'pg-so', value: words('Regar as plantas', 'Water the plants', 'Regar las plantas', 'Arroser les plantes', 'Pflanzen gießen') }))}<div>${await renderHtml(Button, { variant: 'primary' }, words('Salvar', 'Save', 'Guardar', 'Enregistrer', 'Speichern'))}</div></div>`;
+    return {
+      placeholder: '',
+      text: '',
+      controls: [
+        {
+          name: 'state',
+          label: L.state[lang],
+          options: states.map((v) => ({
+            value: v,
+            label: v ? (labels[v] ?? v) : words('Nenhum', 'None', 'Ninguno', 'Aucun', 'Keiner'),
+          })),
+        },
+      ],
+      combos: await combos([states], ([st]) =>
+        renderHtml(
+          StatusOverlay,
+          { state: st || undefined, label: st ? labels[st] : '', as: 'div' },
+          inner,
+        ),
       ),
     };
   }
