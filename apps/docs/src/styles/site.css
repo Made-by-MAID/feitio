@@ -1197,3 +1197,34 @@ main[tabindex="-1"]:focus {
 .playground .stage .live:has(.header-frame) {
   inline-size: 100%;
 }
+
+/* The pieces of the layout demos: plain numbered paper, so only the space is looked at. */
+.lay-box {
+  display: grid;
+  place-items: center;
+  min-inline-size: 3rem;
+  min-block-size: 2.5rem;
+  padding: 0 var(--feitio-space-3);
+  font: var(--feitio-font-weight-bold) var(--feitio-font-size-small) var(--feitio-font-ui);
+  background: var(--feitio-color-surface-top);
+  border: var(--feitio-border-width) solid var(--feitio-color-text);
+  border-radius: var(--feitio-radius);
+}
+.lay-box[data-wide] {
+  min-inline-size: 7rem;
+}
+.lay-box[data-empty] {
+  background: transparent;
+  border-style: dashed;
+  border-color: var(--feitio-color-text-soft);
+  color: var(--feitio-color-text-soft);
+  font-weight: var(--feitio-font-weight-regular);
+}
+.playground .live:has(> .feitio-grid, > .feitio-stack, > .feitio-inline) {
+  inline-size: 100%;
+}
+.playground .live > .feitio-grid,
+.playground .live > .feitio-inline,
+.playground .live > .feitio-stack {
+  inline-size: 100%;
+}

@@ -1,0 +1,10 @@
+---
+/** Inline: puts the pieces side by side, wrapping to the next line when they do not fit; the gap holds between lines too. */
+interface Props {
+  gap?: 1 | 2 | 3 | 4 | 5 | 6 | 7;
+  justify?: 'between' | 'end';
+  as?: 'div' | 'ul';
+}
+const { gap = 3, justify, as: Tag = 'div' } = Astro.props;
+---
+<Tag class="feitio-inline" data-gap={gap} data-justify={justify}><slot /></Tag>

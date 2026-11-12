@@ -4,13 +4,16 @@ import Divider from '@feitio/astro/Divider.astro';
 import Field from '@feitio/astro/Field.astro';
 import Fieldset from '@feitio/astro/Fieldset.astro';
 import FilterField from '@feitio/astro/FilterField.astro';
+import Grid from '@feitio/astro/Grid.astro';
 import Heading from '@feitio/astro/Heading.astro';
+import Inline from '@feitio/astro/Inline.astro';
 import Kbd from '@feitio/astro/Kbd.astro';
 import Link from '@feitio/astro/Link.astro';
 import Notice from '@feitio/astro/Notice.astro';
 import Radios from '@feitio/astro/Radios.astro';
 import SegmentedControl from '@feitio/astro/SegmentedControl.astro';
 import Select from '@feitio/astro/Select.astro';
+import Stack from '@feitio/astro/Stack.astro';
 import Switch from '@feitio/astro/Switch.astro';
 import Tag from '@feitio/astro/Tag.astro';
 import Textarea from '@feitio/astro/Textarea.astro';
@@ -811,6 +814,110 @@ export async function playgroundFor(
         ],
         async ([d, a]) =>
           `<div class="feitio-stack" data-gap="3" style="inline-size: min(100%, 26rem)" ${a ? 'data-demo-async' : ''}>${await renderHtml(FilterField, { id: 'pg-filter', list: 'pg-filter-list', label: words('Filtrar', 'Filter', 'Filtrar', 'Filtrer', 'Filtern'), placeholder: words('plantas, backup…', 'plants, backup…', 'plantas, copia…', 'plantes, sauvegarde…', 'Pflanzen, Sicherung…'), debounce: d ? 600 : undefined, async: Boolean(a), busyLabel: words('Buscando…', 'Searching…', 'Buscando…', 'Recherche…', 'Suche…') })}${list}</div>`,
+      ),
+    };
+  }
+
+  const GAP = {
+    name: 'gap',
+    label: words('Espaço (gap)', 'Space (gap)', 'Espacio (gap)', 'Espace (gap)', 'Abstand (gap)'),
+    options: ['1', '2', '3', '4', '5', '6', '7'].map((v) => ({ value: v, label: v })),
+  };
+  const box = (n: number, wide = false) =>
+    Array.from(
+      { length: n },
+      (_, i) => `<span class="lay-box"${wide && i % 3 === 1 ? ' data-wide' : ''}>${i + 1}</span>`,
+    ).join('');
+  if (slug === 'stack') {
+    return {
+      placeholder: '',
+      text: '',
+      controls: [
+        GAP,
+        {
+          name: 'align',
+          label: words('Alinhamento', 'Alignment', 'Alineación', 'Alignement', 'Ausrichtung'),
+          options: [
+            { value: '', label: words('Esticado', 'Stretched', 'Estirado', 'Étiré', 'Gestreckt') },
+            { value: 'start', label: words('Início', 'Start', 'Inicio', 'Début', 'Anfang') },
+            { value: 'center', label: words('Centro', 'Center', 'Centro', 'Centre', 'Mitte') },
+          ],
+        },
+      ],
+      combos: await combos([GAP.options.map((o) => o.value), ['', 'start', 'center']], ([g, a]) =>
+        renderHtml(Stack, { gap: Number(g), align: a || undefined }, box(3)),
+      ),
+    };
+  }
+  if (slug === 'inline') {
+    return {
+      placeholder: '',
+      text: '',
+      controls: [
+        GAP,
+        {
+          name: 'justify',
+          label: words('Distribuição', 'Distribution', 'Distribución', 'Répartition', 'Verteilung'),
+          options: [
+            { value: '', label: words('Início', 'Start', 'Inicio', 'Début', 'Anfang') },
+            {
+              value: 'between',
+              label: words('Espalhado', 'Spread', 'Repartido', 'Réparti', 'Verteilt'),
+            },
+            { value: 'end', label: words('Fim', 'End', 'Final', 'Fin', 'Ende') },
+          ],
+        },
+        {
+          name: 'count',
+          label: words('Peças', 'Pieces', 'Piezas', 'Éléments', 'Teile'),
+          options: [
+            { value: '3', label: '3' },
+            {
+              value: '12',
+              label: words(
+                '12 (quebra a linha)',
+                '12 (wraps)',
+                '12 (salta de línea)',
+                '12 (passe à la ligne)',
+                '12 (umbrechen)',
+              ),
+            },
+          ],
+        },
+      ],
+      combos: await combos(
+        [GAP.options.map((o) => o.value), ['', 'between', 'end'], ['3', '12']],
+        ([g, j, n]) =>
+          renderHtml(Inline, { gap: Number(g), justify: j || undefined }, box(Number(n))),
+      ),
+    };
+  }
+  if (slug === 'grid') {
+    return {
+      placeholder: '',
+      text: '',
+      controls: [
+        GAP,
+        {
+          name: 'min',
+          label: words(
+            'Coluna mínima',
+            'Narrowest column',
+            'Columna mínima',
+            'Colonne minimale',
+            'Schmalste Spalte',
+          ),
+          options: ['6rem', '9rem', '15rem'].map((v) => ({ value: v, label: v })),
+        },
+        {
+          name: 'count',
+          label: words('Peças', 'Pieces', 'Piezas', 'Éléments', 'Teile'),
+          options: ['5', '8'].map((v) => ({ value: v, label: v })),
+        },
+      ],
+      combos: await combos(
+        [GAP.options.map((o) => o.value), ['6rem', '9rem', '15rem'], ['5', '8']],
+        ([g, m, n]) => renderHtml(Grid, { gap: Number(g), min: m }, box(Number(n))),
       ),
     };
   }

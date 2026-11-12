@@ -1,0 +1,10 @@
+---
+/** Stack: stacks the pieces, with the scale's space between them (gap 1 to 7). The children never bring their own margin. */
+interface Props {
+  gap?: 1 | 2 | 3 | 4 | 5 | 6 | 7;
+  align?: 'start' | 'center';
+  as?: 'div' | 'section' | 'ul' | 'ol';
+}
+const { gap = 4, align, as: Tag = 'div' } = Astro.props;
+---
+<Tag class="feitio-stack" data-gap={gap} data-align={align}><slot /></Tag>

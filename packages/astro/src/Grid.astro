@@ -1,0 +1,11 @@
+---
+/** Grid: columns that fit the width, each at least `min` wide, never past the screen. A missing item leaves its cell empty. */
+interface Props {
+  gap?: 1 | 2 | 3 | 4 | 5 | 6 | 7;
+  /** The narrowest a column may get, like "9rem". */
+  min?: string;
+  as?: 'div' | 'ul';
+}
+const { gap = 4, min, as: Tag = 'div' } = Astro.props;
+---
+<Tag class="feitio-grid" data-gap={gap} style={min ? `--feitio-grid-min: ${min}` : undefined}><slot /></Tag>
