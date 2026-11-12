@@ -1,4 +1,5 @@
 ---
+
 "@feitio/core": minor
 "@feitio/astro": minor
 ---
