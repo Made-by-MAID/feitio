@@ -1241,3 +1241,10 @@ main[tabindex="-1"]:focus {
 .playground > .feitio-code {
   border-radius: 0;
 }
+.playground > * {
+  min-inline-size: 0;
+}
+.example-title {
+  margin: 0;
+  font: var(--feitio-font-weight-bold) var(--feitio-font-size-h3) var(--feitio-font-ui);
+}

@@ -6,7 +6,8 @@
     "useIgnoreFile": true
   },
   "files": {
-    "ignoreUnknown": true
+    "ignoreUnknown": true,
+    "includes": ["**", "!apps/docs/src/content/drafts.json"]
   },
   "formatter": {
     "enabled": true,
@@ -51,11 +52,21 @@
       }
     },
     {
-      "includes": ["apps/docs/src/styles/site.css"],
+      "includes": ["apps/docs/src/styles/site.css", "apps/docs/src/styles/demos.css"],
       "linter": {
         "rules": {
           "style": {
             "noDescendingSpecificity": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["apps/docs/src/styles/demos.css"],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "noImportantStyles": "off"
           }
         }
       }

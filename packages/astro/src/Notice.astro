@@ -56,5 +56,6 @@ const text = Astro.slots.has('default');
 </div>
 <script>
   import { notices } from '@feitio/vanilla/notice/source';
-  (window as Window & { feitioNotice?: ReturnType<typeof notices> }).feitioNotice ??= notices(window);
+  const page = window as Window & { feitioNotice?: ReturnType<typeof notices> };
+  page.feitioNotice ??= notices(window);
 </script>

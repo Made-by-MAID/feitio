@@ -7,8 +7,10 @@
 import Icon from '@feitio/astro/Icon.astro';
 import Menu from '@feitio/astro/Menu.astro';
 import Logo from '../components/Logo.astro';
+import '../styles/layers.css';
 import '@feitio/core/css/fonts.css';
 import '@feitio/core/css/feitio.css';
+import '../styles/demos.css';
 import '../styles/site.css';
 import { HTML_LANG, LANG_NATIVE, LOCALES, type Locale, pathIn, WORDS } from '../i18n/ui.ts';
 
@@ -124,5 +126,18 @@ const GH =
 <span class="feitio-scroll-fade" aria-hidden="true"></span>
 <footer class="feitio-footer" data-pagefind-ignore><div class="inner"><span class="who"><Logo /><strong>Feitio</strong><span>© <span data-since="2026">2026</span></span></span><span>{words.madeBy} <a href="https://github.com/HenriqueArtur">@HenriqueArtur</a>.</span><ul><li><a href={`${base}${lang}/dev/changelog/`}>{words.changelog}</a></li><li><a href="https://github.com/Made-by-MAID/feitio/blob/main/LICENSE">{words.license}</a></li><li><a href="https://github.com/Made-by-MAID/feitio">GitHub</a></li></ul></div></footer>
 <script is:inline src={`${base}site.js`}></script>
+<script is:inline src={`${base}demos.js`}></script>
+<script>
+  // Every page wires the Notice behavior: the examples come as HTML, not through Notice.astro.
+  import { notices } from '@feitio/vanilla/notice/source';
+  const page = window as Window & { feitioNotice?: ReturnType<typeof notices> };
+  page.feitioNotice ??= notices(window);
+  for (const b of document.querySelectorAll<HTMLElement>('[data-notice-show]')) {
+    b.addEventListener('click', () => {
+      const n = document.getElementById(b.dataset.noticeShow ?? '');
+      if (n) page.feitioNotice?.show(n);
+    });
+  }
+</script>
 </body>
 </html>

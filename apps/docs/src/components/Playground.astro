@@ -14,18 +14,32 @@ interface Props {
   /** The HTML of each combination, keyed by the values joined with "|", in the controls' order. */
   combos: Record<string, string>;
   /** The placeholder the text field replaces, and the text it starts with. */
-  placeholder: string;
-  text: string;
-  textLabel: string;
+  placeholder?: string;
+  text?: string;
+  /** The text field's label; without it, no text field (the component has no text to change). */
+  textLabel?: string;
   modeLabel: string;
+  /** A copy of an example shown elsewhere on the page: out of the keyboard and screen readers, so nothing is announced twice. */
+  copy?: boolean;
 }
-const { lang, controls, combos, placeholder, text, textLabel, modeLabel } = Astro.props;
+const {
+  lang,
+  controls,
+  combos,
+  placeholder = '',
+  text = '',
+  textLabel,
+  modeLabel,
+  copy = false,
+} = Astro.props;
 const words = WORDS[lang];
 const first = controls.map((c) => c.options[0]?.value ?? '').join('|');
-const html = (combos[first] ?? '').replaceAll(placeholder, text);
+const html = placeholder
+  ? (combos[first] ?? '').replaceAll(placeholder, text)
+  : (combos[first] ?? '');
 ---
 <div class="playground" data-playground data-placeholder={placeholder}>
-  <div class="stage" data-theme="casa" data-mode="light"><div class="live" set:html={html} /></div>
+  <div class="stage" data-theme="casa" data-mode="light"><div class="live" set:html={html} inert={copy} /></div>
   <div class="controls">
     {
       controls.map((c) => (
@@ -39,10 +53,12 @@ const html = (combos[first] ?? '').replaceAll(placeholder, text);
         </div>
       ))
     }
-    <div class="control">
-      <label class="control-label" for="pg-text">{textLabel}</label>
-      <input class="feitio-input" id="pg-text" value={text} data-text />
-    </div>
+    {textLabel && (
+      <div class="control">
+        <label class="control-label" for="pg-text">{textLabel}</label>
+        <input class="feitio-input" id="pg-text" value={text} data-text />
+      </div>
+    )}
     <div class="control">
       <span class="control-label">{modeLabel}</span>
       <div class="feitio-segmented" role="group" aria-label={modeLabel}>
@@ -67,7 +83,8 @@ const html = (combos[first] ?? '').replaceAll(placeholder, text);
     const escape = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     function update(): void {
       const key = groups.map((g) => g.querySelector<HTMLElement>('[aria-pressed="true"]')?.dataset.value ?? '').join('|');
-      const html = (combos[key] ?? '').replaceAll(placeholder, escape(field?.value || ' '));
+      const raw = combos[key] ?? '';
+      const html = placeholder ? raw.replaceAll(placeholder, escape(field?.value || ' ')) : raw;
       if (live) live.innerHTML = html;
       if (code) {
         const highlight = (window as Window & { highlightHtml?: Highlight }).highlightHtml;

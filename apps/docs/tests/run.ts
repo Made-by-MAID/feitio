@@ -16,22 +16,14 @@ const dist = join(import.meta.dir, '..', 'dist');
 const shots = join(import.meta.dir, 'screenshots');
 const axeSource = await readFile(join(repo, 'node_modules', 'axe-core', 'axe.min.js'), 'utf8');
 const LOCALES = ['pt', 'en', 'es', 'fr', 'de'];
-const PAGES = [
-  'components/button/',
-  'components/notice/',
-  ...[
-    'link',
-    'linkcard',
-    'heading',
-    'text',
-    'icon',
-    'block',
-    'visually-hidden',
-    'skiplink',
-    'divider',
-    'kbd',
-  ].map((s) => `components/${s}/`),
-];
+const drafts = JSON.parse(
+  await readFile(join(import.meta.dir, '..', 'src', 'content', 'drafts.json'), 'utf8'),
+) as { slug: string }[];
+const PAGES = drafts
+  .map((d) => `components/${d.slug}/`)
+  .filter(
+    (p) => !process.env.PAGES || process.env.PAGES.split(',').some((only) => p.includes(only)),
+  );
 
 const server = Bun.serve({
   port: 0,
@@ -73,8 +65,8 @@ function watch(page: Page, state: string): void {
 await mkdir(shots, { recursive: true });
 const browser = await chromium.launch();
 
-// Every page, every language: day, night, and a phone.
-for (const lang of LOCALES) {
+// Every page, every language: day, night, and a phone. ONLY=behavior skips this, to run the rest quickly.
+for (const lang of process.env.ONLY === 'behavior' ? [] : LOCALES) {
   for (const path of PAGES) {
     const name = `${lang}-${path.replaceAll('/', '-').replace(/-$/, '')}`;
     for (const mode of ['light', 'dark'] as const) {
@@ -125,21 +117,23 @@ for (const lang of LOCALES) {
 {
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
   await page.goto(`${origin}/en/components/notice/`);
-  await page.click('#n-close .close');
+  await page.click('#ex-n-fechar .close');
   await page.waitForTimeout(700);
-  check(await page.locator('#n-close').isHidden(), 'notice: the close button did not close it');
-  await page.click('[data-notice-again="n-close"]');
-  check(await page.locator('#n-close').isVisible(), 'notice: show again did not bring it back');
-  await page.locator('#n-time').scrollIntoViewIfNeeded();
+  check(await page.locator('#ex-n-fechar').isHidden(), 'notice: the close button did not close it');
+  await page.click('[data-notice-show="ex-n-fechar"]');
+  check(await page.locator('#ex-n-fechar').isVisible(), 'notice: show again did not bring it back');
+  await page.locator('#ex-n-tempo').scrollIntoViewIfNeeded();
   await page.mouse.move(0, 0);
   await page.waitForTimeout(9000);
-  check(await page.locator('#n-time').isHidden(), 'notice: the timed notice did not go away');
-  await page.click('[data-notice-again="n-time"]');
+  check(await page.locator('#ex-n-tempo').isHidden(), 'notice: the timed notice did not go away');
+  await page.click('[data-notice-show="ex-n-tempo"]');
   await page.waitForTimeout(300);
-  await page.evaluate(() => document.getElementById('n-time')?.classList.remove('feitio-place'));
-  await page.click('[data-notice-again="n-time"]');
+  await page.evaluate(() =>
+    document.getElementById('ex-n-tempo')?.classList.remove('feitio-place'),
+  );
+  await page.click('[data-notice-show="ex-n-tempo"]');
   const placedAgain = await page
-    .locator('#n-time')
+    .locator('#ex-n-tempo')
     .evaluate((n) => n.classList.contains('feitio-place'));
   check(!placedAgain, 'notice: showing it again while on screen landed it again');
   await page.close();

@@ -81,6 +81,16 @@ export const GROUPS: [GroupKey, Words][] = [
     ),
   ],
   ['docs', w('Documentação', 'Documentation', 'Documentación', 'Documentation', 'Dokumentation')],
+  [
+    'templates',
+    w(
+      'Modelos de página',
+      'Page templates',
+      'Plantillas de página',
+      'Modèles de page',
+      'Seitenvorlagen',
+    ),
+  ],
 ];
 
 /** The section titles every component page shares. */

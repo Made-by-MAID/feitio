@@ -1,9 +1,15 @@
 ---
-/** The page of every component documented by data (content/components/): one template, five languages. */
-import Example from '../../../components/Example.astro';
-import { COMPONENTS } from '../../../content/components/index.ts';
-import type { ComponentDoc } from '../../../content/components/types.ts';
+/**
+ * A component's page, from the approved drafts: the Playground first (the component itself, with
+ * controls when it has props worth trying), then the sections that make sense for it, in the
+ * standard order (when to use, when not, examples, anatomy, states, do and don't, writing, where it
+ * goes, accessibility, attributes).
+ */
+import Playground from '../../../components/Playground.astro';
+import { COMPONENTS, type DraftComponent } from '../../../content/components/index.ts';
+import { w } from '../../../content/components/types.ts';
 import { componentsNav } from '../../../content/nav.ts';
+import { playgroundFor } from '../../../content/playgrounds.ts';
 import { LOCALES, type Locale, WORDS } from '../../../i18n/ui.ts';
 import DocPage from '../../../layouts/DocPage.astro';
 
@@ -12,35 +18,61 @@ export function getStaticPaths() {
     COMPONENTS.map((doc) => ({ params: { lang, slug: doc.slug }, props: { doc } })),
   );
 }
-const { doc } = Astro.props as { doc: ComponentDoc };
+const { doc } = Astro.props as { doc: DraftComponent };
 const lang = Astro.params.lang as Locale;
 const base = import.meta.env.BASE_URL;
 const sprite = `${base}feitio/icons/sprite.svg`;
-const rendered = await Promise.all(
-  doc.sections.map(async (s) =>
-    s.kind === 'examples' ? Promise.all(s.examples.map((e) => e.render(lang, sprite))) : [],
-  ),
+const words = WORDS[lang];
+const fill = (html: string) => html.replaceAll('@@BASE@@', base).replaceAll('@@LANG@@', lang);
+const sections = doc.sections.map((s) => ({ ...s, body: fill(s.html[lang]) }));
+
+// The Playground: the component's own combinations when it has them; otherwise its first example, alone.
+const setup = await playgroundFor(doc.slug, lang, sprite);
+const firstExample =
+  sections
+    .find((s) => s.id === 'examples')
+    ?.body.match(/<div class="live"[^>]*>([\s\S]*?)<\/div>\s*<div class="about">/)?.[1] ?? '';
+// The copy gets its own ids (and references), so no id or label appears twice on the page.
+const copied = firstExample.trim().replace(
+  /\b(id|for|aria-labelledby|aria-describedby|aria-controls|popovertarget|data-open-dialog)="([^"]+)"/g,
+  (_m, attr: string, value: string) =>
+    `${attr}="${value
+      .split(' ')
+      .map((v) => `pg-${v}`)
+      .join(' ')}"`,
 );
-const toc = doc.sections.map((s) => ({
-  id: s.id,
-  text: s.title[lang],
-  children:
-    s.kind === 'examples' ? s.examples.map((e) => ({ id: e.id, text: e.title[lang] })) : undefined,
-}));
+// It is an inert illustration: no landmark in it may count as one of the page's regions.
+const plain = copied
+  .replace(/\srole="region"/g, '')
+  .replace(/<nav\b/g, '<div')
+  .replace(/<\/nav>/g, '</div>')
+  .replace(/<(aside|section)\b/g, '<div')
+  .replace(/<\/(aside|section)>/g, '</div>');
+const playground = setup ?? { controls: [], combos: { '': plain }, text: '', placeholder: '' };
+const PG = w('Playground', 'Playground', 'Playground', 'Playground', 'Playground');
+const TEXT = w('Texto', 'Text', 'Texto', 'Texte', 'Text');
+const BG = w('Fundo', 'Background', 'Fondo', 'Fond', 'Hintergrund');
+
+const toc = [
+  { id: 'playground', text: PG[lang] },
+  ...sections.map((s) => ({
+    id: s.id,
+    text: s.title[lang],
+    children: [...s.body.matchAll(/<h3 id="([^"]+)">([\s\S]*?)<\/h3>/g)].map((m) => ({
+      id: m[1] ?? '',
+      text: (m[2] ?? '').replace(/<[^>]+>/g, ''),
+    })),
+  })),
+].map((t) => ({ ...t, children: t.children?.length ? t.children : undefined }));
 ---
-<DocPage lang={lang} title={doc.name} area="comp" nav={componentsNav(lang, base, doc.name)} toc={toc} lede={doc.lede[lang]} searchArea={WORDS[lang].areas.comp}>
+<DocPage lang={lang} title={doc.name} area="comp" nav={componentsNav(lang, base, doc.name)} toc={toc} lede={doc.lede[lang]} searchArea={words.areas.comp}>
+  <h2 id="playground">{PG[lang]}</h2>
+  <Playground lang={lang} controls={playground.controls} combos={playground.combos} placeholder={playground.placeholder} text={playground.text} textLabel={setup?.placeholder ? TEXT[lang] : undefined} modeLabel={BG[lang]} copy={!setup} />
   {
-    doc.sections.map((s, i) => (
+    sections.map((s) => (
       <>
         <h2 id={s.id}>{s.title[lang]}</h2>
-        {s.kind === 'list' && <ul>{s.items.map((item) => <li set:html={item[lang]} />)}</ul>}
-        {s.kind === 'text' && <p set:html={s.body[lang]} />}
-        {s.kind === 'examples' && (
-          <div class="feitio-stack" data-gap="4">
-            {s.examples.map((e, j) => <Example id={e.id} title={e.title[lang]} description={e.description[lang]} html={rendered[i]?.[j] ?? ''} lang={lang} />)}
-          </div>
-        )}
-        {s.kind === 'attrs' && <dl class="attrs">{s.attrs.map(([name, what]) => <div><dt><code>{name}</code></dt><dd>{what[lang]}</dd></div>)}</dl>}
+        <Fragment set:html={s.body} />
       </>
     ))
   }
