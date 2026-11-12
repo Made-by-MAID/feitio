@@ -314,6 +314,69 @@
     overflow: hidden;
     animation: feitio-notice-out var(--feitio-duration-change) var(--feitio-easing-change) forwards;
   }
+
+  /* Menu: a button with a short list under it, lifted paper that arrives as placed paper. The
+     current item carries the check; the list never passes the window (the script places it). */
+  .feitio-menu-list {
+    position: fixed;
+    inset: auto;
+    margin: 0;
+    min-inline-size: 11rem;
+    max-inline-size: calc(100vw - var(--feitio-space-4));
+    padding: var(--feitio-space-1);
+    list-style: none;
+    color: var(--feitio-color-text);
+    background: var(--feitio-color-surface-top);
+    border: var(--feitio-border-width) solid var(--feitio-color-text);
+    border-radius: var(--feitio-radius);
+    box-shadow: var(--feitio-shadow-lift);
+    font: var(--feitio-font-size-small) var(--feitio-font-ui);
+  }
+  .feitio-menu-list:popover-open {
+    animation: feitio-place var(--feitio-duration-place) var(--feitio-easing-place);
+  }
+  .feitio-menu-list a,
+  .feitio-menu-list button {
+    display: grid;
+    grid-template-columns: 1.2em minmax(0, 1fr);
+    align-items: center;
+    gap: var(--feitio-space-2);
+    inline-size: 100%;
+    min-block-size: var(--feitio-control-min-size-small);
+    padding: 0 var(--feitio-space-3) 0 var(--feitio-space-2);
+    color: inherit;
+    text-align: start;
+    text-decoration: none;
+    font: inherit;
+    background: transparent;
+    border: var(--feitio-border-width) solid transparent;
+    border-radius: var(--feitio-radius);
+    cursor: pointer;
+  }
+  .feitio-menu-list a > span,
+  .feitio-menu-list button {
+    grid-column: 2;
+  }
+  .feitio-menu-list a:hover,
+  .feitio-menu-list button:hover,
+  .feitio-menu-list a:focus-visible,
+  .feitio-menu-list button:focus-visible {
+    background: var(--feitio-color-surface);
+    border-color: var(--feitio-color-text);
+    outline: none;
+  }
+  .feitio-menu-list a[aria-current="true"] {
+    font-weight: var(--feitio-font-weight-bold);
+  }
+  .feitio-menu .feitio-menu-list .feitio-icon {
+    grid-column: 1;
+    inline-size: 1em;
+    block-size: 1em;
+  }
+  .feitio-menu .feitio-button > .feitio-icon {
+    inline-size: 0.9em;
+    block-size: 0.9em;
+  }
 }
 
 @keyframes feitio-notice-out {

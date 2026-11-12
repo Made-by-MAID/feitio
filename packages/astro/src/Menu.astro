@@ -1,0 +1,47 @@
+---
+/**
+ * Menu: a button that opens a short list of links or actions under it, for when there are too many
+ * options to show side by side (the language, the extra actions of a row). The list is lifted paper
+ * and opens with the popover API: Esc and a click outside close it, the arrows move through it.
+ * Each item: { text, href?, current?, lang? }; with href it is a link, without it a button.
+ */
+import Icon from './Icon.astro';
+
+type Item = { text: string; href?: string; current?: boolean; lang?: string; hreflang?: string };
+interface Props {
+  /** What the button says: the current choice, or what the menu is for. */
+  label: string;
+  /**
+   * Words screen readers hear after the label, when it is short ("PT" + ", idioma: Português"). They
+   * come after the visible text, never instead of it, so a voice command can still say "PT".
+   */
+  hint?: string;
+  items: Item[];
+  id: string;
+  size?: 'small';
+  sprite?: string;
+}
+const { label, hint, items, id, size, sprite } = Astro.props;
+---
+<span class="feitio-menu">
+  <button type="button" class="feitio-button" data-size={size} popovertarget={`${id}-list`} aria-haspopup="true" aria-expanded="false">{label}{hint && <span class="feitio-visually-hidden">{hint}</span>}<Icon name="chevron-down" sprite={sprite} /></button>
+  <ul class="feitio-menu-list" id={`${id}-list`} popover>
+    {
+      items.map((item) =>
+        item.href ? (
+          <li><a href={item.href} lang={item.lang} hreflang={item.hreflang} aria-current={item.current ? 'true' : undefined}>{item.current && <Icon name="check" sprite={sprite} />}<span>{item.text}</span></a></li>
+        ) : (
+          <li><button type="button">{item.text}</button></li>
+        ),
+      )
+    }
+  </ul>
+</span>
+<script>
+  import { menus } from '@feitio/vanilla/menu/source';
+  const page = window as Window & { feitioMenus?: boolean };
+  if (!page.feitioMenus) {
+    page.feitioMenus = true;
+    menus(window);
+  }
+</script>

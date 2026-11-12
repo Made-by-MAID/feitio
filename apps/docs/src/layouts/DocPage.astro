@@ -5,11 +5,12 @@
  * themselves. Header, Drawer, search and Footer come with it.
  */
 import Icon from '@feitio/astro/Icon.astro';
+import Menu from '@feitio/astro/Menu.astro';
 import Logo from '../components/Logo.astro';
 import '@feitio/core/css/fonts.css';
 import '@feitio/core/css/feitio.css';
 import '../styles/site.css';
-import { HTML_LANG, LOCALES, type Locale, pathIn, WORDS } from '../i18n/ui.ts';
+import { HTML_LANG, LANG_NATIVE, LOCALES, type Locale, pathIn, WORDS } from '../i18n/ui.ts';
 
 export type TocItem = { id: string; text: string; children?: { id: string; text: string }[] };
 export type NavGroup = {
@@ -66,9 +67,7 @@ const GH =
   </nav>
   <div class="tools">
     <button type="button" class="feitio-button search-open" data-size="small" data-open-search><Icon name="search" sprite={sprite} />{words.search}<kbd class="wide-only">/</kbd></button>
-    <nav class="feitio-segmented wide-only" aria-label={words.language}>
-      {LOCALES.map((l) => <a href={pathIn(l, here, base)} hreflang={HTML_LANG[l]} aria-current={l === lang ? 'true' : undefined}>{langNames[l]}</a>)}
-    </nav>
+    <span class="wide-only"><Menu id="lang" size="small" label={langNames[lang]} hint={`, ${words.language}: ${LANG_NATIVE[lang]}`} sprite={sprite} items={LOCALES.map((l) => ({ text: LANG_NATIVE[l], href: pathIn(l, here, base), current: l === lang, lang: HTML_LANG[l], hreflang: HTML_LANG[l] }))} /></span>
     <div class="feitio-segmented wide-only" role="group" aria-label={words.light}><button type="button" data-mode-set="" aria-pressed="true">{words.auto}</button><button type="button" data-mode-set="light" aria-pressed="false">{words.day}</button><button type="button" data-mode-set="dark" aria-pressed="false">{words.night}</button></div>
     <a class="brand-mark wide-only" href="https://github.com/Made-by-MAID/feitio" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d={GH} /></svg></a>
     <button type="button" class="feitio-button menu" data-size="small" popovertarget="site-menu" aria-controls="site-menu">{words.menu}<Icon name="menu" sprite={sprite} /></button>
@@ -79,7 +78,7 @@ const GH =
   <div class="drawer-body">
     <div class="feitio-nav"><div class="group"><ul><li><a href={`${base}${lang}/`}>{words.home}</a></li>{areas.map((a) => <li><a href={a.href}>{words.areas[a.key]}</a></li>)}</ul></div></div>
     <div class="choices">
-      <div><span>{words.language}</span><nav class="feitio-segmented" aria-label={words.language}>{LOCALES.map((l) => <a href={pathIn(l, here, base)} hreflang={HTML_LANG[l]} aria-current={l === lang ? 'true' : undefined}>{langNames[l]}</a>)}</nav></div>
+      <div class="langs"><span>{words.language}</span><ul class="feitio-nav-plain">{LOCALES.map((l) => <li><a href={pathIn(l, here, base)} lang={HTML_LANG[l]} hreflang={HTML_LANG[l]} aria-current={l === lang ? 'page' : undefined}>{LANG_NATIVE[l]}</a></li>)}</ul></div>
       <div><span>{words.light}</span><span class="feitio-segmented" role="group" aria-label={words.light}><button type="button" data-mode-set="" aria-pressed="true">{words.auto}</button><button type="button" data-mode-set="light" aria-pressed="false">{words.day}</button><button type="button" data-mode-set="dark" aria-pressed="false">{words.night}</button></span></div>
     </div>
   </div>

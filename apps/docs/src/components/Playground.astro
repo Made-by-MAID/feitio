@@ -1,0 +1,91 @@
+---
+/**
+ * Playground: the component live, with controls for its props and its code underneath, changing
+ * together. Every combination of the listed props is rendered at build time by the component itself
+ * (renderHtml), so what is shown is always real HTML; the text field only swaps the placeholder.
+ */
+import { type Locale, WORDS } from '../i18n/ui.ts';
+import CodeBlock from './CodeBlock.astro';
+
+export type Control = { name: string; label: string; options: { value: string; label: string }[] };
+interface Props {
+  lang: Locale;
+  controls: Control[];
+  /** The HTML of each combination, keyed by the values joined with "|", in the controls' order. */
+  combos: Record<string, string>;
+  /** The placeholder the text field replaces, and the text it starts with. */
+  placeholder: string;
+  text: string;
+  textLabel: string;
+  modeLabel: string;
+}
+const { lang, controls, combos, placeholder, text, textLabel, modeLabel } = Astro.props;
+const words = WORDS[lang];
+const first = controls.map((c) => c.options[0]?.value ?? '').join('|');
+const html = (combos[first] ?? '').replaceAll(placeholder, text);
+---
+<div class="playground" data-playground data-placeholder={placeholder}>
+  <div class="stage" data-theme="casa" data-mode="light"><div class="live" set:html={html} /></div>
+  <div class="controls">
+    {
+      controls.map((c) => (
+        <div class="control">
+          <span class="control-label">{c.label}</span>
+          <div class="feitio-segmented" role="group" aria-label={c.label}>
+            {c.options.map((o, i) => (
+              <button type="button" data-prop={c.name} data-value={o.value} aria-pressed={i === 0 ? 'true' : 'false'}>{o.label}</button>
+            ))}
+          </div>
+        </div>
+      ))
+    }
+    <div class="control">
+      <label class="control-label" for="pg-text">{textLabel}</label>
+      <input class="feitio-input" id="pg-text" value={text} data-text />
+    </div>
+    <div class="control">
+      <span class="control-label">{modeLabel}</span>
+      <div class="feitio-segmented" role="group" aria-label={modeLabel}>
+        <button type="button" data-stage-mode="light" aria-pressed="true">{words.day}</button>
+        <button type="button" data-stage-mode="dark" aria-pressed="false">{words.night}</button>
+      </div>
+    </div>
+  </div>
+  <CodeBlock code={html} lang={lang} />
+  <script type="application/json" data-combos set:html={JSON.stringify(combos)} />
+</div>
+<script>
+  type Highlight = (source: string) => string;
+  for (const pg of document.querySelectorAll<HTMLElement>('[data-playground]')) {
+    const combos = JSON.parse(pg.querySelector('[data-combos]')?.textContent ?? '{}') as Record<string, string>;
+    const placeholder = pg.dataset.placeholder ?? '';
+    const live = pg.querySelector<HTMLElement>('.live');
+    const code = pg.querySelector<HTMLElement>('.feitio-code pre code');
+    const field = pg.querySelector<HTMLInputElement>('[data-text]');
+    const stage = pg.querySelector<HTMLElement>('.stage');
+    const groups = [...pg.querySelectorAll<HTMLElement>('.controls .feitio-segmented')].filter((g) => g.querySelector('[data-prop]'));
+    const escape = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    function update(): void {
+      const key = groups.map((g) => g.querySelector<HTMLElement>('[aria-pressed="true"]')?.dataset.value ?? '').join('|');
+      const html = (combos[key] ?? '').replaceAll(placeholder, escape(field?.value || ' '));
+      if (live) live.innerHTML = html;
+      if (code) {
+        const highlight = (window as Window & { highlightHtml?: Highlight }).highlightHtml;
+        code.innerHTML = highlight ? highlight(html) : escape(html);
+      }
+    }
+    for (const b of pg.querySelectorAll<HTMLElement>('[data-prop]')) {
+      b.addEventListener('click', () => {
+        for (const o of b.parentElement?.querySelectorAll('button') ?? []) o.setAttribute('aria-pressed', String(o === b));
+        update();
+      });
+    }
+    for (const b of pg.querySelectorAll<HTMLElement>('[data-stage-mode]')) {
+      b.addEventListener('click', () => {
+        for (const o of b.parentElement?.querySelectorAll('button') ?? []) o.setAttribute('aria-pressed', String(o === b));
+        stage?.setAttribute('data-mode', b.dataset.stageMode ?? 'light');
+      });
+    }
+    field?.addEventListener('input', update);
+  }
+</script>

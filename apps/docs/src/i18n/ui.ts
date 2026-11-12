@@ -2,6 +2,15 @@
 export const LOCALES = ['pt', 'en', 'es', 'fr', 'de'] as const;
 export type Locale = (typeof LOCALES)[number];
 
+/** Each language in its own words, as the language picker lists it. */
+export const LANG_NATIVE: Record<Locale, string> = {
+  pt: 'Português',
+  en: 'English',
+  es: 'Español',
+  fr: 'Français',
+  de: 'Deutsch',
+};
+
 /** The html lang of each language. */
 export const HTML_LANG: Record<Locale, string> = {
   pt: 'pt-BR',

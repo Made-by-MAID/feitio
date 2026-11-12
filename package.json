@@ -21,7 +21,8 @@
     "changeset": "changeset",
     "version": "changeset version && bun install",
     "docs:dev": "bun run --filter '@feitio/docs' dev",
-    "docs:build": "bun run --filter '@feitio/docs' build"
+    "docs:build": "bun run --filter '@feitio/docs' build",
+    "test:docs": "bun run docs:build && bun apps/docs/tests/run.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.3",

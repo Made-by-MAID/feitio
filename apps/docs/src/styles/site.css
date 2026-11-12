@@ -1232,3 +1232,82 @@ main[tabindex="-1"]:focus {
 .live-stack > .feitio-button {
   justify-self: center;
 }
+
+/* No Drawer, os idiomas viram uma lista simples, um embaixo do outro. */
+.site-drawer .choices .langs {
+  display: grid;
+  gap: var(--feitio-space-2);
+  align-items: start;
+}
+.feitio-nav-plain {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--feitio-space-1);
+}
+.feitio-nav-plain a {
+  display: flex;
+  align-items: center;
+  min-block-size: 36px;
+  padding: 0 var(--feitio-space-3);
+  color: var(--feitio-color-text);
+  text-decoration: none;
+  border: var(--feitio-border-width) solid transparent;
+  border-radius: var(--feitio-radius);
+}
+.feitio-nav-plain a[aria-current="page"] {
+  font-weight: var(--feitio-font-weight-bold);
+  background: var(--feitio-color-surface-top);
+  border-color: var(--feitio-color-text);
+}
+.site-drawer .choices .langs {
+  grid-template-columns: minmax(0, 1fr);
+  justify-content: stretch;
+}
+
+/* Playground: o palco em cima (com dia e noite próprios), os controles e o código embaixo. */
+.playground {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  border: var(--feitio-border-width) solid var(--feitio-color-line);
+  border-radius: var(--feitio-radius);
+  overflow: hidden;
+}
+.playground .stage {
+  display: grid;
+  place-items: center;
+  min-block-size: 10rem;
+  padding: var(--feitio-space-5) var(--feitio-space-4);
+  color: var(--feitio-color-text);
+  background: var(--feitio-color-surface);
+  border-block-end: var(--feitio-border-width) solid var(--feitio-color-line);
+}
+.playground .live {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--feitio-space-3);
+}
+.playground .controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--feitio-space-4);
+  padding: var(--feitio-space-4);
+  border-block-end: var(--feitio-border-width) solid var(--feitio-color-line);
+  font: var(--feitio-font-size-small) var(--feitio-font-ui);
+}
+.playground .control {
+  display: grid;
+  gap: var(--feitio-space-2);
+  align-content: start;
+}
+.playground .control-label {
+  font-weight: var(--feitio-font-weight-bold);
+}
+.playground .control .feitio-input {
+  min-inline-size: 12rem;
+}
+.playground > .feitio-code {
+  border-radius: 0;
+}

@@ -14,6 +14,18 @@ type ButtonPage = {
   a11y: [string, string[]];
   attrs: [string, [string, string][]];
   area: string;
+  /** Playground: title, variant, its three names, size, its three names, state, its two names, text, background. */
+  pg: [
+    string,
+    string,
+    [string, string, string],
+    string,
+    [string, string, string],
+    string,
+    [string, string],
+    string,
+    string,
+  ];
 };
 
 export const BUTTON: Record<Locale, ButtonPage> = {
@@ -68,6 +80,17 @@ export const BUTTON: Record<Locale, ButtonPage> = {
       ],
     ],
     area: 'Componentes',
+    pg: [
+      'Playground',
+      'Variante',
+      ['Comum', 'Principal', 'Perigo'],
+      'Tamanho',
+      ['Normal', 'Pequeno', 'Grande'],
+      'Estado',
+      ['Ativo', 'Desativado'],
+      'Texto',
+      'Fundo',
+    ],
   },
   en: {
     lede: 'Performs an action on the screen it is on. To go to another page, it is a link.',
@@ -120,6 +143,17 @@ export const BUTTON: Record<Locale, ButtonPage> = {
       ],
     ],
     area: 'Components',
+    pg: [
+      'Playground',
+      'Variant',
+      ['Default', 'Primary', 'Danger'],
+      'Size',
+      ['Regular', 'Small', 'Large'],
+      'State',
+      ['Enabled', 'Disabled'],
+      'Text',
+      'Background',
+    ],
   },
   es: {
     lede: 'Hace una acción en la pantalla donde está. Para ir a otra página, es un enlace.',
@@ -172,6 +206,17 @@ export const BUTTON: Record<Locale, ButtonPage> = {
       ],
     ],
     area: 'Componentes',
+    pg: [
+      'Playground',
+      'Variante',
+      ['Común', 'Principal', 'Peligro'],
+      'Tamaño',
+      ['Normal', 'Pequeño', 'Grande'],
+      'Estado',
+      ['Activo', 'Desactivado'],
+      'Texto',
+      'Fondo',
+    ],
   },
   fr: {
     lede: 'Effectue une action sur l’écran où il se trouve. Pour aller vers une autre page, c’est un lien.',
@@ -227,6 +272,17 @@ export const BUTTON: Record<Locale, ButtonPage> = {
       ],
     ],
     area: 'Composants',
+    pg: [
+      'Playground',
+      'Variante',
+      ['Courant', 'Principal', 'Danger'],
+      'Taille',
+      ['Normal', 'Petit', 'Grand'],
+      'État',
+      ['Actif', 'Désactivé'],
+      'Texte',
+      'Fond',
+    ],
   },
   de: {
     lede: 'Führt eine Aktion auf dem Bildschirm aus, auf dem er steht. Um zu einer anderen Seite zu gehen, ist es ein Link.',
@@ -282,5 +338,16 @@ export const BUTTON: Record<Locale, ButtonPage> = {
       ],
     ],
     area: 'Komponenten',
+    pg: [
+      'Playground',
+      'Variante',
+      ['Standard', 'Primär', 'Gefahr'],
+      'Größe',
+      ['Normal', 'Klein', 'Groß'],
+      'Zustand',
+      ['Aktiv', 'Deaktiviert'],
+      'Text',
+      'Hintergrund',
+    ],
   },
 };

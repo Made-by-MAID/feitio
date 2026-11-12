@@ -1,3 +1,4 @@
 public/feitio/
 dist/
 .astro/
+tests/screenshots/

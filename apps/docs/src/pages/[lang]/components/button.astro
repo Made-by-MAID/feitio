@@ -1,6 +1,7 @@
 ---
 import Button from '@feitio/astro/Button.astro';
 import Example from '../../../components/Example.astro';
+import Playground from '../../../components/Playground.astro';
 import { BUTTON } from '../../../content/button.ts';
 import { componentsNav } from '../../../content/nav.ts';
 import { LOCALES, type Locale } from '../../../i18n/ui.ts';
@@ -36,7 +37,39 @@ const examples = [
     html: await renderHtml(Button, { href: `${base}${lang}/dev/`, variant: 'primary' }, t.link[2]),
   },
 ];
+const PH = '__TEXT__';
+const variants = ['', 'primary', 'danger'];
+const sizes = ['', 'small', 'large'];
+const states = ['', 'disabled'];
+const combos: Record<string, string> = {};
+for (const v of variants)
+  for (const z of sizes)
+    for (const d of states)
+      combos[`${v}|${z}|${d}`] = await renderHtml(
+        Button,
+        { variant: v || undefined, size: z || undefined, disabled: d ? true : undefined },
+        PH,
+      );
+const [pgTitle, pgVariant, vNames, pgSize, zNames, pgState, dNames, pgText, pgBg] = t.pg;
+const controls = [
+  {
+    name: 'variant',
+    label: pgVariant,
+    options: variants.map((v, i) => ({ value: v, label: vNames[i] ?? v })),
+  },
+  {
+    name: 'size',
+    label: pgSize,
+    options: sizes.map((z, i) => ({ value: z, label: zNames[i] ?? z })),
+  },
+  {
+    name: 'state',
+    label: pgState,
+    options: states.map((d, i) => ({ value: d, label: dNames[i] ?? d })),
+  },
+];
 const toc = [
+  { id: 'playground', text: pgTitle },
   { id: 'when', text: t.when[0] },
   { id: 'when-not', text: t.whenNot[0] },
   {
@@ -49,6 +82,8 @@ const toc = [
 ];
 ---
 <DocPage lang={lang} title="Button" area="comp" nav={componentsNav(lang, base, 'Button')} toc={toc} lede={t.lede} searchArea={t.area}>
+  <h2 id="playground">{pgTitle}</h2>
+  <Playground lang={lang} controls={controls} combos={combos} placeholder={PH} text={t.primary[2]} textLabel={pgText} modeLabel={pgBg} />
   <h2 id="when">{t.when[0]}</h2>
   <ul>{t.when[1].map((i) => <li set:html={i} />)}</ul>
   <h2 id="when-not">{t.whenNot[0]}</h2>

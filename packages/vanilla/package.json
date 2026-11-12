@@ -17,11 +17,13 @@
   "exports": {
     ".": "./dist/feitio.js",
     "./notice": "./dist/notice.js",
-    "./notice/source": "./src/notice/index.ts"
+    "./notice/source": "./src/notice/index.ts",
+    "./menu": "./dist/menu.js",
+    "./menu/source": "./src/menu/index.ts"
   },
   "scripts": {
-    "build": "bun build src/index.ts src/notice/index.ts --outdir dist --format esm --entry-naming [dir]/[name].[ext] --root src && bun run rename",
-    "rename": "mv dist/index.js dist/feitio.js && mv dist/notice/index.js dist/notice.js && rmdir dist/notice"
+    "build": "bun build src/index.ts src/notice/index.ts src/menu/index.ts --outdir dist --format esm --entry-naming [dir]/[name].[ext] --root src && bun run rename",
+    "rename": "mv dist/index.js dist/feitio.js && mv dist/notice/index.js dist/notice.js && mv dist/menu/index.js dist/menu.js && rmdir dist/notice dist/menu"
   },
   "dependencies": {
     "@feitio/core": "workspace:*"
