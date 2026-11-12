@@ -24,7 +24,7 @@ jobs:
           path: ~/.bun/install/cache
           key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
       - run: bun install --frozen-lockfile
-      # Style, types and every test of every package (contrast, icons, the Notice...).
+      # Style, types and every test of every package (contrast, icons, the Notice, the Menu...).
       - run: bun run check
       # Every package builds, as it will be published.
       - run: bun run --filter '@feitio/*' build
@@ -52,4 +52,27 @@ jobs:
         with:
           name: showcase-screenshots
           path: e2e/screenshots/
+          if-no-files-found: ignore
+
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.4
+      - uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+      - run: bun install --frozen-lockfile
+      - run: bunx playwright install --with-deps chromium
+      # The docs site, built and used in a real browser: every page in every language (axe by day
+      # and at night, no sideways scroll on a phone), and each component's behavior.
+      - run: bun run test:docs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: docs-screenshots
+          path: apps/docs/tests/screenshots/
           if-no-files-found: ignore
