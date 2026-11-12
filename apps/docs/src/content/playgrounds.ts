@@ -1,14 +1,20 @@
 import Anchor from '@feitio/astro/Anchor.astro';
 import AppShell from '@feitio/astro/AppShell.astro';
 import BackToTop from '@feitio/astro/BackToTop.astro';
+import Block from '@feitio/astro/Block.astro';
 import Breadcrumbs from '@feitio/astro/Breadcrumbs.astro';
 import Button from '@feitio/astro/Button.astro';
 import Checkbox from '@feitio/astro/Checkbox.astro';
+import CodeBlock from '@feitio/astro/CodeBlock.astro';
 import Details from '@feitio/astro/Details.astro';
+import Dialog from '@feitio/astro/Dialog.astro';
 import Divider from '@feitio/astro/Divider.astro';
+import DoDont from '@feitio/astro/DoDont.astro';
+import Drawer from '@feitio/astro/Drawer.astro';
 import EmptyState from '@feitio/astro/EmptyState.astro';
 import ErrorMessage from '@feitio/astro/ErrorMessage.astro';
 import ErrorSummary from '@feitio/astro/ErrorSummary.astro';
+import Example from '@feitio/astro/Example.astro';
 import Field from '@feitio/astro/Field.astro';
 import Fieldset from '@feitio/astro/Fieldset.astro';
 import FilterField from '@feitio/astro/FilterField.astro';
@@ -20,6 +26,7 @@ import Icon from '@feitio/astro/Icon.astro';
 import Inline from '@feitio/astro/Inline.astro';
 import Kbd from '@feitio/astro/Kbd.astro';
 import Link from '@feitio/astro/Link.astro';
+import LinkCard from '@feitio/astro/LinkCard.astro';
 import Nav from '@feitio/astro/Nav.astro';
 import Notice from '@feitio/astro/Notice.astro';
 import Pagination from '@feitio/astro/Pagination.astro';
@@ -28,16 +35,20 @@ import ScrollFade from '@feitio/astro/ScrollFade.astro';
 import Search from '@feitio/astro/Search.astro';
 import SegmentedControl from '@feitio/astro/SegmentedControl.astro';
 import Select from '@feitio/astro/Select.astro';
+import SkipLink from '@feitio/astro/SkipLink.astro';
 import Stack from '@feitio/astro/Stack.astro';
 import StatusOverlay from '@feitio/astro/StatusOverlay.astro';
 import SummaryList from '@feitio/astro/SummaryList.astro';
+import Swatch from '@feitio/astro/Swatch.astro';
 import Switch from '@feitio/astro/Switch.astro';
 import Table from '@feitio/astro/Table.astro';
 import Tag from '@feitio/astro/Tag.astro';
 import TaskList from '@feitio/astro/TaskList.astro';
+import Text from '@feitio/astro/Text.astro';
 import Textarea from '@feitio/astro/Textarea.astro';
 import TextInput from '@feitio/astro/TextInput.astro';
 import TimeInput from '@feitio/astro/TimeInput.astro';
+import VisuallyHidden from '@feitio/astro/VisuallyHidden.astro';
 import type { Control } from '../components/Playground.astro';
 import type { Locale } from '../i18n/ui.ts';
 import { renderHtml } from '../lib/render.ts';
@@ -1856,6 +1867,428 @@ export async function playgroundFor(
         async ([u]) =>
           `<div class="feitio-app-frame" style="block-size: 22rem; inline-size: min(100%, 24rem); overflow-y: auto; border: var(--feitio-border-width) solid var(--feitio-color-line)">${await renderHtml(AppShell, { id: 'pg-app', brand: words('Produto', 'Product', 'Producto', 'Produit', 'Produkt'), nav: NAVG(true, true), user: u ? 'Ana' : undefined, signOut: u ? { text: words('Sair', 'Sign out', 'Salir', 'Se déconnecter', 'Abmelden'), href: '#playground' } : undefined, closeLabel: words('Fechar', 'Close', 'Cerrar', 'Fermer', 'Schließen'), topLabel: words('Topo', 'Top', 'Arriba', 'Haut', 'Nach oben'), sprite }, `<div style="padding: var(--feitio-space-4)"><h3>${words('Agendamentos', 'Schedules', 'Citas', 'Rendez-vous', 'Termine')}</h3>${LONGTEXT}</div>`)}</div>`,
       ),
+    };
+  }
+
+  if (slug === 'dialog') {
+    const del = words('Apagar', 'Delete', 'Borrar', 'Supprimer', 'Löschen');
+    return {
+      placeholder: '',
+      text: '',
+      controls: [
+        {
+          name: 'kind',
+          label: words('Tipo', 'Kind', 'Tipo', 'Type', 'Art'),
+          options: [
+            { value: '', label: words('Pergunta', 'Question', 'Pregunta', 'Question', 'Frage') },
+            { value: 'danger', label: words('Perigo', 'Danger', 'Peligro', 'Danger', 'Gefahr') },
+            {
+              value: 'word',
+              label: words(
+                'Confirmar digitando',
+                'Type to confirm',
+                'Confirmar escribiendo',
+                'Confirmer en tapant',
+                'Zum Bestätigen tippen',
+              ),
+            },
+          ],
+        },
+      ],
+      combos: await combos([['', 'danger', 'word']], async ([k]) => {
+        const opener = await renderHtml(
+          Button,
+          { variant: k ? 'danger' : undefined, 'data-open-dialog': 'pg-dialog' },
+          k === 'word'
+            ? words('Apagar tudo', 'Delete all', 'Borrar todo', 'Tout supprimer', 'Alles löschen')
+            : k
+              ? del
+              : words(
+                  'Pausar lembretes',
+                  'Pause reminders',
+                  'Pausar recordatorios',
+                  'Mettre en pause',
+                  'Erinnerungen pausieren',
+                ),
+        );
+        const dialog = await renderHtml(
+          Dialog,
+          {
+            id: 'pg-dialog',
+            title:
+              k === 'word'
+                ? words(
+                    'Apagar os 132 lembretes?',
+                    'Delete the 132 reminders?',
+                    '¿Borrar los 132 recordatorios?',
+                    'Supprimer les 132 rappels ?',
+                    'Die 132 Erinnerungen löschen?',
+                  )
+                : k
+                  ? words(
+                      'Apagar o backup?',
+                      'Delete the backup?',
+                      '¿Borrar la copia?',
+                      'Supprimer la sauvegarde ?',
+                      'Die Sicherung löschen?',
+                    )
+                  : words(
+                      'Pausar os 12 lembretes?',
+                      'Pause the 12 reminders?',
+                      '¿Pausar los 12 recordatorios?',
+                      'Mettre en pause les 12 rappels ?',
+                      'Die 12 Erinnerungen pausieren?',
+                    ),
+            action: k ? del : words('Pausar', 'Pause', 'Pausar', 'Mettre en pause', 'Pausieren'),
+            cancel: words('Cancelar', 'Cancel', 'Cancelar', 'Annuler', 'Abbrechen'),
+            danger: Boolean(k),
+            confirmWord:
+              k === 'word'
+                ? {
+                    word: words('APAGAR', 'DELETE', 'BORRAR', 'SUPPRIMER', 'LÖSCHEN'),
+                    label: words(
+                      'Digite APAGAR para confirmar',
+                      'Type DELETE to confirm',
+                      'Escribe BORRAR para confirmar',
+                      'Tapez SUPPRIMER pour confirmer',
+                      'Tippe LÖSCHEN zum Bestätigen',
+                    ),
+                  }
+                : undefined,
+          },
+          `<p>${k ? words('Não dá para desfazer.', 'This cannot be undone.', 'No se puede deshacer.', 'Impossible d’annuler.', 'Das lässt sich nicht rückgängig machen.') : words('Você pode reativá-los em Ajustes.', 'You can turn them back on in Settings.', 'Puedes reactivarlos en Ajustes.', 'Vous pouvez les réactiver dans Réglages.', 'Du kannst sie in den Einstellungen wieder einschalten.')}</p>`,
+        );
+        return `${opener}${dialog}`;
+      }),
+    };
+  }
+  if (slug === 'drawer') {
+    const sides = ['end', 'start', 'top', 'bottom'];
+    const sideNames: Record<string, string> = {
+      end: words('Direita', 'Right', 'Derecha', 'Droite', 'Rechts'),
+      start: words('Esquerda', 'Left', 'Izquierda', 'Gauche', 'Links'),
+      top: words('Topo', 'Top', 'Arriba', 'Haut', 'Oben'),
+      bottom: words('Baixo', 'Bottom', 'Abajo', 'Bas', 'Unten'),
+    };
+    return {
+      placeholder: '',
+      text: '',
+      controls: [
+        {
+          name: 'side',
+          label: words('Borda', 'Edge', 'Borde', 'Bord', 'Rand'),
+          options: sides.map((v) => ({ value: v, label: sideNames[v] ?? v })),
+        },
+        yesNo('footer', words('Rodapé', 'Footer', 'Pie', 'Pied', 'Fußzeile')),
+      ],
+      combos: await combos([sides, ['', 'yes']], async ([side, f]) => {
+        const opener = await renderHtml(
+          Button,
+          { popovertarget: 'pg-drawer' },
+          words(
+            'Abrir o painel',
+            'Open the panel',
+            'Abrir el panel',
+            'Ouvrir le panneau',
+            'Panel öffnen',
+          ),
+        );
+        const footer = f
+          ? `<div class="feitio-inline" data-gap="2">${await renderHtml(Button, { size: 'small', variant: 'primary' }, words('Aplicar', 'Apply', 'Aplicar', 'Appliquer', 'Anwenden'))}${await renderHtml(Button, { size: 'small' }, words('Limpar', 'Clear', 'Limpiar', 'Effacer', 'Zurücksetzen'))}</div>`
+          : '';
+        const body = `<p>${words('Os filtros da lista.', 'The list’s filters.', 'Los filtros de la lista.', 'Les filtres de la liste.', 'Die Filter der Liste.')}</p>`;
+        const html = await renderHtml(
+          Drawer,
+          {
+            id: 'pg-drawer',
+            title: words('Filtros', 'Filters', 'Filtros', 'Filtres', 'Filter'),
+            side,
+            closeLabel: words('Fechar', 'Close', 'Cerrar', 'Fermer', 'Schließen'),
+            sprite,
+          },
+          footer ? { default: body, footer } : body,
+        );
+        return `${opener}${html}`;
+      }),
+    };
+  }
+  if (slug === 'codeblock') {
+    const sample =
+      '<button type="button" class="feitio-button" data-variant="primary">\n  Salvar alterações\n</button>';
+    return {
+      placeholder: '',
+      text: '',
+      controls: [
+        {
+          name: 'syntax',
+          label: words('Linguagem', 'Language', 'Lenguaje', 'Langage', 'Sprache'),
+          options: [
+            { value: 'html', label: 'HTML' },
+            { value: 'shell', label: 'Shell' },
+          ],
+        },
+      ],
+      combos: await combos([['html', 'shell']], ([sy]) =>
+        renderHtml(
+          CodeBlock,
+          sy === 'shell'
+            ? {
+                code: 'bun add @feitio/core',
+                label: 'Shell',
+                syntax: 'shell',
+                copyLabel: words('Copiar', 'Copy', 'Copiar', 'Copier', 'Kopieren'),
+                copiedLabel: words('Copiado', 'Copied', 'Copiado', 'Copié', 'Kopiert'),
+              }
+            : {
+                code: sample,
+                label: 'HTML',
+                syntax: 'html',
+                copyLabel: words('Copiar', 'Copy', 'Copiar', 'Copier', 'Kopieren'),
+                copiedLabel: words('Copiado', 'Copied', 'Copiado', 'Copié', 'Kopiert'),
+              },
+        ),
+      ),
+    };
+  }
+  if (slug === 'example') {
+    const live = await renderHtml(
+      Button,
+      { variant: 'primary' },
+      words(
+        'Salvar alterações',
+        'Save changes',
+        'Guardar cambios',
+        'Enregistrer',
+        'Änderungen speichern',
+      ),
+    );
+    return {
+      placeholder: '',
+      text: '',
+      controls: [],
+      combos: {
+        '': await renderHtml(
+          Example,
+          {
+            id: 'pg-ex',
+            title: words('Principal', 'Primary', 'Principal', 'Principal', 'Primär'),
+            description: words(
+              'A ação que a tela existe para fazer.',
+              'The action the screen exists for.',
+              'La acción para la que existe la pantalla.',
+              'L’action pour laquelle l’écran existe.',
+              'Die Aktion, für die es den Bildschirm gibt.',
+            ),
+            code: live,
+            showLabel: words(
+              'Mostrar código',
+              'Show code',
+              'Mostrar código',
+              'Afficher le code',
+              'Code anzeigen',
+            ),
+            sprite,
+          },
+          live,
+        ),
+      },
+    };
+  }
+  if (slug === 'dodont') {
+    const good = await renderHtml(
+      Button,
+      { variant: 'primary' },
+      words(
+        'Salvar alterações',
+        'Save changes',
+        'Guardar cambios',
+        'Enregistrer',
+        'Änderungen speichern',
+      ),
+    );
+    const bad = await renderHtml(Button, { variant: 'primary' }, 'OK');
+    return {
+      placeholder: '',
+      text: '',
+      controls: [],
+      combos: {
+        '': await renderHtml(DoDont, {
+          doWhy: words(
+            'Verbo e objeto.',
+            'Verb and object.',
+            'Verbo y objeto.',
+            'Verbe et objet.',
+            'Verb und Objekt.',
+          ),
+          dontWhy: words(
+            '"OK" não diz o quê.',
+            '"OK" does not say what.',
+            '"OK" no dice qué.',
+            '« OK » ne dit pas quoi.',
+            '„OK“ sagt nicht, was.',
+          ),
+          doLabel: words('Faça assim', 'Do', 'Hazlo así', 'À faire', 'So geht’s'),
+          dontLabel: words('Não faça', 'Don’t', 'No lo hagas', 'À éviter', 'Nicht so'),
+          sprite,
+        }).then((h) =>
+          h
+            .replace('<div class="demo"></div>', `<div class="demo">${good}</div>`)
+            .replace('<div class="demo"></div>', `<div class="demo">${bad}</div>`),
+        ),
+      },
+    };
+  }
+  if (slug === 'swatch') {
+    const roles = ['accent', 'ok', 'warn', 'error', 'text'];
+    return {
+      placeholder: '',
+      text: '',
+      controls: [
+        {
+          name: 'role',
+          label: words('Papel', 'Role', 'Papel', 'Rôle', 'Rolle'),
+          options: roles.map((r) => ({ value: r, label: r })),
+        },
+      ],
+      combos: await combos(
+        [roles],
+        async ([r]) =>
+          `<span class="feitio-inline" data-gap="2">${await renderHtml(Swatch, { role: r })}<code>${r}</code></span>`,
+      ),
+    };
+  }
+  if (slug === 'icon') {
+    const names = [
+      'calendar',
+      'check',
+      'close',
+      'info',
+      'menu',
+      'plus',
+      'search',
+      'sliders',
+      'task',
+      'warn',
+      'new-tab',
+    ];
+    return {
+      placeholder: '',
+      text: '',
+      controls: [
+        {
+          name: 'name',
+          label: words('Ícone', 'Icon', 'Icono', 'Icône', 'Symbol'),
+          options: names.map((n) => ({ value: n, label: n })),
+        },
+      ],
+      combos: await combos(
+        [names],
+        async ([n]) =>
+          `<span class="feitio-inline" data-gap="1" style="font-size: var(--feitio-font-size-h3)">${await renderHtml(Icon, { name: n, sprite })}<span>${n}</span></span>`,
+      ),
+    };
+  }
+  if (slug === 'text') {
+    return {
+      placeholder: PH,
+      text: words(
+        'O backup roda todo domingo às 3h. Se algo falhar, o aviso chega com o motivo e o que fazer.',
+        'The backup runs every Sunday at 3. If something fails, the notice arrives with the reason and what to do.',
+        'La copia se ejecuta cada domingo a las 3. Si algo falla, el aviso llega con el motivo y qué hacer.',
+        'La sauvegarde tourne chaque dimanche à 3 h. Si quelque chose échoue, l’avis arrive avec la raison et quoi faire.',
+        'Die Sicherung läuft jeden Sonntag um 3 Uhr. Wenn etwas fehlschlägt, kommt der Hinweis mit Grund und nächstem Schritt.',
+      ),
+      controls: [],
+      combos: { '': await renderHtml(Text, {}, PH) },
+    };
+  }
+  if (slug === 'block') {
+    return {
+      placeholder: PH,
+      text: words(
+        'Backup semanal',
+        'Weekly backup',
+        'Copia semanal',
+        'Sauvegarde hebdomadaire',
+        'Wöchentliche Sicherung',
+      ),
+      controls: [
+        {
+          name: 'as',
+          label: words('Elemento', 'Element', 'Elemento', 'Élément', 'Element'),
+          options: ['div', 'section', 'article'].map((v) => ({ value: v, label: `<${v}>` })),
+        },
+      ],
+      combos: await combos(
+        [['div', 'section', 'article']],
+        async ([a]) =>
+          `<div style="inline-size: min(100%, 26rem)">${await renderHtml(Block, { as: a }, `<strong>${PH}</strong>`)}</div>`,
+      ),
+    };
+  }
+  if (slug === 'linkcard') {
+    return {
+      placeholder: PH,
+      text: words(
+        'O conceito, os fundamentos e os padrões.',
+        'The concept, the foundations and the patterns.',
+        'El concepto, los fundamentos y los patrones.',
+        'Le concept, les fondements et les modèles.',
+        'Das Konzept, die Grundlagen und die Muster.',
+      ),
+      controls: [],
+      combos: {
+        '': `<div style="inline-size: min(100%, 22rem)">${await renderHtml(LinkCard, { href: '#playground', title: words('Design', 'Design', 'Diseño', 'Design', 'Design'), sprite }, PH)}</div>`,
+      },
+    };
+  }
+  if (slug === 'visually-hidden') {
+    return {
+      placeholder: PH,
+      text: words('Filtrar', 'Filter', 'Filtrar', 'Filtrer', 'Filtern'),
+      controls: [
+        {
+          name: 'show',
+          label: words('Ver como', 'See as', 'Ver como', 'Voir comme', 'Ansehen als'),
+          options: [
+            { value: '', label: words('Quem vê', 'Sighted', 'Quien ve', 'Voyant', 'Sehend') },
+            {
+              value: 'reader',
+              label: words(
+                'Leitor de tela',
+                'Screen reader',
+                'Lector de pantalla',
+                'Lecteur d’écran',
+                'Screenreader',
+              ),
+            },
+          ],
+        },
+      ],
+      combos: await combos(
+        [['', 'reader']],
+        async ([v]) =>
+          `<label class="feitio-stack" data-gap="2" style="inline-size: min(100%, 20rem)">${v ? `<span class="pg-revealed">${PH}</span>` : await renderHtml(VisuallyHidden, {}, PH)}<input class="feitio-input" type="search" placeholder="…"></label>`,
+      ),
+    };
+  }
+  if (slug === 'skiplink') {
+    return {
+      placeholder: PH,
+      text: words(
+        'Pular para o conteúdo',
+        'Skip to content',
+        'Saltar al contenido',
+        'Aller au contenu',
+        'Zum Inhalt springen',
+      ),
+      controls: [],
+      combos: {
+        '': (await renderHtml(SkipLink, { href: '#playground' }, PH)).replace(
+          'class="feitio-skip-link"',
+          'class="feitio-skip-link" style="position: static; translate: none"',
+        ),
+      },
     };
   }
   return undefined;

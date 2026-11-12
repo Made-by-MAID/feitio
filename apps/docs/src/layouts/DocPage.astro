@@ -128,12 +128,14 @@ const GH =
 <script is:inline src={`${base}demos.js`}></script>
 <script>
   // Every page wires the Notice behavior: the examples come as HTML, not through Notice.astro.
+  import { dialogs } from '@feitio/vanilla/dialog/source';
   import { forms } from '@feitio/vanilla/forms/source';
   import { notices } from '@feitio/vanilla/notice/source';
   import { scrolls } from '@feitio/vanilla/scroll/source';
   const page = window as Window & { feitioNotice?: ReturnType<typeof notices> };
   page.feitioNotice ??= notices(window);
   forms(window);
+  dialogs(window);
   scrolls(window);
   // A playground that swaps its HTML says so; the new ScrollFade and BackToTop get wired too.
   document.addEventListener('feitio-rendered', (event) => scrolls(window, event.target as HTMLElement));

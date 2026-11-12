@@ -37,36 +37,6 @@ for (const b of document.querySelectorAll('[data-cycle-demo]'))
     for (const o of document.querySelectorAll('[data-cycle-demo]'))
       o.setAttribute('aria-pressed', String(o === b));
   });
-for (const b of document.querySelectorAll('[data-open-dialog]'))
-  b.addEventListener('click', () => {
-    const d = document.getElementById(b.dataset.openDialog);
-    d?.showModal();
-    d?.querySelector('[data-type-to-confirm] input')?.focus();
-  });
-for (const form of document.querySelectorAll('[data-type-to-confirm]')) {
-  const input = form.querySelector('input'),
-    danger = form.querySelector('[data-variant="danger"]');
-  input.addEventListener('input', () => {
-    danger.disabled = input.value.trim().toUpperCase() !== form.dataset.typeToConfirm;
-  });
-  form.closest('dialog').addEventListener('close', () => {
-    input.value = '';
-    danger.disabled = true;
-  });
-}
-for (const form of document.querySelectorAll('[data-type-to-confirm]')) {
-  const input = form.querySelector('input'),
-    danger = form.querySelector('[data-variant="danger"]');
-  input.addEventListener('input', () => {
-    danger.disabled = input.value.trim().toUpperCase() !== form.dataset.typeToConfirm;
-  });
-  form.closest('dialog').addEventListener('close', () => {
-    input.value = '';
-    danger.disabled = true;
-  });
-}
-
-// Catálogo: filtra enquanto digita e copia o código de cada peça, dizendo "Copiado" no lugar.
 for (const b of document.querySelectorAll('[data-copy]')) {
   b.addEventListener('click', async () => {
     try {
@@ -86,11 +56,6 @@ for (const b of document.querySelectorAll('[data-copy]')) {
     }, 1600);
   });
 }
-for (const b of document.querySelectorAll('[data-open-dialog]'))
-  b.addEventListener('click', () => {
-    const d = document.getElementById(b.dataset.openDialog);
-    d?.showModal();
-  });
 const waitP = (ms) => new Promise((r) => setTimeout(r, ms));
 const iconP = (n) =>
   `<svg class="feitio-icon" aria-hidden="true"><use href="../../feitio/icons/sprite.svg#feitio-${n}"/></svg>`;

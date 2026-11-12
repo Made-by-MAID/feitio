@@ -1,0 +1,25 @@
+---
+/**
+ * Dialog: a question before a big action, in the middle of the screen, closing only with an answer.
+ * The slot is the explanation. confirmWord asks for a typed word before the danger action turns on.
+ * Open it with a button carrying data-open-dialog="id" (the behavior comes from @feitio/vanilla).
+ */
+interface Props {
+  id: string;
+  title: string;
+  action: string;
+  cancel?: string;
+  danger?: boolean;
+  /** For what deletes a lot at once: the word to type, and the field's label. */
+  confirmWord?: { word: string; label: string };
+}
+const { id, title, action, cancel = 'Cancelar', danger = false, confirmWord } = Astro.props;
+---
+<dialog class="feitio-dialog" id={id} aria-labelledby={`${id}-t`} aria-describedby={`${id}-d`}>
+  <form method="dialog" data-type-to-confirm={confirmWord?.word}>
+    <h2 id={`${id}-t`}>{title}</h2>
+    <div id={`${id}-d`}><slot /></div>
+    {confirmWord && <div class="feitio-field"><label class="feitio-label" for={`${id}-word`}>{confirmWord.label}</label><input class="feitio-input" id={`${id}-word`} autocomplete="off" /></div>}
+    <div class="actions"><button type="submit" class="feitio-button" data-variant={danger ? 'danger' : 'primary'} value="yes" disabled={Boolean(confirmWord)}>{action}</button><button type="submit" class="feitio-button" value="cancel" autofocus={!confirmWord}>{cancel}</button></div>
+  </form>
+</dialog>

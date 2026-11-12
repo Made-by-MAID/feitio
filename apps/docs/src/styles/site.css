@@ -1192,3 +1192,11 @@ main[tabindex="-1"]:focus {
   border: var(--feitio-border-width) solid var(--feitio-color-text);
   border-radius: var(--feitio-radius);
 }
+.pg-revealed {
+  font: var(--feitio-font-weight-bold) var(--feitio-font-size-small) var(--feitio-font-ui);
+  color: var(--feitio-color-text-soft);
+  border: var(--feitio-border-width) dashed var(--feitio-color-text-soft);
+  padding: 0 var(--feitio-space-2);
+  border-radius: var(--feitio-radius);
+  inline-size: fit-content;
+}

@@ -25,11 +25,13 @@
     "./status": "./dist/status.js",
     "./status/source": "./src/status/index.ts",
     "./scroll": "./dist/scroll.js",
-    "./scroll/source": "./src/scroll/index.ts"
+    "./scroll/source": "./src/scroll/index.ts",
+    "./dialog": "./dist/dialog.js",
+    "./dialog/source": "./src/dialog/index.ts"
   },
   "scripts": {
-    "build": "bun build src/index.ts src/notice/index.ts src/menu/index.ts src/forms/index.ts src/status/index.ts src/scroll/index.ts --outdir dist --format esm --entry-naming [dir]/[name].[ext] --root src && bun run rename",
-    "rename": "mv dist/index.js dist/feitio.js && for m in notice menu forms status scroll; do mv dist/$m/index.js dist/$m.js && rmdir dist/$m; done"
+    "build": "bun build src/index.ts src/notice/index.ts src/menu/index.ts src/forms/index.ts src/status/index.ts src/scroll/index.ts src/dialog/index.ts --outdir dist --format esm --entry-naming [dir]/[name].[ext] --root src && bun run rename",
+    "rename": "mv dist/index.js dist/feitio.js && for m in notice menu forms status scroll dialog; do mv dist/$m/index.js dist/$m.js && rmdir dist/$m; done"
   },
   "dependencies": {
     "@feitio/core": "workspace:*"

@@ -1,0 +1,23 @@
+---
+/**
+ * Drawer: a panel that slides in from an edge (end, start, top or bottom), with an optional title and
+ * footer. It opens with the popover API from any button with popovertarget="id"; Esc and a click
+ * outside close it. The slot is its body; slot="footer" goes at its foot.
+ */
+import Icon from './Icon.astro';
+
+interface Props {
+  id: string;
+  title?: string;
+  side?: 'end' | 'start' | 'top' | 'bottom';
+  label?: string;
+  closeLabel?: string;
+  sprite?: string;
+}
+const { id, title, side = 'end', label, closeLabel = 'Fechar', sprite } = Astro.props;
+---
+<div class="feitio-drawer" id={id} popover data-side={side === 'end' ? undefined : side} role="dialog" aria-label={label ?? title}>
+  <div class="drawer-header">{title && <h2>{title}</h2>}<button type="button" class="feitio-button close" data-size="small" popovertarget={id} popovertargetaction="hide"><Icon name="close" sprite={sprite} />{closeLabel}</button></div>
+  <div class="drawer-body"><slot /></div>
+  {Astro.slots.has('footer') && <div class="drawer-footer"><slot name="footer" /></div>}
+</div>

@@ -271,6 +271,40 @@ for (const lang of process.env.ONLY === 'behavior' ? [] : LOCALES) {
   await page.close();
 }
 
+// Dialog and Drawer: the button opens them; the typed confirmation turns the danger action on; the Drawer opens from the chosen edge.
+{
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  await page.goto(`${origin}/en/components/dialog/`);
+  await page.click('[data-prop="kind"][data-value="word"]');
+  await page.click('.playground .live [data-open-dialog]');
+  await page.waitForTimeout(300);
+  check(
+    await page.locator('#pg-dialog').evaluate((d) => (d as HTMLDialogElement).open),
+    'dialog: the button did not open it',
+  );
+  check(
+    await page.locator('#pg-dialog [data-variant="danger"]').isDisabled(),
+    'dialog: the danger action was on before typing',
+  );
+  await page.keyboard.type('DELETE');
+  check(
+    await page.locator('#pg-dialog [data-variant="danger"]').isEnabled(),
+    'dialog: typing the word did not turn the action on',
+  );
+  await page.keyboard.press('Escape');
+  await page.goto(`${origin}/en/components/drawer/`);
+  await page.click('[data-prop="side"][data-value="bottom"]');
+  await page.click('.playground .live [popovertarget="pg-drawer"]');
+  await page.waitForTimeout(500);
+  check(
+    await page
+      .locator('#pg-drawer')
+      .evaluate((d) => d.matches(':popover-open') && d.getAttribute('data-side') === 'bottom'),
+    'drawer: it did not open from the bottom',
+  );
+  await page.close();
+}
+
 await browser.close();
 server.stop();
 if (problems.length) {

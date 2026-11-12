@@ -1884,6 +1884,255 @@
       display: none;
     }
   }
+
+  /* On top of the screen (Dialog) and documentation (CodeBlock, Example, DoDont, Swatch). */
+  .feitio-dialog {
+    inline-size: calc(100% - var(--feitio-space-3) * 2);
+    max-inline-size: 36rem;
+    max-block-size: calc(100dvh - var(--feitio-space-3) * 2);
+    margin: auto;
+    padding: var(--feitio-space-4);
+    color: var(--feitio-color-text);
+    background: var(--feitio-color-surface-top);
+    border: var(--feitio-border-width) solid var(--feitio-color-text);
+    border-radius: var(--feitio-radius);
+    box-shadow: var(--feitio-shadow-lift);
+    font-family: var(--feitio-font-ui);
+    opacity: 0;
+    translate: 0 var(--feitio-space-3);
+    transition:
+      opacity var(--feitio-duration-place) var(--feitio-easing-place),
+      translate var(--feitio-duration-place) var(--feitio-easing-place),
+      display var(--feitio-duration-place) allow-discrete,
+      overlay var(--feitio-duration-place) allow-discrete;
+  }
+  .feitio-dialog[open] {
+    opacity: 1;
+    translate: 0 0;
+  }
+  .feitio-dialog[open] {
+    opacity: 0;
+    translate: 0 var(--feitio-space-3);
+  }
+  .feitio-dialog::backdrop {
+    background: color-mix(in oklch, var(--feitio-color-shadow) 45%, transparent);
+  }
+  .feitio-code {
+    position: relative;
+    border-radius: var(--feitio-radius);
+    background: var(--feitio-color-surface-raised);
+  }
+  .feitio-code .bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--feitio-space-3);
+    padding: var(--feitio-space-2) var(--feitio-space-2) var(--feitio-space-2) var(--feitio-space-4);
+    border-bottom: var(--feitio-border-width) solid var(--feitio-color-line);
+    font: var(--feitio-font-weight-bold) 0.8rem var(--feitio-font-ui);
+    color: var(--feitio-color-text-soft);
+  }
+  .feitio-code .copy {
+    background: var(--feitio-color-surface-top);
+  }
+  .feitio-code pre {
+    margin: 0;
+    padding: var(--feitio-space-4);
+    overflow-x: auto;
+    font:
+      0.88rem / 1.6 ui-monospace,
+      "SF Mono",
+      Menlo,
+      monospace;
+    tab-size: 2;
+  }
+  .feitio-code .c-tag {
+    color: var(--feitio-color-accent-strong);
+    font-weight: 600;
+  }
+  .feitio-code .c-attr {
+    color: var(--feitio-color-ok);
+  }
+  .feitio-code .c-value {
+    color: var(--feitio-color-text);
+  }
+  .feitio-code .c-punct,
+  .feitio-code .c-comment {
+    color: var(--feitio-color-text-soft);
+  }
+  .feitio-code .c-comment {
+    font-style: italic;
+  }
+  .feitio-code .copy[data-done] {
+    color: var(--feitio-color-ok);
+    border-color: var(--feitio-color-ok);
+  }
+  .feitio-example {
+    border: var(--feitio-border-width) solid var(--feitio-color-line);
+    border-radius: var(--feitio-radius);
+  }
+  .feitio-example .live {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--feitio-space-3);
+    padding: var(--feitio-space-5) var(--feitio-space-4);
+  }
+  .feitio-example .about {
+    padding: var(--feitio-space-3) var(--feitio-space-4);
+    border-top: var(--feitio-border-width) solid var(--feitio-color-line);
+    font: var(--feitio-font-size-small) var(--feitio-font-ui);
+  }
+  .feitio-example .about h3 {
+    margin: 0;
+    font: var(--feitio-font-weight-bold) var(--feitio-font-size-body) var(--feitio-font-ui);
+  }
+  .feitio-example .about p {
+    margin: var(--feitio-space-1) 0 0;
+    color: var(--feitio-color-text-soft);
+  }
+  .feitio-example details summary {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--feitio-space-2);
+    min-block-size: 40px;
+    margin-block-start: var(--feitio-space-2);
+    cursor: pointer;
+    list-style: none;
+    font-weight: var(--feitio-font-weight-bold);
+    color: var(--feitio-color-accent-strong);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+  .feitio-example details summary::-webkit-details-marker {
+    display: none;
+  }
+  .feitio-example details summary .feitio-icon {
+    inline-size: 1em;
+    block-size: 1em;
+    transition: rotate var(--feitio-duration-change) var(--feitio-easing-change);
+  }
+  .feitio-example details[open] summary .feitio-icon {
+    rotate: 90deg;
+  }
+  .feitio-example details .feitio-code {
+    margin-block-start: var(--feitio-space-2);
+  }
+  .feitio-example h3[id] {
+    scroll-margin-block-start: var(--feitio-space-6);
+  }
+  .feitio-code pre[hidden] {
+    display: none;
+  }
+  .feitio-swatch {
+    display: inline-block;
+    inline-size: 1em;
+    block-size: 1em;
+    vertical-align: -0.12em;
+    background: var(--swatch);
+    border: var(--feitio-border-width) solid var(--feitio-color-text);
+    border-radius: 3px;
+  }
+  @starting-style {
+    .feitio-dialog[open] {
+      opacity: 0;
+      translate: 0 var(--feitio-space-3);
+    }
+  }
+  .feitio-dialog h2 {
+    margin: 0;
+    font: var(--feitio-font-weight-bold) var(--feitio-font-size-h3) var(--feitio-font-ui);
+    line-height: var(--feitio-line-height-heading);
+  }
+  .feitio-dialog p,
+  .feitio-dialog ul {
+    margin: var(--feitio-space-2) 0 0;
+    font-size: var(--feitio-font-size-small);
+    line-height: var(--feitio-line-height-text);
+  }
+  .feitio-dialog ul {
+    padding-inline-start: 1.2rem;
+    display: grid;
+    gap: var(--feitio-space-1);
+  }
+  .feitio-dialog .feitio-field {
+    margin-block-start: var(--feitio-space-4);
+  }
+  .feitio-dialog .actions {
+    margin-block-start: var(--feitio-space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--feitio-space-3);
+  }
+  .feitio-dialog:not(.search-dialog) {
+    max-inline-size: 28rem;
+  }
+  .feitio-dialog:not(.search-dialog) form {
+    display: block;
+  }
+  .do .demo .feitio-button,
+  .dont .demo .feitio-button {
+    pointer-events: none;
+  }
+  .do .demo,
+  .dont .demo {
+    align-items: center;
+    font-family: var(--feitio-font-ui);
+  }
+  .pair.stack {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .dont .demo:has(.grid-demo) {
+    overflow: visible;
+  }
+  .do .demo img,
+  .dont .demo img {
+    inline-size: 9rem;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+
+  /* DoDont: the right way (moss) and the wrong way (wine) side by side; the verdict has icon and word. */
+  .feitio-dodont {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: var(--feitio-space-4);
+  }
+  .feitio-dodont .do,
+  .feitio-dodont .dont {
+    border: var(--feitio-border-width) solid var(--feitio-color-line);
+    border-radius: var(--feitio-radius);
+    overflow: hidden;
+  }
+  .feitio-dodont .verdict {
+    display: flex;
+    align-items: center;
+    gap: var(--feitio-space-2);
+    margin: 0;
+    padding: var(--feitio-space-2) var(--feitio-space-3);
+    font: var(--feitio-font-weight-bold) var(--feitio-font-size-small) var(--feitio-font-ui);
+  }
+  .feitio-dodont .do .verdict {
+    color: var(--feitio-color-ok);
+    background: var(--feitio-color-ok-surface);
+  }
+  .feitio-dodont .dont .verdict {
+    color: var(--feitio-color-error);
+    background: var(--feitio-color-error-surface);
+  }
+  .feitio-dodont .demo {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--feitio-space-2);
+    padding: var(--feitio-space-4);
+  }
+  .feitio-dodont .why {
+    margin: 0;
+    padding: 0 var(--feitio-space-4) var(--feitio-space-4);
+    font: var(--feitio-font-size-small) var(--feitio-font-ui);
+    color: var(--feitio-color-text-soft);
+  }
 }
 
 @keyframes feitio-filter-wait {
