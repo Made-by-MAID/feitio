@@ -1,0 +1,12 @@
+---
+/** BackToTop: back to the start, shown after half a screen of scrolling, in the window's bottom-right corner (or its box's). */
+import Icon from './Icon.astro';
+
+interface Props {
+  href?: string;
+  label?: string;
+  sprite?: string;
+}
+const { href = '#content', label = 'Topo', sprite } = Astro.props;
+---
+<a class="feitio-button feitio-back-to-top" data-size="small" href={href}><Icon name="chevron-down" sprite={sprite} />{label}</a>

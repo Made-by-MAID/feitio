@@ -1,5 +1,10 @@
+import Anchor from '@feitio/astro/Anchor.astro';
+import AppShell from '@feitio/astro/AppShell.astro';
+import BackToTop from '@feitio/astro/BackToTop.astro';
+import Breadcrumbs from '@feitio/astro/Breadcrumbs.astro';
 import Button from '@feitio/astro/Button.astro';
 import Checkbox from '@feitio/astro/Checkbox.astro';
+import Details from '@feitio/astro/Details.astro';
 import Divider from '@feitio/astro/Divider.astro';
 import EmptyState from '@feitio/astro/EmptyState.astro';
 import ErrorMessage from '@feitio/astro/ErrorMessage.astro';
@@ -7,14 +12,19 @@ import ErrorSummary from '@feitio/astro/ErrorSummary.astro';
 import Field from '@feitio/astro/Field.astro';
 import Fieldset from '@feitio/astro/Fieldset.astro';
 import FilterField from '@feitio/astro/FilterField.astro';
+import Footer from '@feitio/astro/Footer.astro';
 import Grid from '@feitio/astro/Grid.astro';
+import Header from '@feitio/astro/Header.astro';
 import Heading from '@feitio/astro/Heading.astro';
 import Inline from '@feitio/astro/Inline.astro';
 import Kbd from '@feitio/astro/Kbd.astro';
 import Link from '@feitio/astro/Link.astro';
+import Nav from '@feitio/astro/Nav.astro';
 import Notice from '@feitio/astro/Notice.astro';
 import Pagination from '@feitio/astro/Pagination.astro';
 import Radios from '@feitio/astro/Radios.astro';
+import ScrollFade from '@feitio/astro/ScrollFade.astro';
+import Search from '@feitio/astro/Search.astro';
 import SegmentedControl from '@feitio/astro/SegmentedControl.astro';
 import Select from '@feitio/astro/Select.astro';
 import Stack from '@feitio/astro/Stack.astro';
@@ -1448,6 +1458,402 @@ export async function playgroundFor(
               : undefined,
           });
         },
+      ),
+    };
+  }
+
+  const NAVG = (icons: boolean, two: boolean) => [
+    {
+      title: words('Trabalho', 'Work', 'Trabajo', 'Travail', 'Arbeit'),
+      items: [
+        {
+          text: words('Agendamentos', 'Schedules', 'Citas', 'Rendez-vous', 'Termine'),
+          href: '#playground',
+          current: true,
+          icon: icons ? 'calendar' : undefined,
+        },
+        {
+          text: words('Tarefas', 'Tasks', 'Tareas', 'Tâches', 'Aufgaben'),
+          href: '#playground',
+          icon: icons ? 'task' : undefined,
+        },
+      ],
+    },
+    ...(two
+      ? [
+          {
+            title: words('Produto', 'Product', 'Producto', 'Produit', 'Produkt'),
+            items: [
+              {
+                text: words('Ajustes', 'Settings', 'Ajustes', 'Réglages', 'Einstellungen'),
+                href: '#playground',
+                icon: icons ? 'sliders' : undefined,
+              },
+            ],
+          },
+        ]
+      : []),
+  ];
+  const LONGTEXT = Array.from(
+    { length: 10 },
+    (_, i) =>
+      `<p>${words('Lembrete', 'Reminder', 'Recordatorio', 'Rappel', 'Erinnerung')} ${i + 1}: ${words('toda semana', 'every week', 'cada semana', 'chaque semaine', 'jede Woche')}, ${8 + i}h.</p>`,
+  ).join('');
+  if (slug === 'nav') {
+    return {
+      placeholder: '',
+      text: '',
+      controls: [
+        yesNo('icons', words('Ícones', 'Icons', 'Iconos', 'Icônes', 'Symbole')),
+        {
+          name: 'groups',
+          label: words('Grupos', 'Groups', 'Grupos', 'Groupes', 'Gruppen'),
+          options: ['1', '2'].map((v) => ({ value: v, label: v })),
+        },
+      ],
+      combos: await combos(
+        [
+          ['', 'yes'],
+          ['1', '2'],
+        ],
+        ([ic, g]) =>
+          renderHtml(Nav, {
+            groups: NAVG(Boolean(ic), g === '2'),
+            label: words('Principal', 'Main', 'Principal', 'Principale', 'Haupt'),
+            sprite,
+          }),
+      ),
+    };
+  }
+  if (slug === 'breadcrumbs') {
+    const steps = [
+      { text: words('Início', 'Home', 'Inicio', 'Accueil', 'Start'), href: '#playground' },
+      {
+        text: words('Agendamentos', 'Schedules', 'Citas', 'Rendez-vous', 'Termine'),
+        href: '#playground',
+      },
+      {
+        text: words('Esta semana', 'This week', 'Esta semana', 'Cette semaine', 'Diese Woche'),
+        href: '#playground',
+      },
+    ];
+    return {
+      placeholder: '',
+      text: '',
+      controls: [
+        {
+          name: 'depth',
+          label: words('Níveis', 'Levels', 'Niveles', 'Niveaux', 'Ebenen'),
+          options: ['2', '3', '4'].map((v) => ({ value: v, label: v })),
+        },
+      ],
+      combos: await combos([['2', '3', '4']], ([d]) =>
+        renderHtml(Breadcrumbs, {
+          items: steps.slice(0, Number(d) - 1),
+          current: words(
+            'Backup semanal',
+            'Weekly backup',
+            'Copia semanal',
+            'Sauvegarde hebdomadaire',
+            'Wöchentliche Sicherung',
+          ),
+          label: words('Você está em', 'You are here', 'Estás en', 'Vous êtes ici', 'Du bist hier'),
+          sprite,
+        }),
+      ),
+    };
+  }
+  if (slug === 'anchor') {
+    const items = [
+      {
+        id: 'playground',
+        text: words(
+          'Quando usar',
+          'When to use',
+          'Cuándo usarlo',
+          'Quand l’utiliser',
+          'Wann verwenden',
+        ),
+      },
+      {
+        id: 'playground',
+        text: words('Exemplos', 'Examples', 'Ejemplos', 'Exemples', 'Beispiele'),
+      },
+      {
+        id: 'playground',
+        text: words(
+          'Acessibilidade',
+          'Accessibility',
+          'Accesibilidad',
+          'Accessibilité',
+          'Barrierefreiheit',
+        ),
+      },
+    ];
+    return {
+      placeholder: '',
+      text: '',
+      controls: [
+        {
+          name: 'current',
+          label: words(
+            'Trecho atual',
+            'Current part',
+            'Parte actual',
+            'Partie actuelle',
+            'Aktueller Teil',
+          ),
+          options: ['0', '1', '2'].map((v, i) => ({ value: v, label: items[i]?.text ?? v })),
+        },
+      ],
+      combos: await combos([['0', '1', '2']], ([c]) =>
+        renderHtml(Anchor, {
+          title: words(
+            'Nesta página',
+            'On this page',
+            'En esta página',
+            'Sur cette page',
+            'Auf dieser Seite',
+          ),
+          label: words(
+            'Exemplo de índice',
+            'Index example',
+            'Ejemplo de índice',
+            'Exemple d’index',
+            'Beispielverzeichnis',
+          ),
+          items: items.map((it, i) => ({ ...it, current: String(i) === c })),
+          sprite,
+        }),
+      ),
+    };
+  }
+  if (slug === 'details') {
+    return {
+      placeholder: '',
+      text: '',
+      controls: [
+        {
+          name: 'open',
+          label: L.state[lang],
+          options: [
+            { value: '', label: words('Fechado', 'Closed', 'Cerrado', 'Fermé', 'Geschlossen') },
+            { value: 'open', label: words('Aberto', 'Open', 'Abierto', 'Ouvert', 'Offen') },
+          ],
+        },
+      ],
+      combos: await combos([['', 'open']], ([o]) =>
+        renderHtml(
+          Details,
+          {
+            summary: words(
+              'O que é o fuso horário?',
+              'What is the time zone?',
+              '¿Qué es la zona horaria?',
+              'Qu’est-ce que le fuseau horaire ?',
+              'Was ist die Zeitzone?',
+            ),
+            open: Boolean(o),
+            sprite,
+          },
+          `<p>${words('É a hora local que o produto usa para disparar os lembretes.', 'It is the local time the product uses to fire reminders.', 'Es la hora local que el producto usa para disparar los recordatorios.', 'C’est l’heure locale que le produit utilise pour envoyer les rappels.', 'Es ist die Ortszeit, mit der das Produkt Erinnerungen auslöst.')}</p>`,
+        ),
+      ),
+    };
+  }
+  if (slug === 'scrollfade' || slug === 'backtotop') {
+    const top = await renderHtml(BackToTop, {
+      href: '#pg-scroll',
+      label: words('Topo', 'Top', 'Arriba', 'Haut', 'Nach oben'),
+      sprite,
+    });
+    const fade = await renderHtml(ScrollFade);
+    return {
+      placeholder: '',
+      text: '',
+      controls: [
+        {
+          name: 'content',
+          label: words('Conteúdo', 'Content', 'Contenido', 'Contenu', 'Inhalt'),
+          options: [
+            {
+              value: 'long',
+              label: words(
+                'Longo (rola)',
+                'Long (scrolls)',
+                'Largo (desplaza)',
+                'Long (défile)',
+                'Lang (scrollt)',
+              ),
+            },
+            { value: 'short', label: words('Curto', 'Short', 'Corto', 'Court', 'Kurz') },
+          ],
+        },
+      ],
+      combos: await combos(
+        [['long', 'short']],
+        async ([c]) =>
+          `<div class="scroll-demo" id="pg-scroll" tabindex="0"><div class="scroll-demo-content">${c === 'long' ? LONGTEXT : `<p>${words('Só uma linha: nada embaixo.', 'Just one line: nothing below.', 'Solo una línea: nada debajo.', 'Une seule ligne : rien en dessous.', 'Nur eine Zeile: nichts darunter.')}</p>`}</div>${fade}${slug === 'backtotop' ? top : ''}</div>`,
+      ),
+    };
+  }
+  if (slug === 'search') {
+    const results = [
+      ['Table', words('Componentes', 'Components', 'Componentes', 'Composants', 'Komponenten')],
+      [
+        'Tokens',
+        words('Desenvolvimento', 'Development', 'Desarrollo', 'Développement', 'Entwicklung'),
+      ],
+    ];
+    const keys = {
+      open: words(
+        'abre o primeiro',
+        'opens the first',
+        'abre el primero',
+        'ouvre le premier',
+        'öffnet das erste',
+      ),
+      choose: words('escolhe', 'choose', 'elige', 'choisir', 'auswählen'),
+      close: words('fecha', 'closes', 'cierra', 'ferme', 'schließt'),
+    };
+    return {
+      placeholder: '',
+      text: '',
+      controls: [
+        {
+          name: 'results',
+          label: words('Resultados', 'Results', 'Resultados', 'Résultats', 'Ergebnisse'),
+          options: [
+            { value: 'yes', label: words('Com', 'With', 'Con', 'Avec', 'Mit') },
+            { value: '', label: words('Nenhum', 'None', 'Ninguno', 'Aucun', 'Keine') },
+          ],
+        },
+      ],
+      combos: await combos([['yes', '']], async ([r]) => {
+        const items = r
+          ? results
+              .map(
+                ([t, a], i) =>
+                  `<li><a href="#playground"${i === 0 ? ' data-active' : ''}><strong>${t}</strong><small>${a}</small></a></li>`,
+              )
+              .join('')
+          : '';
+        const html = await renderHtml(
+          Search,
+          {
+            id: 'pg-search',
+            title: words(
+              'Buscar no Feitio',
+              'Search Feitio',
+              'Buscar en Feitio',
+              'Rechercher dans Feitio',
+              'Feitio durchsuchen',
+            ),
+            placeholder: words(
+              'Button, cor…',
+              'Button, color…',
+              'Button, color…',
+              'Button, couleur…',
+              'Button, Farbe…',
+            ),
+            closeLabel: words('Fechar', 'Close', 'Cerrar', 'Fermer', 'Schließen'),
+            keys,
+            sprite,
+          },
+          items,
+        );
+        // In the playground the dialog shows in place, open, as a sample.
+        return html
+          .replace(
+            '<dialog class="feitio-dialog search-dialog"',
+            '<dialog open class="feitio-dialog search-dialog search-sample"',
+          )
+          .replace(
+            r ? '' : '<ul class="results">',
+            r
+              ? ''
+              : `<p class="empty">${words('Nada encontrado. Tente outra palavra.', 'Nothing found. Try another word.', 'No se encontró nada. Prueba otra palabra.', 'Rien trouvé. Essayez un autre mot.', 'Nichts gefunden. Versuch ein anderes Wort.')}</p><ul class="results">`,
+          );
+      }),
+    };
+  }
+  if (slug === 'header') {
+    const areas = [
+      words('Design', 'Design', 'Diseño', 'Design', 'Design'),
+      words('Desenvolvimento', 'Development', 'Desarrollo', 'Développement', 'Entwicklung'),
+      words('Componentes', 'Components', 'Componentes', 'Composants', 'Komponenten'),
+      words('Recursos', 'Resources', 'Recursos', 'Ressources', 'Ressourcen'),
+    ];
+    const search = await renderHtml(
+      Button,
+      { size: 'small' },
+      words('Buscar', 'Search', 'Buscar', 'Rechercher', 'Suchen'),
+    );
+    const menu = await renderHtml(Button, { size: 'small', class: 'menu' }, 'Menu');
+    return {
+      placeholder: '',
+      text: '',
+      controls: [
+        {
+          name: 'width',
+          label: words('Largura', 'Width', 'Ancho', 'Largeur', 'Breite'),
+          options: [
+            { value: 'wide', label: words('Larga', 'Wide', 'Ancha', 'Large', 'Breit') },
+            { value: 'narrow', label: 'Mobile' },
+          ],
+        },
+      ],
+      combos: await combos(
+        [['wide', 'narrow']],
+        async ([wd]) =>
+          `<div class="header-frame ${wd === 'narrow' ? 'is-narrow' : 'is-wide'}">${(await renderHtml(Header, { brand: 'Feitio', brandHref: '#playground', areas: areas.map((t, i) => ({ text: t, href: '#playground', current: i === 2 })), label: words('Áreas', 'Areas', 'Áreas', 'Zones', 'Bereiche') }, `${search}${menu}`)).replace('class="site-header"', `class="site-header header-demo${wd === 'wide' ? ' wide' : ''}"`)}</div>`,
+      ),
+    };
+  }
+  if (slug === 'footer') {
+    const links = [
+      {
+        text: words('Mudanças', 'Changelog', 'Cambios', 'Changements', 'Änderungen'),
+        href: '#playground',
+      },
+      {
+        text: words('Licença MIT', 'MIT License', 'Licencia MIT', 'Licence MIT', 'MIT-Lizenz'),
+        href: '#playground',
+      },
+      { text: 'GitHub', href: '#playground' },
+    ];
+    return {
+      placeholder: '',
+      text: '',
+      controls: [
+        {
+          name: 'since',
+          label: words('Desde', 'Since', 'Desde', 'Depuis', 'Seit'),
+          options: [
+            {
+              value: String(new Date().getFullYear()),
+              label: words('Este ano', 'This year', 'Este año', 'Cette année', 'Dieses Jahr'),
+            },
+            { value: '2024', label: '2024' },
+          ],
+        },
+      ],
+      combos: await combos([[String(new Date().getFullYear()), '2024']], ([y]) =>
+        renderHtml(Footer, { name: 'Feitio', since: Number(y), links }),
+      ),
+    };
+  }
+  if (slug === 'appshell') {
+    return {
+      placeholder: '',
+      text: '',
+      controls: [
+        yesNo('user', words('Quem entrou', 'Signed in', 'Quién entró', 'Connecté', 'Angemeldet')),
+      ],
+      combos: await combos(
+        [['yes', '']],
+        async ([u]) =>
+          `<div class="feitio-app-frame" style="block-size: 22rem; inline-size: min(100%, 24rem); overflow-y: auto; border: var(--feitio-border-width) solid var(--feitio-color-line)">${await renderHtml(AppShell, { id: 'pg-app', brand: words('Produto', 'Product', 'Producto', 'Produit', 'Produkt'), nav: NAVG(true, true), user: u ? 'Ana' : undefined, signOut: u ? { text: words('Sair', 'Sign out', 'Salir', 'Se déconnecter', 'Abmelden'), href: '#playground' } : undefined, closeLabel: words('Fechar', 'Close', 'Cerrar', 'Fermer', 'Schließen'), topLabel: words('Topo', 'Top', 'Arriba', 'Haut', 'Nach oben'), sprite }, `<div style="padding: var(--feitio-space-4)"><h3>${words('Agendamentos', 'Schedules', 'Citas', 'Rendez-vous', 'Termine')}</h3>${LONGTEXT}</div>`)}</div>`,
       ),
     };
   }

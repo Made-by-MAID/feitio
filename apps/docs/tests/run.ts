@@ -244,6 +244,33 @@ for (const lang of process.env.ONLY === 'behavior' ? [] : LOCALES) {
   await page.close();
 }
 
+// ScrollFade and BackToTop inside a box: the fade shows while there is more, BackToTop after half a box, and it goes back up.
+{
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  await page.goto(`${origin}/en/components/backtotop/`);
+  check(
+    (await page.locator('#pg-scroll .feitio-scroll-fade').getAttribute('data-visible')) !== null,
+    'scrollfade: no fade while there is more below',
+  );
+  await page.locator('#pg-scroll').evaluate((box) => box.scrollTo({ top: box.scrollHeight }));
+  await page.waitForTimeout(300);
+  check(
+    (await page.locator('#pg-scroll .feitio-back-to-top').getAttribute('data-visible')) !== null,
+    'backtotop: it did not show after scrolling',
+  );
+  check(
+    (await page.locator('#pg-scroll .feitio-scroll-fade').getAttribute('data-visible')) === null,
+    'scrollfade: the fade stayed at the end',
+  );
+  await page.click('#pg-scroll .feitio-back-to-top');
+  await page.waitForTimeout(900);
+  check(
+    (await page.locator('#pg-scroll').evaluate((box) => box.scrollTop)) === 0,
+    'backtotop: it did not go back to the top',
+  );
+  await page.close();
+}
+
 await browser.close();
 server.stop();
 if (problems.length) {

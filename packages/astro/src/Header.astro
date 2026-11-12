@@ -1,0 +1,11 @@
+---
+/** Header: a site's header: the brand, the big areas (the current one in placed paper) and the tools. On mobile the areas go into the Menu. */
+interface Props {
+  brand: string;
+  brandHref: string;
+  areas: { text: string; href: string; current?: boolean }[];
+  label?: string;
+}
+const { brand, brandHref, areas, label } = Astro.props;
+---
+<header class="site-header"><a class="brand" href={brandHref}><slot name="logo" />{brand}</a><nav class="areas" aria-label={label}>{areas.map((a) => <a href={a.href} aria-current={a.current ? 'true' : undefined}>{a.text}</a>)}</nav><div class="tools"><slot /></div></header>

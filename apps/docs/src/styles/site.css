@@ -153,54 +153,6 @@
 
   /* Anchor: o índice da página, que acompanha a rolagem. O trecho atual fica em tinta e negrito,
      com a seta à mão na frente: sem faixa colorida do lado. */
-  .feitio-anchor {
-    font: var(--feitio-font-size-small) var(--feitio-font-ui);
-  }
-  .feitio-anchor .title {
-    margin: 0 0 var(--feitio-space-2);
-    font-weight: var(--feitio-font-weight-bold);
-  }
-  .feitio-anchor ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    display: grid;
-    gap: var(--feitio-space-1);
-  }
-  .feitio-anchor ul ul {
-    padding-inline-start: var(--feitio-space-3);
-    margin-block-start: var(--feitio-space-1);
-  }
-  .feitio-anchor a {
-    display: grid;
-    grid-template-columns: 0.9em minmax(0, 1fr);
-    gap: var(--feitio-space-1);
-    align-items: baseline;
-    padding-block: 0.15rem;
-    color: var(--feitio-color-text-soft);
-    text-decoration: none;
-    line-height: var(--feitio-line-height-heading);
-  }
-  .feitio-anchor a:hover {
-    color: var(--feitio-color-text);
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 0.2em;
-  }
-  .feitio-anchor a .feitio-icon {
-    inline-size: 0.8em;
-    block-size: 0.8em;
-    align-self: center;
-    opacity: 0;
-    transition: opacity var(--feitio-duration-change) var(--feitio-easing-change);
-  }
-  .feitio-anchor a[aria-current="location"] {
-    color: var(--feitio-color-text);
-    font-weight: var(--feitio-font-weight-bold);
-  }
-  .feitio-anchor a[aria-current="location"] .feitio-icon {
-    opacity: 1;
-  }
 
   /* CodeBlock: código com o botão Copiar, que diz "Copiado" no próprio lugar. */
   .feitio-code {
@@ -1019,51 +971,6 @@ main[tabindex="-1"]:focus {
   }
 
   /* Footer: a marca, os links e os anos. */
-  .feitio-footer {
-    padding: var(--feitio-space-5) var(--feitio-space-4);
-    border-block-start: var(--feitio-border-width) solid var(--feitio-color-line);
-    font: var(--feitio-font-size-small) var(--feitio-font-ui);
-    color: var(--feitio-color-text-soft);
-  }
-  .feitio-footer .inner {
-    max-inline-size: 90rem;
-    margin-inline: auto;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--feitio-space-3) var(--feitio-space-5);
-  }
-  .feitio-footer .who {
-    display: flex;
-    align-items: center;
-    gap: var(--feitio-space-2);
-  }
-  .feitio-footer .who strong {
-    color: var(--feitio-color-text);
-    font-weight: var(--feitio-font-weight-heavy);
-  }
-  .feitio-footer .brand-logo {
-    inline-size: 1.4rem;
-    block-size: 1.4rem;
-  }
-  .feitio-footer ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--feitio-space-2) var(--feitio-space-4);
-  }
-  .feitio-footer a {
-    color: var(--feitio-color-text-soft);
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 0.2em;
-  }
-  .feitio-footer a:hover {
-    color: var(--feitio-color-text);
-  }
 }
 .site-main > .feitio-breadcrumbs + h1 {
   margin-block-start: var(--feitio-space-3);
@@ -1248,4 +1155,32 @@ main[tabindex="-1"]:focus {
 .playground .live > .feitio-task-list,
 .playground .live > .feitio-pagination {
   inline-size: 100%;
+}
+/* The Header in a playground is a sample: not pinned to the top, and it gets the stage's width. */
+.site-header.header-demo {
+  position: static;
+  z-index: auto;
+  translate: none;
+}
+.playground
+  .live:has(
+    > .header-frame,
+    > .scroll-demo,
+    > .feitio-app-frame,
+    > .feitio-footer,
+    > dialog.search-sample
+  ) {
+  inline-size: 100%;
+}
+.playground .live > .feitio-footer {
+  inline-size: 100%;
+  border: var(--feitio-border-width) solid var(--feitio-color-line);
+  border-radius: var(--feitio-radius);
+}
+.playground .live > dialog.search-sample {
+  position: static;
+  display: block;
+  margin: 0 auto;
+  opacity: 1;
+  translate: none;
 }

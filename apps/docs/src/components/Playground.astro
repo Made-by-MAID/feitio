@@ -85,7 +85,10 @@ const html = placeholder
       const key = groups.map((g) => g.querySelector<HTMLElement>('[aria-pressed="true"]')?.dataset.value ?? '').join('|');
       const raw = combos[key] ?? '';
       const html = placeholder ? raw.replaceAll(placeholder, escape(field?.value || ' ')) : raw;
-      if (live) live.innerHTML = html;
+      if (live) {
+        live.innerHTML = html;
+        live.dispatchEvent(new Event('feitio-rendered', { bubbles: true }));
+      }
       if (code) {
         const highlight = (window as Window & { highlightHtml?: Highlight }).highlightHtml;
         code.innerHTML = highlight ? highlight(html) : escape(html);

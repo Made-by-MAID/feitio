@@ -273,33 +273,7 @@ for (const c of document.querySelectorAll(
 ))
   c.innerHTML = highlightHtml(c.textContent);
 
-// ---- ScrollFade e BackToTop da página.
-const scrollerOf = (el) => {
-  for (let p = el.parentElement; p; p = p.parentElement) {
-    const o = getComputedStyle(p).overflowY;
-    if (o === 'auto' || o === 'scroll') return p;
-  }
-  return null;
-};
-for (const el of document.querySelectorAll('.feitio-scroll-fade, .feitio-back-to-top')) {
-  const box = scrollerOf(el);
-  const area = box || document.documentElement;
-  const fade = el.classList.contains('feitio-scroll-fade');
-  const update = () => {
-    const y = area.scrollTop,
-      view = area.clientHeight;
-    el.toggleAttribute('data-visible', fade ? y + view < area.scrollHeight - 8 : y > view * 0.5);
-  };
-  (box || window).addEventListener('scroll', update, { passive: true });
-  addEventListener('resize', update);
-  update();
-  if (!fade)
-    el.addEventListener('click', (event) => {
-      event.preventDefault();
-      area.scrollTo({ top: 0, behavior: motionOff() ? 'auto' : 'smooth' });
-      document.querySelector(el.getAttribute('href'))?.focus({ preventScroll: true });
-    });
-}
+// ScrollFade e BackToTop: @feitio/vanilla (scrolls), ligados no DocPage.
 
 // ---- Busca: não é uma decisão, então um toque fora fecha (o Dialog de confirmar continua só
 // fechando com uma resposta). closedby="any" onde o navegador já entende; o clique conferido

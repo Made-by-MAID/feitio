@@ -1,0 +1,15 @@
+---
+/** Nav: the product's places, in groups, with the current one marked (aria-current="page"). */
+import Icon from './Icon.astro';
+
+interface Props {
+  groups: {
+    title?: string;
+    items: { text: string; href: string; current?: boolean; icon?: string }[];
+  }[];
+  label?: string;
+  sprite?: string;
+}
+const { groups, label, sprite } = Astro.props;
+---
+<nav class="feitio-nav" aria-label={label}>{groups.map((g) => <div class="group">{g.title && <p class="group-title">{g.title}</p>}<ul>{g.items.map((i) => <li><a href={i.href} aria-current={i.current ? 'page' : undefined}>{i.icon && <Icon name={i.icon} sprite={sprite} />}{i.text}</a></li>)}</ul></div>)}</nav>

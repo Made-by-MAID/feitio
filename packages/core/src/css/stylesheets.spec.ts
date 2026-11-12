@@ -24,6 +24,8 @@ test('the components read no Feitio variable that the tokens or the base do not 
     '--feitio-gap',
     '--feitio-grid-min',
     '--feitio-filter-debounce',
+    '--feitio-scroll-fade-bleed',
+    '--feitio-scroll-fade-to',
   ]);
   const unknown = [...usedVariables(components)].filter((name) => !declared.has(name));
   expect(unknown).toEqual([]);

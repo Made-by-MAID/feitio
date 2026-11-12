@@ -1,0 +1,44 @@
+---
+/**
+ * AppShell: a product's layout of regions: the header (it leaves when scrolling down on mobile and
+ * comes back up), the navigation in a Drawer from the right, the main area with its ScrollFade and
+ * BackToTop. The slot is the main area's content.
+ */
+import Icon from './Icon.astro';
+import Nav from './Nav.astro';
+
+interface Props {
+  id: string;
+  brand: string;
+  nav: {
+    title?: string;
+    items: { text: string; href: string; current?: boolean; icon?: string }[];
+  }[];
+  user?: string;
+  signOut?: { text: string; href: string };
+  menuLabel?: string;
+  closeLabel?: string;
+  topLabel?: string;
+  sprite?: string;
+}
+const {
+  id,
+  brand,
+  nav,
+  user,
+  signOut,
+  menuLabel = 'Menu',
+  closeLabel = 'Fechar',
+  topLabel = 'Topo',
+  sprite,
+} = Astro.props;
+---
+<div class="feitio-app">
+  <header class="feitio-app-header" data-hide-on-scroll><a class="brand" href={`#${id}-content`}>{brand}</a><button type="button" class="feitio-button menu" data-size="small" popovertarget={id} aria-controls={id}>{menuLabel}<Icon name="menu" sprite={sprite} /></button></header>
+  <nav class="feitio-drawer feitio-app-nav" id={id} popover aria-label={menuLabel}>
+    <div class="drawer-header"><h2>{menuLabel}</h2><button type="button" class="feitio-button close" data-size="small" popovertarget={id} popovertargetaction="hide"><Icon name="close" sprite={sprite} />{closeLabel}</button></div>
+    <div class="drawer-body"><Nav groups={nav} sprite={sprite} /></div>
+    {(user || signOut) && <div class="drawer-footer nav-footer">{user && <span class="who">{user}</span>}{signOut && <a class="feitio-link" href={signOut.href}>{signOut.text}</a>}</div>}
+  </nav>
+  <div class="feitio-app-main" id={`${id}-content`} tabindex="-1"><slot /><span class="feitio-scroll-fade" aria-hidden="true"></span><a class="feitio-button feitio-back-to-top" data-size="small" href={`#${id}-content`}><Icon name="chevron-down" sprite={sprite} />{topLabel}</a></div>
+</div>

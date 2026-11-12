@@ -1310,6 +1310,511 @@
     accent-color: var(--feitio-color-text);
     vertical-align: middle;
   }
+
+  /* Navigation: AppShell, Drawer, Nav, Breadcrumbs, Details, ScrollFade, BackToTop, Anchor and Footer. */
+  /* Drawer: um painel que entra por qualquer borda da tela (data-side: end, start, top, bottom),
+       por cima do conteúdo, aberto por um botão. É um popover do navegador: fecha com Esc e com
+       um toque fora. Fechado, não ocupa lugar nem recebe foco. Título e rodapé são opcionais;
+       o Fechar, pequeno, está sempre lá. */
+  .feitio-drawer {
+    margin: 0;
+    inset: 0 0 0 auto;
+    inline-size: min(20rem, 85vw);
+    block-size: 100dvh;
+    max-block-size: none;
+    max-inline-size: none;
+    padding: 0;
+    color: var(--feitio-color-text);
+    background: var(--feitio-color-surface);
+    border: 0;
+    border-inline-start: var(--feitio-border-width) solid var(--feitio-color-text);
+    font-family: var(--feitio-font-ui);
+    translate: 105% 0;
+    transition:
+      translate var(--feitio-duration-change) var(--feitio-easing-change),
+      display var(--feitio-duration-change) allow-discrete,
+      overlay var(--feitio-duration-change) allow-discrete;
+  }
+  .feitio-drawer[data-side="start"] {
+    inset: 0 auto 0 0;
+    border-inline-start: 0;
+    border-inline-end: var(--feitio-border-width) solid var(--feitio-color-text);
+    translate: -105% 0;
+  }
+  .feitio-drawer[data-side="top"],
+  .feitio-drawer[data-side="bottom"] {
+    inline-size: 100%;
+    block-size: auto;
+    max-block-size: 85dvh;
+    border-inline-start: 0;
+  }
+  .feitio-drawer[data-side="top"] {
+    inset: 0 0 auto 0;
+    border-bottom: var(--feitio-border-width) solid var(--feitio-color-text);
+    translate: 0 -105%;
+  }
+  .feitio-drawer[data-side="bottom"] {
+    inset: auto 0 0 0;
+    border-top: var(--feitio-border-width) solid var(--feitio-color-text);
+    translate: 0 105%;
+  }
+  .feitio-drawer:popover-open {
+    display: flex;
+    flex-direction: column;
+    translate: 0 0;
+  }
+  @starting-style {
+    .feitio-drawer:popover-open {
+      translate: 105% 0;
+    }
+    .feitio-drawer[data-side="start"]:popover-open {
+      translate: -105% 0;
+    }
+    .feitio-drawer[data-side="top"]:popover-open {
+      translate: 0 -105%;
+    }
+    .feitio-drawer[data-side="bottom"]:popover-open {
+      translate: 0 105%;
+    }
+  }
+  .feitio-drawer::backdrop {
+    background: color-mix(in oklch, var(--feitio-color-shadow) 45%, transparent);
+  }
+  .feitio-drawer .drawer-header {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: var(--feitio-space-3);
+    padding: var(--feitio-space-2) var(--feitio-space-3) var(--feitio-space-2) var(--feitio-space-4);
+  }
+  .feitio-drawer .drawer-header:has(h2) {
+    border-bottom: var(--feitio-border-width) solid var(--feitio-color-line);
+  }
+  .feitio-drawer .drawer-header h2 {
+    margin: 0;
+    font: var(--feitio-font-weight-bold) var(--feitio-font-size-h3) var(--feitio-font-ui);
+    line-height: var(--feitio-line-height-heading);
+  }
+  .feitio-drawer .drawer-header .close {
+    margin-inline-start: auto;
+  }
+  .feitio-drawer .drawer-body {
+    flex: 1 1 auto;
+    min-block-size: 0;
+    overflow-y: auto;
+    padding: var(--feitio-space-4);
+    display: grid;
+    align-content: start;
+    gap: var(--feitio-space-4);
+  }
+  .feitio-drawer .drawer-header:not(:has(h2)) + .drawer-body {
+    padding-block-start: 0;
+  }
+  .feitio-drawer .drawer-footer {
+    flex: none;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--feitio-space-2) var(--feitio-space-3);
+    padding: var(--feitio-space-3) var(--feitio-space-4);
+    border-top: var(--feitio-border-width) solid var(--feitio-color-line);
+    font-size: var(--feitio-font-size-small);
+  }
+  [data-motion="direct"] .feitio-drawer {
+    transition: none;
+  }
+
+  /* AppShell: um layout de regiões, mobile first: brand, actions, menu, nav (num Drawer),
+       nav-footer e main. No mobile, o cabeçalho some ao rolar para baixo e volta ao rolar para
+       cima. O fim do conteúdo leva um ScrollFade e um BackToTop. A partir de 64rem, o Drawer vira a coluna do lado. */
+  .feitio-app-frame {
+    container-type: inline-size;
+  }
+  .feitio-app {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "header" "main";
+    background: var(--feitio-color-surface);
+    font-family: var(--feitio-font-ui);
+  }
+  .feitio-app-header {
+    grid-area: header;
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: var(--feitio-space-3);
+    padding: var(--feitio-space-2) var(--feitio-space-3);
+    background: var(--feitio-color-surface);
+    border-bottom: var(--feitio-border-width) solid var(--feitio-color-text);
+    transition: translate var(--feitio-duration-change) var(--feitio-easing-change);
+  }
+  .feitio-app-header[data-hidden] {
+    translate: 0 calc(-100% - 2px);
+  }
+  .feitio-app-header .brand {
+    font: var(--feitio-font-weight-bold) var(--feitio-font-size-h3) var(--feitio-font-ui);
+    color: var(--feitio-color-text);
+    text-decoration: none;
+  }
+  .feitio-app-header .actions {
+    margin-inline-start: auto;
+    display: flex;
+    align-items: center;
+    gap: var(--feitio-space-2);
+  }
+  .feitio-app-header .menu {
+    margin-inline-start: auto;
+  }
+  .feitio-app-header .actions + .menu {
+    margin-inline-start: 0;
+  }
+  .feitio-app-main {
+    grid-area: main;
+    min-inline-size: 0;
+    padding: var(--feitio-space-4);
+    --feitio-scroll-fade-bleed: var(--feitio-space-4);
+  }
+  .feitio-app-main > * + * {
+    margin-block-start: var(--feitio-space-4);
+  }
+  .feitio-app-nav .feitio-nav {
+    align-content: start;
+  }
+  .feitio-app-nav .nav-footer {
+    justify-content: space-between;
+  }
+  .feitio-app-nav .nav-footer .who {
+    color: var(--feitio-color-text-soft);
+  }
+  @container (min-width: 64rem) {
+    .feitio-app {
+      grid-template-columns: minmax(12rem, 15rem) minmax(0, 1fr);
+      grid-template-areas: "header header" "nav main";
+    }
+    .feitio-app-header {
+      position: static;
+      padding: var(--feitio-space-3) var(--feitio-space-5);
+    }
+    .feitio-app-header .menu,
+    .feitio-app-nav .drawer-header {
+      display: none;
+    }
+    .feitio-app-nav[popover] {
+      grid-area: nav;
+      display: grid;
+      grid-template-rows: minmax(0, 1fr) auto;
+      position: static;
+      inset: auto;
+      inline-size: auto;
+      block-size: auto;
+      overflow: visible;
+      translate: none;
+      border-inline-start: 0;
+      border-inline-end: var(--feitio-border-width) solid var(--feitio-color-line);
+      transition: none;
+    }
+    .feitio-app-nav .drawer-body {
+      padding: var(--feitio-space-4) var(--feitio-space-3);
+      overflow: visible;
+    }
+    .feitio-app-nav .drawer-footer {
+      padding-inline: var(--feitio-space-3);
+    }
+    .feitio-app-main {
+      padding: var(--feitio-space-5);
+      --feitio-scroll-fade-bleed: var(--feitio-space-5);
+    }
+    /* Telas grandes: o conteúdo fica numa medida, no centro. */
+    .feitio-app-main > :not(.feitio-scroll-fade, .feitio-back-to-top) {
+      max-inline-size: 72rem;
+      margin-inline: auto;
+    }
+  }
+
+  /* ScrollFade: a borda de baixo de uma caixa que rola some no papel enquanto houver conteúdo.
+       Último filho do conteúdo, preso embaixo (sticky), sem ocupar lugar. */
+  .feitio-scroll-fade {
+    position: sticky;
+    inset-block-end: 0;
+    z-index: 1;
+    display: block;
+    block-size: 3rem;
+    margin-block-start: -3rem;
+    margin-inline: calc(var(--feitio-scroll-fade-bleed, 0px) * -1);
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      var(--feitio-scroll-fade-to, var(--feitio-color-surface))
+    );
+    opacity: 0;
+    transition: opacity var(--feitio-duration-change) var(--feitio-easing-change);
+  }
+  .feitio-scroll-fade[data-visible] {
+    opacity: 1;
+  }
+
+  /* BackToTop: depois de meia tela rolada, um botão pequeno no canto de baixo leva ao começo.
+       Também preso embaixo (sticky), à direita, como papel sobreposto. */
+  .feitio-button.feitio-back-to-top {
+    position: sticky;
+    inset-block-end: var(--feitio-space-3);
+    z-index: 2;
+    display: flex;
+    inline-size: fit-content;
+    margin: var(--feitio-space-3) var(--feitio-space-3) var(--feitio-space-3) auto;
+    background: var(--feitio-color-surface-top);
+    box-shadow: var(--feitio-shadow-lift);
+    opacity: 0;
+    visibility: hidden;
+    translate: 0 var(--feitio-space-3);
+    transition:
+      opacity var(--feitio-duration-change) var(--feitio-easing-change),
+      translate var(--feitio-duration-change) var(--feitio-easing-change),
+      visibility var(--feitio-duration-change) allow-discrete;
+  }
+  .feitio-button.feitio-back-to-top .feitio-icon {
+    rotate: 180deg;
+  }
+  .feitio-button.feitio-back-to-top[data-visible] {
+    opacity: 1;
+    visibility: visible;
+    translate: 0 0;
+  }
+  [data-motion="direct"] .feitio-scroll-fade,
+  [data-motion="direct"] .feitio-back-to-top {
+    transition: none;
+  }
+
+  /* Nav: a lista de lugares; o atual é um papel colocado, com traço de tinta. */
+  .feitio-nav {
+    display: grid;
+    gap: var(--feitio-space-5);
+    font: var(--feitio-font-size-small) var(--feitio-font-ui);
+  }
+  .feitio-nav .group {
+    display: grid;
+    gap: var(--feitio-space-2);
+  }
+  .feitio-nav .group-title {
+    margin: 0;
+    padding-inline: var(--feitio-space-3);
+    font-weight: var(--feitio-font-weight-bold);
+    color: var(--feitio-color-text-soft);
+  }
+  .feitio-nav ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: var(--feitio-space-1);
+  }
+  .feitio-nav a {
+    display: flex;
+    align-items: center;
+    gap: var(--feitio-space-2);
+    min-block-size: 40px;
+    padding: 0 var(--feitio-space-3);
+    border: var(--feitio-border-width) solid transparent;
+    border-radius: var(--feitio-radius);
+    color: var(--feitio-color-text);
+    text-decoration: none;
+  }
+  .feitio-nav a:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+  .feitio-nav a[aria-current="page"] {
+    font-weight: var(--feitio-font-weight-bold);
+    background: var(--feitio-color-surface-top);
+    border-color: var(--feitio-color-text);
+  }
+  .feitio-nav .feitio-icon {
+    inline-size: 1.1em;
+    block-size: 1.1em;
+    flex: none;
+  }
+
+  /* Breadcrumbs: o caminho até aqui; a página atual é a última e não é link. */
+  .feitio-breadcrumbs ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--feitio-space-1) var(--feitio-space-2);
+    font: var(--feitio-font-size-small) var(--feitio-font-ui);
+  }
+  .feitio-breadcrumbs li {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--feitio-space-2);
+  }
+  .feitio-breadcrumbs .sep {
+    display: inline-flex;
+    color: var(--feitio-color-text-soft);
+  }
+  .feitio-breadcrumbs .sep .feitio-icon {
+    inline-size: 0.8em;
+    block-size: 0.8em;
+  }
+  .feitio-breadcrumbs a {
+    color: var(--feitio-color-accent-strong);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+  .feitio-breadcrumbs [aria-current="page"] {
+    color: var(--feitio-color-text-soft);
+  }
+  .feitio-breadcrumbs .back .feitio-icon {
+    rotate: 180deg;
+    inline-size: 0.9em;
+    block-size: 0.9em;
+  }
+  .feitio-breadcrumbs .back a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--feitio-space-1);
+  }
+
+  /* Details: o que é de apoio, fechado até a pessoa pedir. */
+  .feitio-details {
+    font: var(--feitio-font-size-small) var(--feitio-font-ui);
+    line-height: var(--feitio-line-height-text);
+  }
+  .feitio-details summary {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--feitio-space-2);
+    min-block-size: 40px;
+    cursor: pointer;
+    list-style: none;
+    font-weight: var(--feitio-font-weight-bold);
+    color: var(--feitio-color-accent-strong);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+  .feitio-details summary::-webkit-details-marker {
+    display: none;
+  }
+  .feitio-details summary .feitio-icon {
+    inline-size: 1em;
+    block-size: 1em;
+    flex: none;
+    transition: rotate var(--feitio-duration-change) var(--feitio-easing-change);
+  }
+  .feitio-details[open]:not([data-closing]) summary .feitio-icon {
+    rotate: 90deg;
+  }
+  .feitio-details .content {
+    padding-block-start: var(--feitio-space-2);
+    padding-inline-start: calc(1em + var(--feitio-space-2));
+  }
+  .feitio-details .content > * + * {
+    margin-block-start: var(--feitio-space-3);
+  }
+  [data-motion="direct"] .feitio-details summary .feitio-icon {
+    transition: none;
+  }
+  .feitio-anchor {
+    font: var(--feitio-font-size-small) var(--feitio-font-ui);
+  }
+  .feitio-anchor .title {
+    margin: 0 0 var(--feitio-space-2);
+    font-weight: var(--feitio-font-weight-bold);
+  }
+  .feitio-anchor ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: var(--feitio-space-1);
+  }
+  .feitio-anchor ul ul {
+    padding-inline-start: var(--feitio-space-3);
+    margin-block-start: var(--feitio-space-1);
+  }
+  .feitio-anchor a {
+    display: grid;
+    grid-template-columns: 0.9em minmax(0, 1fr);
+    gap: var(--feitio-space-1);
+    align-items: baseline;
+    padding-block: 0.15rem;
+    color: var(--feitio-color-text-soft);
+    text-decoration: none;
+    line-height: var(--feitio-line-height-heading);
+  }
+  .feitio-anchor a:hover {
+    color: var(--feitio-color-text);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+  .feitio-anchor a .feitio-icon {
+    inline-size: 0.8em;
+    block-size: 0.8em;
+    align-self: center;
+    opacity: 0;
+    transition: opacity var(--feitio-duration-change) var(--feitio-easing-change);
+  }
+  .feitio-anchor a[aria-current="location"] {
+    color: var(--feitio-color-text);
+    font-weight: var(--feitio-font-weight-bold);
+  }
+  .feitio-anchor a[aria-current="location"] .feitio-icon {
+    opacity: 1;
+  }
+  .feitio-footer {
+    padding: var(--feitio-space-5) var(--feitio-space-4);
+    border-block-start: var(--feitio-border-width) solid var(--feitio-color-line);
+    font: var(--feitio-font-size-small) var(--feitio-font-ui);
+    color: var(--feitio-color-text-soft);
+  }
+  .feitio-footer .inner {
+    max-inline-size: 90rem;
+    margin-inline: auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--feitio-space-3) var(--feitio-space-5);
+  }
+  .feitio-footer .who {
+    display: flex;
+    align-items: center;
+    gap: var(--feitio-space-2);
+  }
+  .feitio-footer .who strong {
+    color: var(--feitio-color-text);
+    font-weight: var(--feitio-font-weight-heavy);
+  }
+  .feitio-footer .brand-logo {
+    inline-size: 1.4rem;
+    block-size: 1.4rem;
+  }
+  .feitio-footer ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--feitio-space-2) var(--feitio-space-4);
+  }
+  .feitio-footer a {
+    color: var(--feitio-color-text-soft);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+  .feitio-footer a:hover {
+    color: var(--feitio-color-text);
+  }
 }
 
 @keyframes feitio-filter-wait {
