@@ -1,8 +1,12 @@
 ---
-/** Divider: the hairline between two parts that touch, when space alone is not enough. */
+/**
+ * Divider: the hairline between two parts that touch, when space alone is not enough. vertical sits
+ * between pieces side by side, as tall as their row.
+ */
 interface Props {
   tone?: 'ink';
+  orientation?: 'horizontal' | 'vertical';
 }
-const { tone } = Astro.props;
+const { tone, orientation = 'horizontal' } = Astro.props;
 ---
-<hr class="feitio-divider" data-tone={tone} />
+<hr class="feitio-divider" data-tone={tone} aria-orientation={orientation === 'vertical' ? 'vertical' : undefined} />

@@ -1,2 +1,0 @@
-/* The order of the layers: the examples' own styles sit under the components, so the core wins. */
-@layer feitio.reset, feitio.tokens, feitio.base, feitio.shapes, docs.demos, feitio.components;

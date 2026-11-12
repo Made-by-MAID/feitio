@@ -1,5 +1,10 @@
 import Button from '@feitio/astro/Button.astro';
+import Divider from '@feitio/astro/Divider.astro';
+import Heading from '@feitio/astro/Heading.astro';
+import Kbd from '@feitio/astro/Kbd.astro';
+import Link from '@feitio/astro/Link.astro';
 import Notice from '@feitio/astro/Notice.astro';
+import Tag from '@feitio/astro/Tag.astro';
 import type { Control } from '../components/Playground.astro';
 import type { Locale } from '../i18n/ui.ts';
 import { renderHtml } from '../lib/render.ts';
@@ -168,6 +173,155 @@ export async function playgroundFor(
           PH,
         ),
       ),
+    };
+  }
+
+  if (slug === 'divider') {
+    const keys = [
+      ['', 'ink'],
+      ['horizontal', 'vertical'],
+    ];
+    return {
+      placeholder: '',
+      text: '',
+      controls: [
+        {
+          name: 'tone',
+          label: words('Tom', 'Tone', 'Tono', 'Ton', 'Ton'),
+          options: [
+            { value: '', label: words('Fina', 'Hairline', 'Fina', 'Fine', 'Fein') },
+            { value: 'ink', label: words('Tinta', 'Ink', 'Tinta', 'Encre', 'Tinte') },
+          ],
+        },
+        {
+          name: 'orientation',
+          label: words('Direção', 'Direction', 'Dirección', 'Direction', 'Richtung'),
+          options: [
+            {
+              value: 'horizontal',
+              label: words('Horizontal', 'Horizontal', 'Horizontal', 'Horizontale', 'Horizontal'),
+            },
+            {
+              value: 'vertical',
+              label: words('Vertical', 'Vertical', 'Vertical', 'Verticale', 'Vertikal'),
+            },
+          ],
+        },
+      ],
+      combos: await combos(keys, async ([tone, o]) => {
+        const hr = await renderHtml(Divider, { tone: tone || undefined, orientation: o });
+        const a = words('Acima', 'Above', 'Arriba', 'Au-dessus', 'Oben');
+        const b = words('Abaixo', 'Below', 'Abajo', 'En dessous', 'Unten');
+        return o === 'vertical'
+          ? `<div class="feitio-inline" data-gap="3"><span>${a}</span>${hr}<span>${b}</span></div>`
+          : `<div class="feitio-stack" data-gap="3" style="inline-size: min(100%, 24rem)"><span>${a}</span>${hr}<span>${b}</span></div>`;
+      }),
+    };
+  }
+  if (slug === 'tag') {
+    const keys = [
+      ['', 'ok', 'warn', 'error'],
+      ['', 'small'],
+    ];
+    return {
+      placeholder: PH,
+      text: words('Atrasado', 'Late', 'Atrasado', 'En retard', 'Verspätet'),
+      controls: [
+        {
+          name: 'status',
+          label: L.status[lang],
+          options: [
+            { value: '', label: words('Neutra', 'Neutral', 'Neutra', 'Neutre', 'Neutral') },
+            { value: 'ok', label: words('Certo', 'Success', 'Correcto', 'Succès', 'Erfolg') },
+            {
+              value: 'warn',
+              label: words('Atenção', 'Warning', 'Atención', 'Attention', 'Achtung'),
+            },
+            { value: 'error', label: words('Erro', 'Error', 'Error', 'Erreur', 'Fehler') },
+          ],
+        },
+        {
+          name: 'size',
+          label: L.size[lang],
+          options: [
+            { value: '', label: words('Normal', 'Regular', 'Normal', 'Normal', 'Normal') },
+            { value: 'small', label: words('Pequena', 'Small', 'Pequeña', 'Petite', 'Klein') },
+          ],
+        },
+      ],
+      combos: await combos(keys, ([st, z]) =>
+        renderHtml(Tag, { status: st || undefined, size: z || undefined, sprite }, PH),
+      ),
+    };
+  }
+  if (slug === 'link') {
+    const keys = [['', 'new-tab']];
+    return {
+      placeholder: PH,
+      text: words(
+        'o relatório de novembro',
+        'the November report',
+        'el informe de noviembre',
+        'le rapport de novembre',
+        'den Novemberbericht',
+      ),
+      controls: [
+        {
+          name: 'tab',
+          label: words('Abre em', 'Opens in', 'Se abre en', 'S’ouvre dans', 'Öffnet in'),
+          options: [
+            {
+              value: '',
+              label: words('Esta aba', 'This tab', 'Esta pestaña', 'Cet onglet', 'Diesem Tab'),
+            },
+            {
+              value: 'new-tab',
+              label: words('Nova aba', 'New tab', 'Otra pestaña', 'Nouvel onglet', 'Neuem Tab'),
+            },
+          ],
+        },
+      ],
+      combos: await combos(keys, ([t]) =>
+        renderHtml(
+          Link,
+          {
+            href: '#playground',
+            newTab: Boolean(t),
+            newTabLabel: words(
+              '(abre em nova aba)',
+              '(opens in a new tab)',
+              '(se abre en otra pestaña)',
+              '(s’ouvre dans un nouvel onglet)',
+              '(öffnet in neuem Tab)',
+            ),
+            sprite,
+          },
+          PH,
+        ),
+      ),
+    };
+  }
+  if (slug === 'heading') {
+    const keys = [['1', '2', '3', '4']];
+    return {
+      placeholder: PH,
+      text: words('Agendamentos', 'Schedules', 'Citas', 'Rendez-vous', 'Termine'),
+      controls: [
+        {
+          name: 'level',
+          label: words('Nível', 'Level', 'Nivel', 'Niveau', 'Ebene'),
+          options: ['1', '2', '3', '4'].map((v) => ({ value: v, label: `h${v}` })),
+        },
+      ],
+      combos: await combos(keys, ([v]) => renderHtml(Heading, { level: Number(v) }, PH)),
+    };
+  }
+  if (slug === 'kbd') {
+    return {
+      placeholder: PH,
+      text: 'Esc',
+      controls: [],
+      combos: { '': await renderHtml(Kbd, {}, PH) },
     };
   }
   return undefined;

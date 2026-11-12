@@ -148,6 +148,17 @@
   .feitio-divider[data-tone="ink"] {
     border-block-start-color: var(--feitio-color-text);
   }
+  /* Vertical: between pieces side by side (an Inline), as tall as the row. */
+  .feitio-divider[aria-orientation="vertical"] {
+    align-self: stretch;
+    inline-size: 0;
+    min-block-size: 1em;
+    border-block-start: 0;
+    border-inline-start: var(--feitio-border-width) solid var(--feitio-color-line);
+  }
+  .feitio-divider[aria-orientation="vertical"][data-tone="ink"] {
+    border-inline-start-color: var(--feitio-color-text);
+  }
 
   /* Kbd: a key, as on the keyboard, with a slightly thicker bottom edge. */
   .feitio-kbd {
@@ -196,6 +207,12 @@
   .feitio-button:hover {
     box-shadow: var(--feitio-shadow-lift);
     translate: -2px -2px;
+  }
+  /* Pressed: the lifted paper is pressed flat onto the table, a little past where it sat. */
+  .feitio-button:active:not(:disabled, [aria-disabled="true"]) {
+    box-shadow: none;
+    translate: 1px 1px;
+    transition-duration: calc(var(--feitio-duration-change) / 4);
   }
   .feitio-button:focus-visible {
     outline: var(--feitio-focus-width) solid var(--feitio-color-accent);
