@@ -1,0 +1,17 @@
+---
+import AreaPage from '../../../components/AreaPage.astro';
+import { AREA_INDEX, AREA_PAGES } from '../../../content/areas.ts';
+import { LOCALES, type Locale } from '../../../i18n/ui.ts';
+
+export function getStaticPaths() {
+  const pages = AREA_PAGES.filter((p) => p.area === 'design');
+  return LOCALES.flatMap((lang) => [
+    ...pages.map((page) => ({ params: { lang, slug: page.slug }, props: { page } })),
+    ...pages
+      .filter((p) => p.slug === AREA_INDEX.design)
+      .map((page) => ({ params: { lang, slug: undefined }, props: { page } })),
+  ]);
+}
+const { page } = Astro.props;
+---
+<AreaPage page={page} lang={Astro.params.lang as Locale} />

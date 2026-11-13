@@ -29,8 +29,20 @@ interface Props {
   lede?: string;
   /** A short label for this page in search results (the area's name). */
   searchArea?: string;
+  /** The home: no navigation, title or index; the slot is the whole main. */
+  bare?: boolean;
 }
-const { lang, title, area, areaHref, nav = [], toc = [], lede, searchArea } = Astro.props;
+const {
+  lang,
+  title,
+  area,
+  areaHref,
+  nav = [],
+  toc = [],
+  lede,
+  searchArea,
+  bare = false,
+} = Astro.props;
 const words = WORDS[lang];
 const base = import.meta.env.BASE_URL;
 const sprite = `${base}feitio/icons/sprite.svg`;
@@ -93,6 +105,9 @@ const GH =
     <p class="foot"><span><kbd class="feitio-kbd">↵</kbd> {words.searchFirst}</span><span><kbd class="feitio-kbd">↑</kbd><kbd class="feitio-kbd">↓</kbd> {words.searchChoose}</span><span><kbd class="feitio-kbd">Esc</kbd> {words.searchClose}</span></p>
   </form>
 </dialog>
+{bare ? (
+  <main class="home" id="conteudo" tabindex="-1" data-pagefind-body><slot /></main>
+) : (
 <div class:list={['site-body', { 'has-side': hasSide, 'has-toc': hasToc }]}>
   {hasSide && (
     <aside class="site-side" aria-label={words.menu}><div class="side-inner"><div class="feitio-nav">
@@ -121,6 +136,7 @@ const GH =
     </div></aside>
   )}
 </div>
+)}
 <a class="feitio-button feitio-back-to-top" data-size="small" href="#conteudo" data-pagefind-ignore><Icon name="chevron-down" sprite={sprite} />{words.top}</a>
 <span class="feitio-scroll-fade" aria-hidden="true"></span>
 <footer class="feitio-footer" data-pagefind-ignore><div class="inner"><span class="who"><Logo /><strong>Feitio</strong><span>© <span data-since="2026">2026</span></span></span><span>{words.madeBy} <a href="https://github.com/HenriqueArtur">@HenriqueArtur</a>.</span><ul><li><a href={`${base}${lang}/dev/changelog/`}>{words.changelog}</a></li><li><a href="https://github.com/Made-by-MAID/feitio/blob/main/LICENSE">{words.license}</a></li><li><a href="https://github.com/Made-by-MAID/feitio">GitHub</a></li></ul></div></footer>

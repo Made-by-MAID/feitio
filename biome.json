@@ -7,7 +7,13 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": ["**", "!apps/docs/src/content/drafts.json"]
+    "includes": [
+      "**",
+      "!apps/docs/src/content/drafts.json",
+      "!apps/docs/src/content/areas.json",
+      "!apps/docs/src/content/home.json",
+      "!apps/docs/public/demos.js"
+    ]
   },
   "formatter": {
     "enabled": true,

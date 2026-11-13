@@ -1,0 +1,11 @@
+---
+import AreaPage from '../../../components/AreaPage.astro';
+import { AREA_PAGES } from '../../../content/areas.ts';
+import { LOCALES, type Locale } from '../../../i18n/ui.ts';
+
+export function getStaticPaths() {
+  return LOCALES.map((lang) => ({ params: { lang } }));
+}
+const page = AREA_PAGES.find((p) => p.area === 'components' && p.slug === 'index');
+---
+{page && <AreaPage page={page} lang={Astro.params.lang as Locale} />}

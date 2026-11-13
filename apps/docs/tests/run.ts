@@ -19,11 +19,18 @@ const LOCALES = ['pt', 'en', 'es', 'fr', 'de'];
 const drafts = JSON.parse(
   await readFile(join(import.meta.dir, '..', 'src', 'content', 'drafts.json'), 'utf8'),
 ) as { slug: string }[];
-const PAGES = drafts
-  .map((d) => `components/${d.slug}/`)
-  .filter(
-    (p) => !process.env.PAGES || process.env.PAGES.split(',').some((only) => p.includes(only)),
-  );
+const areas = JSON.parse(
+  await readFile(join(import.meta.dir, '..', 'src', 'content', 'areas.json'), 'utf8'),
+) as { pages: { area: string; slug: string }[] };
+const PAGES = [
+  '',
+  ...drafts.map((d) => `components/${d.slug}/`),
+  ...areas.pages.map((p) =>
+    p.area === 'components' && p.slug === 'index' ? 'components/' : `${p.area}/${p.slug}/`,
+  ),
+].filter(
+  (p) => !process.env.PAGES || process.env.PAGES.split(',').some((only) => p.includes(only)),
+);
 
 const server = Bun.serve({
   port: 0,
@@ -68,7 +75,7 @@ const browser = await chromium.launch();
 // Every page, every language: day, night, and a phone. ONLY=behavior skips this, to run the rest quickly.
 for (const lang of process.env.ONLY === 'behavior' ? [] : LOCALES) {
   for (const path of PAGES) {
-    const name = `${lang}-${path.replaceAll('/', '-').replace(/-$/, '')}`;
+    const name = `${lang}-${path.replaceAll('/', '-').replace(/-$/, '') || 'home'}`;
     for (const mode of ['light', 'dark'] as const) {
       const page = await browser.newPage({
         viewport: { width: 1440, height: 900 },

@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="1 1 64 64"><title>Feitio</title>
+  <!-- Feitio: o botão sobre o papel. A marca completa, para tamanhos a partir de 48px. -->
+  <style>
+    .shadow { fill: #2d211a; }
+    .paper { fill: #fdfaf3; }
+    .ink { fill: none; stroke: #2d211a; stroke-width: 3; stroke-linecap: round; }
+    .hot { fill: none; stroke: #ba4209; stroke-width: 3; stroke-linecap: round; }
+    @media (prefers-color-scheme: dark) {
+      .shadow { fill: #080503; }
+      .paper { fill: #392e26; }
+      .ink { stroke: #f0e7d8; }
+    }
+  </style>
+  <path class="shadow" transform="translate(3.6 4.2)" d="M32 6.2C47.4 6 58 17.2 57.7 32.2C57.4 46.8 46.6 57.8 31.8 57.7C17.4 57.6 6.4 46.6 6.4 31.8C6.4 17.4 17.2 6.4 32 6.2Z"/>
+  <path class="paper" d="M32 6.2C47.4 6 58 17.2 57.7 32.2C57.4 46.8 46.6 57.8 31.8 57.7C17.4 57.6 6.4 46.6 6.4 31.8C6.4 17.4 17.2 6.4 32 6.2Z"/>
+  <path class="ink" d="M32 6.4C47.2 5.9 58 17.2 57.6 32.2C57.2 46.6 46.4 57.7 31.6 57.6"/>
+  <path class="ink" d="M34 57.5C18.4 58.3 6.2 46.8 6.5 31.4C6.8 17.1 17.6 6.5 31.2 6.1"/>
+  <path class="ink" d="M32.2 15.2C41.8 15 48.9 22.6 48.6 32.2C48.3 41.4 41.4 48.8 32 48.6"/>
+  <path class="ink" d="M33.6 48.5C23.4 49 15.2 41.6 15.5 31.5C15.8 22.4 22.7 15.4 31.2 15.3"/>
+  <path class="hot" d="M24.6 24.4C29 28.6 34.4 34.2 39.6 39.4"/>
+  <path class="hot" d="M39.8 24.2C35 28.8 29.8 34.4 24.2 39.8"/>
+  <path class="ink" d="M23.4 23.6c.6-1.6 2.8-1.4 3 .4M40.2 23.2c1.6-.4 2.2 1.8.6 2.4M24.8 40.8c-1.6.2-2-2-.4-2.4M39.2 40.6c-.6 1.6-2.8 1.2-2.8-.6"/>
+</svg>

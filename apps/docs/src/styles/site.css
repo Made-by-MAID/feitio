@@ -1200,3 +1200,9 @@ main[tabindex="-1"]:focus {
   border-radius: var(--feitio-radius);
   inline-size: fit-content;
 }
+.site-main :not(pre) > code {
+  overflow-wrap: anywhere;
+}
+.ruler .bar-cell {
+  margin: 0;
+}
