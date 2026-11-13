@@ -1,0 +1,28 @@
+name: Bug
+description: Something in a Feitio package or on the docs site does not work as it should.
+labels: [bug]
+body:
+  - type: input
+    id: package
+    attributes:
+      label: Package and version
+      description: Like @feitio/react 0.1.0, or "docs site".
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happens
+      description: What you did, what you expected, and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: How to see it
+      description: The smallest HTML or code that shows it, or the docs page address.
+  - type: input
+    id: where
+    attributes:
+      label: Browser and system
+      description: Like Firefox 140 on macOS, with or without a screen reader.
