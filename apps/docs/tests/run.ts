@@ -109,6 +109,7 @@ for (const lang of process.env.ONLY === 'behavior' ? [] : LOCALES) {
 // in the sitemap.
 {
   const sitemap = await readFile(join(dist, 'sitemap-0.xml'), 'utf8').catch(() => '');
+  const links = new Set<string>();
   check(sitemap.length > 0, 'sitemap: sitemap-0.xml is missing');
   for (const lang of LOCALES) {
     for (const path of PAGES) {
@@ -144,6 +145,14 @@ for (const lang of process.env.ONLY === 'behavior' ? [] : LOCALES) {
         document.querySelector('script[type="application/ld+json"]') !== null,
         `${name}: no structured data`,
       );
+      // Every link inside the site leads to a page or file that exists.
+      for (const link of document.querySelectorAll('a[href^="/"]')) {
+        const target = (link.getAttribute('href') ?? '').split(/[#?]/)[0] ?? '';
+        if (!target || links.has(target)) continue;
+        links.add(target);
+        const file = target.endsWith('/') ? join(dist, target, 'index.html') : join(dist, target);
+        check(await Bun.file(file).exists(), `${name}: broken link ${target}`);
+      }
     }
   }
 }

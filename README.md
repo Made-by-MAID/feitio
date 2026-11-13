@@ -1,5 +1,11 @@
 # Feitio
 
+[![npm](https://img.shields.io/npm/v/@feitio/core?label=%40feitio%2Fcore)](https://www.npmjs.com/package/@feitio/core)
+[![CI](https://github.com/Made-by-MAID/feitio/actions/workflows/ci.yml/badge.svg)](https://github.com/Made-by-MAID/feitio/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+
+**Docs:** https://made-by-maid.github.io/feitio/
+
 A handmade, humanist design system. _Feitio_ is Portuguese for the way a thing is made, by hand.
 
 Feitio holds what every interface built with it shares: the guidelines, the design tokens, the base
