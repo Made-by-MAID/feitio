@@ -134,7 +134,7 @@ const GH =
 {!notFound && LOCALES.map((l) => <link rel="alternate" hreflang={HTML_LANG[l]} href={absolute(pathIn(l, here, base))} />)}
 {!notFound && <link rel="alternate" hreflang="x-default" href={absolute(pathIn('pt', here, base))} />}
 {!notFound && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
-<link rel="alternate" type="text/markdown" href={`${here}index.md`} />
+{!notFound && <link rel="alternate" type="text/markdown" href={`${here}index.md`} />}
 <link rel="help" type="text/plain" href={`${base}${lang}/llms.txt`} />
 </head>
 <body>
