@@ -23,7 +23,8 @@
     "docs:dev": "bun run --filter '@feitio/docs' dev",
     "docs:build": "bun run --filter '@feitio/docs' build",
     "test:docs": "FEITIO_PARITY=1 bun run docs:build && bun apps/docs/tests/run.ts && bun run test:parity",
-    "test:parity": "bun packages/react/parity/run.tsx && bun packages/react/parity/browser.tsx"
+    "test:parity": "bun packages/react/parity/run.tsx && bun packages/react/parity/browser.tsx",
+    "release": "bun run --filter '@feitio/*' build && bun scripts/release.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.3",
