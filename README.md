@@ -105,6 +105,8 @@ A Bun workspace. Every published package shares one version.
   are in `@feitio/core/css/components.css`.
 - `apps/docs`: the documentation site, in Astro, one set of pages per language (PT, EN, ES, FR, DE),
   searched with Pagefind. `bun run docs:dev` to work on it, `bun run docs:build` to build it.
+  Every page also comes as Markdown (`index.md` next to it), and each language has an `llms.txt`
+  and an `llms-full.txt` for AI agents. Published on GitHub Pages from `main`.
 - `docs/guidelines/`: how and why.
 - `site/`: the showcase, in English and Portuguese, published on GitHub Pages straight from `main`
   (the root `index.html` sends visitors there).

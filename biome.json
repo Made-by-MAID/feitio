@@ -12,7 +12,8 @@
       "!apps/docs/src/content/drafts.json",
       "!apps/docs/src/content/areas.json",
       "!apps/docs/src/content/home.json",
-      "!apps/docs/public/demos.js"
+      "!apps/docs/public/demos.js",
+      "!.changeset/*.md"
     ]
   },
   "formatter": {

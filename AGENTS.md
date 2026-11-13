@@ -28,6 +28,7 @@ Rules for anyone changing this repository, people and AI agents alike. Read the
   `apps/docs/src/content/`; examples render the component itself (`renderHtml`), so "Show code"
   always shows what runs.
 - Every docs page exists in all five languages (PT, EN, ES, FR, DE). New words go in all five.
+- For agents, read `/<lang>/llms.txt` (an index) or `/<lang>/llms-full.txt` (everything) on the published site, or any page's `index.md`.
 - A component enters with its tests in `apps/docs/tests/run.ts`, a real browser over the built site:
   axe by day and at night in every language, no sideways scroll on a phone, and its behavior
   (clicks, keyboard, focus). `bun run test:docs` builds the site and runs them. A component page

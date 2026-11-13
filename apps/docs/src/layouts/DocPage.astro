@@ -70,6 +70,8 @@ const GH =
 </script>
 <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml">
 {LOCALES.map((l) => <link rel="alternate" hreflang={HTML_LANG[l]} href={pathIn(l, here, base)} />)}
+<link rel="alternate" type="text/markdown" href={`${here}index.md`} />
+<link rel="help" type="text/plain" href={`${base}${lang}/llms.txt`} />
 </head>
 <body>
 <a class="feitio-skip-link" href="#conteudo">{words.skip}</a>
