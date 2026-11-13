@@ -39,6 +39,9 @@ Rules for anyone changing this repository, people and AI agents alike. Read the
   with props worth trying gets a Playground (every combination rendered by the component itself).
 - All published packages share one version (the `fixed` group in `.changeset/config.json`). A pull
   request that changes a published package adds a changeset: `bun run changeset`.
+- Releases: the Release workflow keeps a "Version packages" pull request open while there are
+  changesets; merging it runs `bun run release` (`scripts/release.ts`), which packs each package with
+  `bun pm pack` (so `workspace:*` becomes the real version) and publishes what npm does not have yet.
 - Behaviors take the page as a parameter (`window`, a root), never a global, so a test hands in a
   happy-dom window. The DOM actions are tested with happy-dom; anything that needs layout, focus or
   the top layer is tested in a real browser.
