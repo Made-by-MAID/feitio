@@ -2,6 +2,21 @@
   "name": "@feitio/react",
   "version": "0.0.0",
   "description": "Feitio's components for React: the same HTML as the Astro components, with the behaviors wired by hooks.",
+  "keywords": [
+    "feitio",
+    "design-system",
+    "accessibility",
+    "a11y",
+    "handmade",
+    "react",
+    "react-components",
+    "components",
+    "ui"
+  ],
+  "homepage": "https://made-by-maid.github.io/feitio/en/dev/react/",
+  "bugs": {
+    "url": "https://github.com/Made-by-MAID/feitio/issues"
+  },
   "license": "MIT",
   "type": "module",
   "sideEffects": false,
@@ -36,5 +51,8 @@
     "@types/react-dom": "19.3.0",
     "react": "19.3.1",
     "react-dom": "19.3.1"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
