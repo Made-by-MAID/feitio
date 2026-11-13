@@ -35,7 +35,8 @@ Rules for anyone changing this repository, people and AI agents alike. Read the
 - For agents, read `/<lang>/llms.txt` (an index) or `/<lang>/llms-full.txt` (everything) on the published site, or any page's `index.md`.
 - A component enters with its tests in `apps/docs/tests/run.ts`, a real browser over the built site:
   axe by day and at night in every language, no sideways scroll on a phone, and its behavior
-  (clicks, keyboard, focus). `bun run test:docs` builds the site and runs them. A component page
+  (clicks, keyboard, focus). Lighthouse runs too (`apps/docs/tests/lighthouse.ts`): accessibility, best
+  practices and SEO stay at 100 and performance above its floor, or the docs check fails. `bun run test:docs` builds the site and runs them. A component page
   with props worth trying gets a Playground (every combination rendered by the component itself).
 - All published packages share one version (the `fixed` group in `.changeset/config.json`). A pull
   request that changes a published package adds a changeset: `bun run changeset`.

@@ -3,3 +3,4 @@ dist/
 .astro/
 tests/screenshots/
 social-preview.png
+tests/lighthouse.json

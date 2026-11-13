@@ -1,6 +1,6 @@
 {
   "name": "@feitio/astro",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Feitio's components for Astro: the single source of each component's HTML.",
   "keywords": [
     "feitio",
@@ -13,7 +13,7 @@
     "components",
     "ui"
   ],
-  "homepage": "https://made-by-maid.github.io/feitio/",
+  "homepage": "https://feitio.bymaid.com/",
   "bugs": {
     "url": "https://github.com/Made-by-MAID/feitio/issues"
   },

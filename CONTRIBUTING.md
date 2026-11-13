@@ -7,7 +7,7 @@ so the best contributions are often fixes, clearer words and better tests.
 
 - Read [`AGENTS.md`](AGENTS.md): the rules for anyone changing the repository, people and AI agents
   alike (never write a value outside the tokens, never write a component's HTML twice, and so on).
-- Read the [guidelines](https://made-by-maid.github.io/feitio/) for anything visual.
+- Read the [guidelines](https://feitio.bymaid.com/) for anything visual.
 - For a new component or a bigger change, open an issue first and say what it is for and when it
   should not be used.
 

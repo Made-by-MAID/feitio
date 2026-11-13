@@ -60,7 +60,7 @@ const langNames = { pt: 'PT', en: 'EN', es: 'ES', fr: 'FR', de: 'DE' };
 const hasSide = nav.length > 0;
 const hasToc = toc.length > 0;
 // Search and link previews: every address absolute, from the site's own origin.
-const site = Astro.site ?? new URL('https://made-by-maid.github.io');
+const site = Astro.site ?? new URL('https://feitio.bymaid.com');
 const absolute = (path: string) => new URL(path, site).href;
 const fullTitle = bare ? `Feitio · ${words.tagline}` : `${title} · Feitio`;
 const description = lede ?? words.description;

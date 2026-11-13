@@ -33,4 +33,4 @@ export function Saved() {
 - **Controls are uncontrolled**: `value`, `checked` and `on` are where they start; `onChange` tells
   what changed.
 
-The guidelines, every component and when not to use it: https://made-by-maid.github.io/feitio/
+The guidelines, every component and when not to use it: https://feitio.bymaid.com/

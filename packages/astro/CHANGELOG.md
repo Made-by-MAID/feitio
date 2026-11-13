@@ -1,5 +1,14 @@
 # @feitio/astro
 
+## 0.2.1
+
+### Patch Changes
+
+- c8b7b9d: The docs moved to their own domain, https://feitio.bymaid.com: every package's homepage and README point there.
+- Updated dependencies [c8b7b9d]
+  - @feitio/core@0.2.1
+  - @feitio/vanilla@0.2.1
+
 ## 0.2.0
 
 ### Patch Changes
