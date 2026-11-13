@@ -2,10 +2,12 @@ name: Release
 
 # On every push to main: while there are changesets, opens (or updates) the "Version packages" pull
 # request with the new versions and changelogs; merging it publishes the packages to npm.
-# Publishing uses npm trusted publishing (OIDC): no token is stored anywhere.
+# Publishing uses npm trusted publishing (OIDC): no token is stored anywhere. No registry-url on
+# setup-node: it would write an .npmrc with a placeholder token that npm tries instead of OIDC.
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 
 concurrency: release-${{ github.ref }}
 
@@ -25,7 +27,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-          registry-url: https://registry.npmjs.org
       # Trusted publishing needs npm 11.5.1 or later.
       - run: npm install -g npm@latest
       - run: bun install --frozen-lockfile
