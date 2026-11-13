@@ -1,18 +1,22 @@
 ---
-/** The root sends each visitor to their language, or Portuguese. */
+/** The root sends each visitor to their language, or Portuguese; without script, to Portuguese. */
 const base = import.meta.env.BASE_URL;
+const site = Astro.site ?? new URL('https://made-by-maid.github.io');
+const pt = new URL(`${base}pt/`, site).href;
 ---
 <!doctype html>
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
 <title>Feitio</title>
-<meta http-equiv="refresh" content={`0; url=${base}pt/`}>
+<meta name="robots" content="noindex">
+<link rel="canonical" href={pt}>
 <script is:inline define:vars={{ base }}>
   const want = (navigator.languages || [navigator.language || 'pt']).map((l) => l.slice(0, 2).toLowerCase());
   const lang = want.find((l) => ['pt', 'en', 'es', 'fr', 'de'].includes(l)) || 'pt';
   location.replace(`${base}${lang}/`);
 </script>
+<noscript><meta http-equiv="refresh" content={`0; url=${base}pt/`}></noscript>
 </head>
 <body><p><a href={`${base}pt/`}>Feitio</a></p></body>
 </html>

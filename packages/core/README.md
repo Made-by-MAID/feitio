@@ -22,6 +22,8 @@ Or, with a bundler: `import '@feitio/core/css/feitio.css';`
   Tokens format), and `js/tokens.ts` names each one for TypeScript.
 - **Icons**: `icons/sprite.svg`, each icon a symbol named `feitio-<name>`.
 - **Illustrations**: `illustrations/*.svg`, ink in `currentColor`.
+- **Fonts**: `css/fonts.css` serves Alegreya and Alegreya Sans from `fonts/`, with no request to
+  any other site.
 
 Components: [`@feitio/astro`](https://www.npmjs.com/package/@feitio/astro) and
 [`@feitio/react`](https://www.npmjs.com/package/@feitio/react). Behaviors for plain HTML:
@@ -29,4 +31,5 @@ Components: [`@feitio/astro`](https://www.npmjs.com/package/@feitio/astro) and
 
 Guidelines, every component and when not to use it: https://made-by-maid.github.io/feitio/
 
-MIT. The Alegreya fonts are under the SIL Open Font License and are not part of this package.
+MIT. The Alegreya and Alegreya Sans fonts in `fonts/` are under the SIL Open Font License
+(`fonts/OFL.txt`).

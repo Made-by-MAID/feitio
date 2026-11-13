@@ -21,6 +21,13 @@ export const HTML_LANG: Record<Locale, string> = {
 };
 
 type Words = {
+  /** What the site is, in a line: the home's title after "Feitio · ". */
+  tagline: string;
+  /** The site in two sentences: the home's description, and any page's without a lede. */
+  description: string;
+  /** The page that does not exist. */
+  notFound: { title: string; text: string; back: string };
+  privacy: string;
   skip: string;
   areas: { design: string; dev: string; comp: string; res: string };
   home: string;
@@ -52,6 +59,15 @@ type Words = {
 
 export const WORDS: Record<Locale, Words> = {
   pt: {
+    tagline: 'um sistema de design feito à mão',
+    description:
+      'Feitio é um sistema de design feito à mão, humanista: diretrizes, tokens, CSS e componentes para Astro e React, com acessibilidade e cinco idiomas.',
+    notFound: {
+      title: 'Página não encontrada',
+      text: 'Este endereço não existe, ou mudou de lugar.',
+      back: 'Voltar ao início',
+    },
+    privacy: 'Privacidade',
     skip: 'Pular para o conteúdo',
     areas: { design: 'Design', dev: 'Desenvolvimento', comp: 'Componentes', res: 'Recursos' },
     home: 'Início',
@@ -81,6 +97,15 @@ export const WORDS: Record<Locale, Words> = {
     newTab: '(abre em nova aba)',
   },
   en: {
+    tagline: 'a handmade design system',
+    description:
+      'Feitio is a handmade, humanist design system: guidelines, tokens, CSS and components for Astro and React, accessible and in five languages.',
+    notFound: {
+      title: 'Page not found',
+      text: 'This address does not exist, or it moved.',
+      back: 'Back to the start',
+    },
+    privacy: 'Privacy',
     skip: 'Skip to content',
     areas: { design: 'Design', dev: 'Development', comp: 'Components', res: 'Resources' },
     home: 'Home',
@@ -110,6 +135,15 @@ export const WORDS: Record<Locale, Words> = {
     newTab: '(opens in a new tab)',
   },
   es: {
+    tagline: 'un sistema de diseño hecho a mano',
+    description:
+      'Feitio es un sistema de diseño hecho a mano, humanista: directrices, tokens, CSS y componentes para Astro y React, accesible y en cinco idiomas.',
+    notFound: {
+      title: 'Página no encontrada',
+      text: 'Esta dirección no existe, o cambió de lugar.',
+      back: 'Volver al inicio',
+    },
+    privacy: 'Privacidad',
     skip: 'Saltar al contenido',
     areas: { design: 'Diseño', dev: 'Desarrollo', comp: 'Componentes', res: 'Recursos' },
     home: 'Inicio',
@@ -139,6 +173,15 @@ export const WORDS: Record<Locale, Words> = {
     newTab: '(se abre en otra pestaña)',
   },
   fr: {
+    tagline: 'un système de design fait main',
+    description:
+      'Feitio est un système de design fait main, humaniste : des règles, des tokens, du CSS et des composants pour Astro et React, accessible et en cinq langues.',
+    notFound: {
+      title: 'Page introuvable',
+      text: 'Cette adresse n’existe pas, ou elle a changé de place.',
+      back: 'Revenir à l’accueil',
+    },
+    privacy: 'Confidentialité',
     skip: 'Aller au contenu',
     areas: { design: 'Design', dev: 'Développement', comp: 'Composants', res: 'Ressources' },
     home: 'Accueil',
@@ -168,6 +211,15 @@ export const WORDS: Record<Locale, Words> = {
     newTab: '(s’ouvre dans un nouvel onglet)',
   },
   de: {
+    tagline: 'ein handgemachtes Designsystem',
+    description:
+      'Feitio ist ein handgemachtes, humanistisches Designsystem: Richtlinien, Tokens, CSS und Komponenten für Astro und React, barrierefrei und in fünf Sprachen.',
+    notFound: {
+      title: 'Seite nicht gefunden',
+      text: 'Diese Adresse gibt es nicht, oder sie ist umgezogen.',
+      back: 'Zurück zum Anfang',
+    },
+    privacy: 'Datenschutz',
     skip: 'Zum Inhalt springen',
     areas: { design: 'Design', dev: 'Entwicklung', comp: 'Komponenten', res: 'Ressourcen' },
     home: 'Start',

@@ -1,0 +1,28 @@
+---
+/**
+ * The page for an address that does not exist, in the site's frame: Portuguese first, with the way
+ * back, then the same words in every other language, each pointing to its own start.
+ */
+import Button from '@feitio/astro/Button.astro';
+import Grid from '@feitio/astro/Grid.astro';
+import LinkCard from '@feitio/astro/LinkCard.astro';
+import Stack from '@feitio/astro/Stack.astro';
+import { HTML_LANG, LANG_NATIVE, LOCALES, WORDS } from '../i18n/ui.ts';
+import DocPage from '../layouts/DocPage.astro';
+
+const base = import.meta.env.BASE_URL;
+const sprite = `${base}feitio/icons/sprite.svg`;
+const pt = WORDS.pt.notFound;
+---
+<DocPage lang="pt" title={pt.title} lede={pt.text} notFound>
+  <Stack gap={6}>
+    <div><Button href={`${base}pt/`} variant="primary">{pt.back}</Button></div>
+    <Grid gap={3} min="14rem">
+      {LOCALES.filter((l) => l !== 'pt').map((l) => (
+        <div lang={HTML_LANG[l]}>
+          <LinkCard href={`${base}${l}/`} title={WORDS[l].notFound.title} sprite={sprite}>{WORDS[l].notFound.back} · {LANG_NATIVE[l]}</LinkCard>
+        </div>
+      ))}
+    </Grid>
+  </Stack>
+</DocPage>

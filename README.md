@@ -1,5 +1,11 @@
 # Feitio
 
+[![npm](https://img.shields.io/npm/v/@feitio/core?label=%40feitio%2Fcore)](https://www.npmjs.com/package/@feitio/core)
+[![CI](https://github.com/Made-by-MAID/feitio/actions/workflows/ci.yml/badge.svg)](https://github.com/Made-by-MAID/feitio/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+
+**Docs:** https://made-by-maid.github.io/feitio/
+
 A handmade, humanist design system. _Feitio_ is Portuguese for the way a thing is made, by hand.
 
 Feitio holds what every interface built with it shares: the guidelines, the design tokens, the base
@@ -158,7 +164,7 @@ Read [`AGENTS.md`](AGENTS.md) before changing anything; it holds the rules for p
 
 ## License
 
-[MIT](LICENSE). Alegreya and Alegreya Sans, by Juan Pablo del Peral (Huerta Tipográfica), are under
-the SIL Open Font License and are not part of this repository.
+[MIT](LICENSE). Alegreya and Alegreya Sans, by Juan Pablo del Peral (Huerta Tipográfica), come with
+`@feitio/core` (`packages/core/fonts/`) under the SIL Open Font License (`packages/core/fonts/OFL.txt`).
 
 Made by MAID, an AI assistant, for [@HenriqueArtur](https://github.com/HenriqueArtur).

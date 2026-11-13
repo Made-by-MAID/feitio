@@ -7,6 +7,7 @@
  */
 import { mkdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
+import { parseHTML } from 'linkedom';
 import { chromium, type Page } from 'playwright';
 
 type AxeResults = { violations: { id: string; help: string; nodes: { target: string[] }[] }[] };
@@ -58,10 +59,12 @@ async function axe(page: Page, state: string): Promise<void> {
 
 function watch(page: Page, state: string): void {
   page.on('pageerror', (error) => problems.push(`${state}: script error: ${error.message}`));
-  page.on('requestfailed', (request) => {
-    // Google Fonts may be unreachable where the tests run; everything of ours must load.
-    if (!request.url().includes('fonts.g'))
-      problems.push(`${state}: failed request ${request.url()}`);
+  page.on('requestfailed', (request) => problems.push(`${state}: failed request ${request.url()}`));
+  // Nothing goes to anyone else: no fonts, scripts or images from another site (privacy).
+  page.on('request', (request) => {
+    const url = request.url();
+    if (!url.startsWith(origin) && !url.startsWith('data:'))
+      problems.push(`${state}: request to another site ${url}`);
   });
   page.on('response', (response) => {
     if (response.status() >= 400 && response.url().startsWith(origin))
@@ -99,6 +102,77 @@ for (const lang of process.env.ONLY === 'behavior' ? [] : LOCALES) {
       await phone.screenshot({ path: join(shots, `${name}-phone.png`), fullPage: true });
     await phone.close();
   }
+}
+
+// Search and link previews, read from the built files: every page in every language has its
+// description, canonical, the five languages plus x-default, its preview image (which exists), and is
+// in the sitemap.
+{
+  const sitemap = await readFile(join(dist, 'sitemap-0.xml'), 'utf8').catch(() => '');
+  const links = new Set<string>();
+  check(sitemap.length > 0, 'sitemap: sitemap-0.xml is missing');
+  for (const lang of LOCALES) {
+    for (const path of PAGES) {
+      const name = `${lang}/${path}`;
+      const html = await readFile(join(dist, lang, path, 'index.html'), 'utf8');
+      const { document } = parseHTML(html);
+      const content = (selector: string) =>
+        document.querySelector(selector)?.getAttribute('content') ?? '';
+      check(content('meta[name="description"]').length > 20, `${name}: no description`);
+      const canonical = document.querySelector('link[rel="canonical"]')?.getAttribute('href') ?? '';
+      check(
+        canonical.startsWith('http') && canonical.endsWith(`/${lang}/${path}`),
+        `${name}: canonical is "${canonical}"`,
+      );
+      const alternates = [...document.querySelectorAll('link[rel="alternate"][hreflang]')];
+      check(
+        alternates.length === 6 &&
+          alternates.every((l) => l.getAttribute('href')?.startsWith('http')),
+        `${name}: hreflang should be five languages plus x-default, absolute`,
+      );
+      check(sitemap.includes(`<loc>${canonical}</loc>`), `${name}: not in the sitemap`);
+      const image = content('meta[property="og:image"]');
+      const file = Bun.file(join(dist, new URL(image).pathname));
+      check(
+        image.endsWith('.png') && (await file.exists()) && file.size < 300_000,
+        `${name}: preview image ${image} missing or over 300 KB`,
+      );
+      check(
+        content('meta[name="twitter:card"]') === 'summary_large_image',
+        `${name}: no twitter card`,
+      );
+      check(
+        document.querySelector('script[type="application/ld+json"]') !== null,
+        `${name}: no structured data`,
+      );
+      // Every link inside the site leads to a page or file that exists.
+      for (const link of document.querySelectorAll('a[href^="/"]')) {
+        const target = (link.getAttribute('href') ?? '').split(/[#?]/)[0] ?? '';
+        if (!target || links.has(target)) continue;
+        links.add(target);
+        const file = target.endsWith('/') ? join(dist, target, 'index.html') : join(dist, target);
+        check(await Bun.file(file).exists(), `${name}: broken link ${target}`);
+      }
+    }
+  }
+}
+
+// The page for an address that does not exist: in the site's frame, accessible by day and at night,
+// and kept out of search.
+for (const mode of ['light', 'dark'] as const) {
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, colorScheme: mode });
+  watch(page, `404 ${mode}`);
+  await page.goto(`${origin}/404.html`);
+  await axe(page, `404 ${mode}`);
+  check(
+    (await page.locator('meta[name="robots"]').getAttribute('content')) === 'noindex',
+    '404: not noindex',
+  );
+  check(
+    (await page.locator('.feitio-link-card').count()) === 4,
+    '404: the other four languages are missing',
+  );
+  await page.close();
 }
 
 // Button: the playground changes the live button and its code together.

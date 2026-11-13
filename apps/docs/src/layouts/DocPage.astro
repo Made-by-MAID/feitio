@@ -31,6 +31,8 @@ interface Props {
   searchArea?: string;
   /** The home: no navigation, title or index; the slot is the whole main. */
   bare?: boolean;
+  /** The page for an address that does not exist: the frame, but nothing for search or previews. */
+  notFound?: boolean;
 }
 const {
   lang,
@@ -42,6 +44,7 @@ const {
   lede,
   searchArea,
   bare = false,
+  notFound = false,
 } = Astro.props;
 const words = WORDS[lang];
 const base = import.meta.env.BASE_URL;
@@ -56,6 +59,35 @@ const areas = [
 const langNames = { pt: 'PT', en: 'EN', es: 'ES', fr: 'FR', de: 'DE' };
 const hasSide = nav.length > 0;
 const hasToc = toc.length > 0;
+// Search and link previews: every address absolute, from the site's own origin.
+const site = Astro.site ?? new URL('https://made-by-maid.github.io');
+const absolute = (path: string) => new URL(path, site).href;
+const fullTitle = bare ? `Feitio · ${words.tagline}` : `${title} · Feitio`;
+const description = lede ?? words.description;
+const rest = here.slice(`${base}${lang}/`.length).replace(/\/$/, '');
+const ogImage = absolute(`${base}og/${lang}/${rest || 'index'}.png`);
+const areaHrefOf = area ? (areaHref ?? areas.find((a) => a.key === area)?.href) : undefined;
+/** The same page in another language; from a page that does not exist, that language's start. */
+const langHref = (l: Locale) => (notFound ? `${base}${l}/` : pathIn(l, here, base));
+const OG_LOCALE = { pt: 'pt_BR', en: 'en_US', es: 'es_ES', fr: 'fr_FR', de: 'de_DE' } as const;
+const jsonLd = bare
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: 'Feitio',
+      url: absolute(`${base}${lang}/`),
+      inLanguage: HTML_LANG[lang],
+      description,
+    }
+  : {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { name: words.home, item: absolute(`${base}${lang}/`) },
+        ...(area && areaHrefOf ? [{ name: words.areas[area], item: absolute(areaHrefOf) }] : []),
+        { name: title, item: absolute(here) },
+      ].map((crumb, i) => ({ '@type': 'ListItem', position: i + 1, ...crumb })),
+    };
 const GH =
   'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z';
 ---
@@ -64,12 +96,44 @@ const GH =
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{title}, Feitio</title>
+<title>{fullTitle}</title>
+<meta name="description" content={description}>
+<meta name="theme-color" content="#f8f1e6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#231a14" media="(prefers-color-scheme: dark)">
+{notFound ? <meta name="robots" content="noindex" /> : (
+  <>
+<link rel="canonical" href={absolute(here)}>
+<meta property="og:type" content={bare ? 'website' : 'article'}>
+<meta property="og:site_name" content="Feitio">
+<meta property="og:title" content={bare ? fullTitle : title}>
+<meta property="og:description" content={description}>
+<meta property="og:url" content={absolute(here)}>
+<meta property="og:locale" content={OG_LOCALE[lang]}>
+{LOCALES.filter((l) => l !== lang).map((l) => <meta property="og:locale:alternate" content={OG_LOCALE[l]} />)}
+<meta property="og:image" content={ogImage}>
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content={bare ? fullTitle : `${title} · Feitio`}>
+{area && <meta property="article:section" content={words.areas[area]} />}
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content={bare ? fullTitle : title}>
+<meta name="twitter:description" content={description}>
+<meta name="twitter:image" content={ogImage}>
+<meta name="twitter:image:alt" content={bare ? fullTitle : `${title} · Feitio`}>
+  </>
+)}
 <script is:inline>
   try { const m = localStorage.getItem('feitio-mode'); if (m) document.documentElement.dataset.mode = m; } catch (e) {}
 </script>
 <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml">
-{LOCALES.map((l) => <link rel="alternate" hreflang={HTML_LANG[l]} href={pathIn(l, here, base)} />)}
+<link rel="icon" href={`${base}marca/feitio-32.png`} type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href={`${base}marca/feitio-180.png`}>
+<link rel="manifest" href={`${base}manifest.webmanifest`}>
+<link rel="sitemap" href={`${base}sitemap-index.xml`}>
+{!notFound && LOCALES.map((l) => <link rel="alternate" hreflang={HTML_LANG[l]} href={absolute(pathIn(l, here, base))} />)}
+{!notFound && <link rel="alternate" hreflang="x-default" href={absolute(pathIn('pt', here, base))} />}
+{!notFound && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
 <link rel="alternate" type="text/markdown" href={`${here}index.md`} />
 <link rel="help" type="text/plain" href={`${base}${lang}/llms.txt`} />
 </head>
@@ -82,7 +146,7 @@ const GH =
   </nav>
   <div class="tools">
     <button type="button" class="feitio-button search-open" data-size="small" data-open-search><Icon name="search" sprite={sprite} />{words.search}<kbd class="wide-only">/</kbd></button>
-    <span class="wide-only"><Menu id="lang" size="small" label={langNames[lang]} hint={`, ${words.language}: ${LANG_NATIVE[lang]}`} sprite={sprite} items={LOCALES.map((l) => ({ text: LANG_NATIVE[l], href: pathIn(l, here, base), current: l === lang, lang: HTML_LANG[l], hreflang: HTML_LANG[l] }))} /></span>
+    <span class="wide-only"><Menu id="lang" size="small" label={langNames[lang]} hint={`, ${words.language}: ${LANG_NATIVE[lang]}`} sprite={sprite} items={LOCALES.map((l) => ({ text: LANG_NATIVE[l], href: langHref(l), current: l === lang, lang: HTML_LANG[l], hreflang: HTML_LANG[l] }))} /></span>
     <div class="feitio-segmented wide-only" role="group" aria-label={words.light}><button type="button" data-mode-set="" aria-pressed="true">{words.auto}</button><button type="button" data-mode-set="light" aria-pressed="false">{words.day}</button><button type="button" data-mode-set="dark" aria-pressed="false">{words.night}</button></div>
     <a class="brand-mark wide-only" href="https://github.com/Made-by-MAID/feitio" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d={GH} /></svg></a>
     <button type="button" class="feitio-button menu" data-size="small" popovertarget="site-menu" aria-controls="site-menu">{words.menu}<Icon name="menu" sprite={sprite} /></button>
@@ -93,7 +157,7 @@ const GH =
   <div class="drawer-body">
     <div class="feitio-nav"><div class="group"><ul><li><a href={`${base}${lang}/`}>{words.home}</a></li>{areas.map((a) => <li><a href={a.href}>{words.areas[a.key]}</a></li>)}</ul></div></div>
     <div class="choices">
-      <div class="langs"><span>{words.language}</span><ul class="feitio-nav-plain">{LOCALES.map((l) => <li><a href={pathIn(l, here, base)} lang={HTML_LANG[l]} hreflang={HTML_LANG[l]} aria-current={l === lang ? 'page' : undefined}>{LANG_NATIVE[l]}</a></li>)}</ul></div>
+      <div class="langs"><span>{words.language}</span><ul class="feitio-nav-plain">{LOCALES.map((l) => <li><a href={langHref(l)} lang={HTML_LANG[l]} hreflang={HTML_LANG[l]} aria-current={l === lang ? 'page' : undefined}>{LANG_NATIVE[l]}</a></li>)}</ul></div>
       <div><span>{words.light}</span><span class="feitio-segmented" role="group" aria-label={words.light}><button type="button" data-mode-set="" aria-pressed="true">{words.auto}</button><button type="button" data-mode-set="light" aria-pressed="false">{words.day}</button><button type="button" data-mode-set="dark" aria-pressed="false">{words.night}</button></span></div>
     </div>
   </div>
@@ -110,13 +174,13 @@ const GH =
 {bare ? (
   <main class="home" id="conteudo" tabindex="-1" data-pagefind-body><slot /></main>
 ) : (
-<div class:list={['site-body', { 'has-side': hasSide, 'has-toc': hasToc }]}>
+<div class:list={['site-body', { 'has-side': hasSide, 'has-toc': hasToc, 'not-found': notFound }]}>
   {hasSide && (
     <aside class="site-side" aria-label={words.menu}><div class="side-inner"><div class="feitio-nav">
       {nav.map((g) => <div class="group"><p class="group-title">{g.title}</p><ul>{g.items.map((i) => <li><a href={i.href} aria-current={i.current ? 'page' : undefined}>{i.text}</a></li>)}</ul></div>)}
     </div><span class="feitio-scroll-fade" aria-hidden="true"></span></div></aside>
   )}
-  <main class="site-main" id="conteudo" tabindex="-1" data-pagefind-body data-pagefind-meta={`area:${searchArea ?? ''}`}>
+  <main class="site-main" id="conteudo" tabindex="-1" data-pagefind-body={notFound ? undefined : ''} data-pagefind-meta={`area:${searchArea ?? ''}`}>
     {area && (
       <nav class="feitio-breadcrumbs" aria-label={words.home} data-pagefind-ignore>
         <ol><li><a href={`${base}${lang}/`}>{words.home}</a></li><li><span class="sep" aria-hidden="true"><Icon name="chevron-right" sprite={sprite} /></span><a href={areaHref ?? areas.find((a) => a.key === area)?.href}>{words.areas[area]}</a></li><li><span class="sep" aria-hidden="true"><Icon name="chevron-right" sprite={sprite} /></span><span aria-current="page">{title}</span></li></ol>
@@ -141,7 +205,7 @@ const GH =
 )}
 <a class="feitio-button feitio-back-to-top" data-size="small" href="#conteudo" data-pagefind-ignore><Icon name="chevron-down" sprite={sprite} />{words.top}</a>
 <span class="feitio-scroll-fade" aria-hidden="true"></span>
-<footer class="feitio-footer" data-pagefind-ignore><div class="inner"><span class="who"><Logo /><strong>Feitio</strong><span>© <span data-since="2026">2026</span></span></span><span>{words.madeBy} <a href="https://github.com/HenriqueArtur">@HenriqueArtur</a>.</span><ul><li><a href={`${base}${lang}/dev/changelog/`}>{words.changelog}</a></li><li><a href="https://github.com/Made-by-MAID/feitio/blob/main/LICENSE">{words.license}</a></li><li><a href="https://github.com/Made-by-MAID/feitio">GitHub</a></li></ul></div></footer>
+<footer class="feitio-footer" data-pagefind-ignore><div class="inner"><span class="who"><Logo /><strong>Feitio</strong><span>© <span data-since="2026">2026</span></span></span><span>{words.madeBy} <a href="https://github.com/HenriqueArtur">@HenriqueArtur</a>.</span><ul><li><a href={`${base}${lang}/dev/mudancas/`}>{words.changelog}</a></li><li><a href={`${base}${lang}/dev/privacidade/`}>{words.privacy}</a></li><li><a href="https://github.com/Made-by-MAID/feitio/blob/main/LICENSE">{words.license}</a></li><li><a href="https://github.com/Made-by-MAID/feitio">GitHub</a></li></ul></div></footer>
 <script is:inline src={`${base}site.js`}></script>
 <script is:inline src={`${base}demos.js`}></script>
 <script>

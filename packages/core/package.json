@@ -29,6 +29,7 @@
   "files": [
     "tokens",
     "css",
+    "fonts",
     "js",
     "icons",
     "illustrations"
@@ -38,7 +39,8 @@
     "./js/tokens.ts": "./js/tokens.ts",
     "./icons/*": "./icons/*",
     "./illustrations/*": "./illustrations/*",
-    "./tokens/*": "./tokens/*"
+    "./tokens/*": "./tokens/*",
+    "./fonts/*": "./fonts/*"
   },
   "scripts": {
     "build": "bun src/flows/build-tokens.ts"
