@@ -1206,3 +1206,6 @@ main[tabindex="-1"]:focus {
 .ruler .bar-cell {
   margin: 0;
 }
+.ruler .bar-cell .bar {
+  display: block;
+}

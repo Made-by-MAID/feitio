@@ -312,6 +312,26 @@ for (const lang of process.env.ONLY === 'behavior' ? [] : LOCALES) {
   await page.close();
 }
 
+// Home, Try it: the new row slides in (the slide animation runs), and the notice lands as paper.
+{
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  await page.goto(`${origin}/en/`);
+  await page.click('#try-save');
+  await page.waitForTimeout(50);
+  const anim = await page
+    .locator('#try-list li')
+    .first()
+    .evaluate((li) => getComputedStyle(li).animationName);
+  check(anim === 'try-slide', `home: the new row did not slide (${anim})`);
+  check(await page.locator('#try-notice').isVisible(), 'home: the notice did not show');
+  await page.goto(`${origin}/en/design/espaco/`);
+  const bars = await page
+    .locator('.ruler .bar')
+    .evaluateAll((all) => all.map((b) => b.getBoundingClientRect().height));
+  check(bars.length === 7 && bars.every((h) => h > 0), 'space: the ruler bars do not show');
+  await page.close();
+}
+
 await browser.close();
 server.stop();
 if (problems.length) {
