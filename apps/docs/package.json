@@ -6,7 +6,7 @@
   "scripts": {
     "copy-core": "rm -rf public/feitio && mkdir -p public/feitio && cp -R ../../packages/core/icons ../../packages/core/illustrations public/feitio/",
     "dev": "bun run copy-core && astro dev",
-    "build": "bun run copy-core && astro build && pagefind --site dist",
+    "build": "bun run copy-core && astro build && pagefind --site dist && bun scripts/markdown.ts",
     "preview": "astro preview"
   },
   "dependencies": {
@@ -16,6 +16,8 @@
     "astro": "7.4.11"
   },
   "devDependencies": {
-    "pagefind": "1.6.0"
+    "linkedom": "0.18.15",
+    "pagefind": "1.6.0",
+    "turndown": "7.2.5"
   }
 }

@@ -332,6 +332,25 @@ for (const lang of process.env.ONLY === 'behavior' ? [] : LOCALES) {
   await page.close();
 }
 
+// For agents: every page has its Markdown, every language its llms.txt and llms-full.txt, and the root llms.txt lists them.
+{
+  const root = await readFile(join(dist, 'llms.txt'), 'utf8').catch(() => '');
+  check(
+    LOCALES.every((l) => root.includes(`${l}/llms.txt`)),
+    'llms.txt: the root does not list every language',
+  );
+  for (const lang of LOCALES) {
+    const index = await readFile(join(dist, lang, 'llms.txt'), 'utf8').catch(() => '');
+    check(index.includes('index.md'), `llms.txt: ${lang} lists no page`);
+    const full = await readFile(join(dist, lang, 'llms-full.txt'), 'utf8').catch(() => '');
+    check(full.length > 50000, `llms-full.txt: ${lang} is too short`);
+    for (const path of PAGES) {
+      const md = await readFile(join(dist, lang, path, 'index.md'), 'utf8').catch(() => '');
+      check(md.startsWith('# '), `markdown: ${lang}/${path} has no Markdown copy`);
+    }
+  }
+}
+
 await browser.close();
 server.stop();
 if (problems.length) {
