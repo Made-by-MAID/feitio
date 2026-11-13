@@ -1,6 +1,6 @@
 {
   "name": "@feitio/vanilla",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Feitio's component behaviors in plain JavaScript, for any HTML: Notice, Menu, Dialog, form controls, scroll and status.",
   "keywords": [
     "feitio",
