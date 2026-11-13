@@ -1,7 +1,23 @@
 {
   "name": "@feitio/vanilla",
   "version": "0.0.0",
-  "description": "Feitio's component behaviors in plain JavaScript, for any HTML: the timed Notice, and more to come.",
+  "description": "Feitio's component behaviors in plain JavaScript, for any HTML: Notice, Menu, Dialog, form controls, scroll and status.",
+  "keywords": [
+    "feitio",
+    "design-system",
+    "accessibility",
+    "a11y",
+    "handmade",
+    "vanilla-js",
+    "components",
+    "dialog",
+    "menu",
+    "notification"
+  ],
+  "homepage": "https://made-by-maid.github.io/feitio/",
+  "bugs": {
+    "url": "https://github.com/Made-by-MAID/feitio/issues"
+  },
   "license": "MIT",
   "type": "module",
   "repository": {
@@ -15,25 +31,49 @@
     "!src/**/*.spec.ts"
   ],
   "exports": {
-    ".": "./dist/feitio.js",
-    "./notice": "./dist/notice.js",
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "default": "./dist/feitio.js"
+    },
+    "./notice": {
+      "types": "./dist/types/notice/index.d.ts",
+      "default": "./dist/notice.js"
+    },
     "./notice/source": "./src/notice/index.ts",
-    "./menu": "./dist/menu.js",
+    "./menu": {
+      "types": "./dist/types/menu/index.d.ts",
+      "default": "./dist/menu.js"
+    },
     "./menu/source": "./src/menu/index.ts",
-    "./forms": "./dist/forms.js",
+    "./forms": {
+      "types": "./dist/types/forms/index.d.ts",
+      "default": "./dist/forms.js"
+    },
     "./forms/source": "./src/forms/index.ts",
-    "./status": "./dist/status.js",
+    "./status": {
+      "types": "./dist/types/status/index.d.ts",
+      "default": "./dist/status.js"
+    },
     "./status/source": "./src/status/index.ts",
-    "./scroll": "./dist/scroll.js",
+    "./scroll": {
+      "types": "./dist/types/scroll/index.d.ts",
+      "default": "./dist/scroll.js"
+    },
     "./scroll/source": "./src/scroll/index.ts",
-    "./dialog": "./dist/dialog.js",
+    "./dialog": {
+      "types": "./dist/types/dialog/index.d.ts",
+      "default": "./dist/dialog.js"
+    },
     "./dialog/source": "./src/dialog/index.ts"
   },
   "scripts": {
-    "build": "bun build src/index.ts src/notice/index.ts src/menu/index.ts src/forms/index.ts src/status/index.ts src/scroll/index.ts src/dialog/index.ts --outdir dist --format esm --entry-naming [dir]/[name].[ext] --root src && bun run rename",
+    "build": "rm -rf dist && bun build src/index.ts src/notice/index.ts src/menu/index.ts src/forms/index.ts src/status/index.ts src/scroll/index.ts src/dialog/index.ts --outdir dist --format esm --entry-naming [dir]/[name].[ext] --root src && bun run rename && tsc -p tsconfig.build.json && bun scripts/fix-declarations.ts",
     "rename": "mv dist/index.js dist/feitio.js && for m in notice menu forms status scroll dialog; do mv dist/$m/index.js dist/$m.js && rmdir dist/$m; done"
   },
   "dependencies": {
     "@feitio/core": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

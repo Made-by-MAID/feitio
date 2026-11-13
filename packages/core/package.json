@@ -2,6 +2,23 @@
   "name": "@feitio/core",
   "version": "0.0.0",
   "description": "Feitio's foundation: design tokens, the layered base CSS, the hand-drawn icons and illustrations.",
+  "keywords": [
+    "feitio",
+    "design-system",
+    "accessibility",
+    "a11y",
+    "handmade",
+    "design-tokens",
+    "css",
+    "css-variables",
+    "icons",
+    "dark-mode",
+    "themes"
+  ],
+  "homepage": "https://made-by-maid.github.io/feitio/",
+  "bugs": {
+    "url": "https://github.com/Made-by-MAID/feitio/issues"
+  },
   "license": "MIT",
   "type": "module",
   "repository": {
@@ -25,5 +42,8 @@
   },
   "scripts": {
     "build": "bun src/flows/build-tokens.ts"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

@@ -2,6 +2,21 @@
   "name": "@feitio/astro",
   "version": "0.0.0",
   "description": "Feitio's components for Astro: the single source of each component's HTML.",
+  "keywords": [
+    "feitio",
+    "design-system",
+    "accessibility",
+    "a11y",
+    "handmade",
+    "astro",
+    "astro-component",
+    "components",
+    "ui"
+  ],
+  "homepage": "https://made-by-maid.github.io/feitio/",
+  "bugs": {
+    "url": "https://github.com/Made-by-MAID/feitio/issues"
+  },
   "license": "MIT",
   "type": "module",
   "repository": {
@@ -24,5 +39,8 @@
   },
   "devDependencies": {
     "astro": "7.4.11"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
