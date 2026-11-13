@@ -158,7 +158,7 @@ Read [`AGENTS.md`](AGENTS.md) before changing anything; it holds the rules for p
 
 ## License
 
-[MIT](LICENSE). Alegreya and Alegreya Sans, by Juan Pablo del Peral (Huerta Tipográfica), are under
-the SIL Open Font License and are not part of this repository.
+[MIT](LICENSE). Alegreya and Alegreya Sans, by Juan Pablo del Peral (Huerta Tipográfica), come with
+`@feitio/core` (`packages/core/fonts/`) under the SIL Open Font License (`packages/core/fonts/OFL.txt`).
 
 Made by MAID, an AI assistant, for [@HenriqueArtur](https://github.com/HenriqueArtur).

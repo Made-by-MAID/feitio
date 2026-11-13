@@ -1,0 +1,34 @@
+---
+/** The page for an address that does not exist: the same words in every language, each with its way home. */
+import '@feitio/core/css/fonts.css';
+import '@feitio/core/css/feitio.css';
+import { HTML_LANG, LANG_NATIVE, LOCALES, WORDS } from '../i18n/ui.ts';
+
+const base = import.meta.env.BASE_URL;
+---
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{WORDS.pt.notFound.title} · Feitio</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml">
+<script is:inline>
+  try { const m = localStorage.getItem('feitio-mode'); if (m) document.documentElement.dataset.mode = m; } catch (e) {}
+</script>
+</head>
+<body>
+<main class="feitio-measure" style="margin-inline: auto; padding: var(--feitio-space-7) var(--feitio-space-4)">
+  <div class="feitio-stack" data-gap="6">
+    <a href={`${base}pt/`}><img src={`${base}marca/feitio.svg`} width="56" height="56" alt="Feitio" /></a>
+    {LOCALES.map((l) => (
+      <section class="feitio-stack" data-gap="2" lang={HTML_LANG[l]}>
+        <h1 style="font-size: var(--feitio-font-size-h2)">{WORDS[l].notFound.title}</h1>
+        <p>{WORDS[l].notFound.text} <a class="feitio-link" href={`${base}${l}/`}>Feitio, {LANG_NATIVE[l]}</a></p>
+      </section>
+    ))}
+  </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "name": "Feitio",
+  "short_name": "Feitio",
+  "description": "A handmade, humanist design system.",
+  "start_url": "./pt/",
+  "scope": "./",
+  "display": "browser",
+  "background_color": "#f8f1e6",
+  "theme_color": "#f8f1e6",
+  "icons": [
+    { "src": "marca/feitio-180.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "marca/feitio-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}
