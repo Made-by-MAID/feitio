@@ -26,7 +26,7 @@ type Words = {
   /** The site in two sentences: the home's description, and any page's without a lede. */
   description: string;
   /** The page that does not exist. */
-  notFound: { title: string; text: string };
+  notFound: { title: string; text: string; back: string };
   privacy: string;
   skip: string;
   areas: { design: string; dev: string; comp: string; res: string };
@@ -64,7 +64,8 @@ export const WORDS: Record<Locale, Words> = {
       'Feitio é um sistema de design feito à mão, humanista: diretrizes, tokens, CSS e componentes para Astro e React, com acessibilidade e cinco idiomas.',
     notFound: {
       title: 'Página não encontrada',
-      text: 'Este endereço não existe, ou mudou de lugar. Volte ao início:',
+      text: 'Este endereço não existe, ou mudou de lugar.',
+      back: 'Voltar ao início',
     },
     privacy: 'Privacidade',
     skip: 'Pular para o conteúdo',
@@ -101,7 +102,8 @@ export const WORDS: Record<Locale, Words> = {
       'Feitio is a handmade, humanist design system: guidelines, tokens, CSS and components for Astro and React, accessible and in five languages.',
     notFound: {
       title: 'Page not found',
-      text: 'This address does not exist, or it moved. Go back to the start:',
+      text: 'This address does not exist, or it moved.',
+      back: 'Back to the start',
     },
     privacy: 'Privacy',
     skip: 'Skip to content',
@@ -138,7 +140,8 @@ export const WORDS: Record<Locale, Words> = {
       'Feitio es un sistema de diseño hecho a mano, humanista: directrices, tokens, CSS y componentes para Astro y React, accesible y en cinco idiomas.',
     notFound: {
       title: 'Página no encontrada',
-      text: 'Esta dirección no existe, o cambió de lugar. Vuelve al inicio:',
+      text: 'Esta dirección no existe, o cambió de lugar.',
+      back: 'Volver al inicio',
     },
     privacy: 'Privacidad',
     skip: 'Saltar al contenido',
@@ -175,7 +178,8 @@ export const WORDS: Record<Locale, Words> = {
       'Feitio est un système de design fait main, humaniste : des règles, des tokens, du CSS et des composants pour Astro et React, accessible et en cinq langues.',
     notFound: {
       title: 'Page introuvable',
-      text: 'Cette adresse n’existe pas, ou elle a changé de place. Revenez à l’accueil :',
+      text: 'Cette adresse n’existe pas, ou elle a changé de place.',
+      back: 'Revenir à l’accueil',
     },
     privacy: 'Confidentialité',
     skip: 'Aller au contenu',
@@ -212,7 +216,8 @@ export const WORDS: Record<Locale, Words> = {
       'Feitio ist ein handgemachtes, humanistisches Designsystem: Richtlinien, Tokens, CSS und Komponenten für Astro und React, barrierefrei und in fünf Sprachen.',
     notFound: {
       title: 'Seite nicht gefunden',
-      text: 'Diese Adresse gibt es nicht, oder sie ist umgezogen. Zurück zum Anfang:',
+      text: 'Diese Adresse gibt es nicht, oder sie ist umgezogen.',
+      back: 'Zurück zum Anfang',
     },
     privacy: 'Datenschutz',
     skip: 'Zum Inhalt springen',

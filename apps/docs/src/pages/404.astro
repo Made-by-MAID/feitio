@@ -1,34 +1,28 @@
 ---
-/** The page for an address that does not exist: the same words in every language, each with its way home. */
-import '@feitio/core/css/fonts.css';
-import '@feitio/core/css/feitio.css';
+/**
+ * The page for an address that does not exist, in the site's frame: Portuguese first, with the way
+ * back, then the same words in every other language, each pointing to its own start.
+ */
+import Button from '@feitio/astro/Button.astro';
+import Grid from '@feitio/astro/Grid.astro';
+import LinkCard from '@feitio/astro/LinkCard.astro';
+import Stack from '@feitio/astro/Stack.astro';
 import { HTML_LANG, LANG_NATIVE, LOCALES, WORDS } from '../i18n/ui.ts';
+import DocPage from '../layouts/DocPage.astro';
 
 const base = import.meta.env.BASE_URL;
+const sprite = `${base}feitio/icons/sprite.svg`;
+const pt = WORDS.pt.notFound;
 ---
-<!doctype html>
-<html lang="pt-BR">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{WORDS.pt.notFound.title} · Feitio</title>
-<meta name="robots" content="noindex">
-<link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml">
-<script is:inline>
-  try { const m = localStorage.getItem('feitio-mode'); if (m) document.documentElement.dataset.mode = m; } catch (e) {}
-</script>
-</head>
-<body>
-<main class="feitio-measure" style="margin-inline: auto; padding: var(--feitio-space-7) var(--feitio-space-4)">
-  <div class="feitio-stack" data-gap="6">
-    <a href={`${base}pt/`}><img src={`${base}marca/feitio.svg`} width="56" height="56" alt="Feitio" /></a>
-    {LOCALES.map((l) => (
-      <section class="feitio-stack" data-gap="2" lang={HTML_LANG[l]}>
-        <h1 style="font-size: var(--feitio-font-size-h2)">{WORDS[l].notFound.title}</h1>
-        <p>{WORDS[l].notFound.text} <a class="feitio-link" href={`${base}${l}/`}>Feitio, {LANG_NATIVE[l]}</a></p>
-      </section>
-    ))}
-  </div>
-</main>
-</body>
-</html>
+<DocPage lang="pt" title={pt.title} lede={pt.text} notFound>
+  <Stack gap={6}>
+    <div><Button href={`${base}pt/`} variant="primary">{pt.back}</Button></div>
+    <Grid gap={3} min="14rem">
+      {LOCALES.filter((l) => l !== 'pt').map((l) => (
+        <div lang={HTML_LANG[l]}>
+          <LinkCard href={`${base}${l}/`} title={WORDS[l].notFound.title} sprite={sprite}>{WORDS[l].notFound.back} · {LANG_NATIVE[l]}</LinkCard>
+        </div>
+      ))}
+    </Grid>
+  </Stack>
+</DocPage>

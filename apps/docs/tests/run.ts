@@ -148,6 +148,24 @@ for (const lang of process.env.ONLY === 'behavior' ? [] : LOCALES) {
   }
 }
 
+// The page for an address that does not exist: in the site's frame, accessible by day and at night,
+// and kept out of search.
+for (const mode of ['light', 'dark'] as const) {
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, colorScheme: mode });
+  watch(page, `404 ${mode}`);
+  await page.goto(`${origin}/404.html`);
+  await axe(page, `404 ${mode}`);
+  check(
+    (await page.locator('meta[name="robots"]').getAttribute('content')) === 'noindex',
+    '404: not noindex',
+  );
+  check(
+    (await page.locator('.feitio-link-card').count()) === 4,
+    '404: the other four languages are missing',
+  );
+  await page.close();
+}
+
 // Button: the playground changes the live button and its code together.
 {
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });

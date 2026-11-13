@@ -1209,3 +1209,11 @@ main[tabindex="-1"]:focus {
 .ruler .bar-cell .bar {
   display: block;
 }
+
+/* The page for an address that does not exist: one centered column, like a reading page. */
+.site-body.not-found .site-main {
+  inline-size: 100%;
+  max-inline-size: var(--feitio-measure-reading);
+  margin-inline: auto;
+  padding-block: var(--feitio-space-7);
+}
