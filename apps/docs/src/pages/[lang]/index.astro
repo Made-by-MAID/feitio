@@ -1,0 +1,19 @@
+---
+/** The home: the approved draft's opening, values, showcase, Try it and doors, in the page's language. */
+import home from '../../content/home.json';
+import { LOCALES, type Locale } from '../../i18n/ui.ts';
+import DocPage from '../../layouts/DocPage.astro';
+
+export function getStaticPaths() {
+  return LOCALES.map((lang) => ({ params: { lang } }));
+}
+const lang = Astro.params.lang as Locale;
+const base = import.meta.env.BASE_URL;
+const data = home as { html: Record<Locale, string>; style: string; script: string };
+const html = data.html[lang].replaceAll('@@BASE@@', base).replaceAll('@@LANG@@', lang);
+---
+<DocPage lang={lang} title="Feitio" bare>
+  <style is:inline set:html={data.style}></style>
+  <Fragment set:html={html} />
+  <script is:inline set:html={data.script}></script>
+</DocPage>

@@ -1,0 +1,25 @@
+---
+/**
+ * Search: the product search, a field in the middle of the screen with the results one per line, and
+ * the keys at the foot. The page fills the results (with Pagefind or its own index).
+ */
+import Icon from './Icon.astro';
+
+interface Props {
+  id: string;
+  title: string;
+  placeholder?: string;
+  closeLabel?: string;
+  keys?: { open: string; choose: string; close: string };
+  sprite?: string;
+}
+const { id, title, placeholder, closeLabel = 'Fechar', keys, sprite } = Astro.props;
+---
+<dialog class="feitio-dialog search-dialog" id={id} aria-labelledby={`${id}-t`}>
+  <form method="dialog">
+    <h2 id={`${id}-t`} class="feitio-visually-hidden">{title}</h2>
+    <div class="search-head"><Icon name="search" sprite={sprite} /><label class="feitio-visually-hidden" for={`${id}-field`}>{title}</label><input class="search-field" id={`${id}-field`} type="search" autocomplete="off" placeholder={placeholder} /><button type="submit" class="feitio-button close" data-size="small" value="close"><Icon name="close" sprite={sprite} />{closeLabel}</button></div>
+    <ul class="results"><slot /></ul>
+    {keys && <p class="foot"><span><kbd class="feitio-kbd">↵</kbd> {keys.open}</span><span><kbd class="feitio-kbd">↑</kbd><kbd class="feitio-kbd">↓</kbd> {keys.choose}</span><span><kbd class="feitio-kbd">Esc</kbd> {keys.close}</span></p>}
+  </form>
+</dialog>

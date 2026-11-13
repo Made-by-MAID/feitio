@@ -10,12 +10,12 @@ let container: AstroContainer | undefined;
 export async function renderHtml(
   component: AstroComponentFactory,
   props: Record<string, unknown> = {},
-  slot = '',
+  slot: string | Record<string, string> = '',
 ): Promise<string> {
   container ??= await AstroContainer.create();
   const html = await container.renderToString(component, {
     props,
-    slots: slot ? { default: slot } : {},
+    slots: typeof slot === 'string' ? (slot ? { default: slot } : {}) : slot,
   });
   return html
     .replace(/<script\b[\s\S]*?<\/script>/g, '')

@@ -1,0 +1,18 @@
+---
+/** Select: one choice from a long list, with the hand-drawn arrow. */
+import Icon from './Icon.astro';
+
+interface Props {
+  id: string;
+  options: string[];
+  value?: string;
+  /** A first, empty option, like "Choose…". */
+  empty?: string;
+  disabled?: boolean;
+  invalid?: boolean;
+  describedBy?: string;
+  sprite?: string;
+}
+const { id, options, value, empty, disabled, invalid, describedBy, sprite } = Astro.props;
+---
+<span class="feitio-select"><select id={id} disabled={disabled} aria-invalid={invalid ? 'true' : undefined} aria-describedby={describedBy}>{empty && <option value="">{empty}</option>}{options.map((o) => <option selected={o === value}>{o}</option>)}</select><Icon name="chevron-down" sprite={sprite} /></span>

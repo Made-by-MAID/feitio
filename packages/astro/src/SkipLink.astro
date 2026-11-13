@@ -1,0 +1,8 @@
+---
+/** SkipLink: the first link of the page, to jump straight to the content. It only shows with the keyboard's focus. */
+interface Props {
+  href?: string;
+}
+const { href = '#content' } = Astro.props;
+---
+<a class="feitio-skip-link" href={href}><slot /></a>

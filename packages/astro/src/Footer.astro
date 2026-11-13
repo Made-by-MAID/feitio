@@ -1,0 +1,12 @@
+---
+/** Footer: the brand with the years (since → this year, by itself), who made it, and the site-wide links. */
+interface Props {
+  name: string;
+  since: number;
+  links: { text: string; href: string }[];
+  note?: string;
+}
+const { name, since, links, note } = Astro.props;
+const year = new Date().getFullYear();
+---
+<footer class="feitio-footer"><div class="inner"><span class="who"><slot name="logo" /><strong>{name}</strong><span>© <span data-since={since}>{since === year ? since : `${since}–${year}`}</span></span></span>{note && <span set:html={note} />}<ul>{links.map((l) => <li><a href={l.href}>{l.text}</a></li>)}</ul></div></footer>

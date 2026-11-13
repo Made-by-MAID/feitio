@@ -1,0 +1,12 @@
+---
+/** Switch: turns a setting on and off, applied when the form is saved; the state is said in words too. */
+interface Props {
+  label: string;
+  on?: boolean;
+  disabled?: boolean;
+  onLabel?: string;
+  offLabel?: string;
+}
+const { label, on = false, disabled, onLabel = 'Ligado', offLabel = 'Desligado' } = Astro.props;
+---
+<label class="feitio-switch" data-on={onLabel} data-off={offLabel}><input type="checkbox" role="switch" checked={on} disabled={disabled} />{label}<span class="state">{on ? onLabel : offLabel}</span></label>

@@ -1,0 +1,12 @@
+---
+/** Details: a closed passage the person opens if they want; opening and closing animate the height. */
+import Icon from './Icon.astro';
+
+interface Props {
+  summary: string;
+  open?: boolean;
+  sprite?: string;
+}
+const { summary, open, sprite } = Astro.props;
+---
+<details class="feitio-details" open={open}><summary><Icon name="chevron-right" sprite={sprite} />{summary}</summary><div class="content"><slot /></div></details>

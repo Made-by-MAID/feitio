@@ -16,7 +16,21 @@ const dist = join(import.meta.dir, '..', 'dist');
 const shots = join(import.meta.dir, 'screenshots');
 const axeSource = await readFile(join(repo, 'node_modules', 'axe-core', 'axe.min.js'), 'utf8');
 const LOCALES = ['pt', 'en', 'es', 'fr', 'de'];
-const PAGES = ['components/button/', 'components/notice/'];
+const drafts = JSON.parse(
+  await readFile(join(import.meta.dir, '..', 'src', 'content', 'drafts.json'), 'utf8'),
+) as { slug: string }[];
+const areas = JSON.parse(
+  await readFile(join(import.meta.dir, '..', 'src', 'content', 'areas.json'), 'utf8'),
+) as { pages: { area: string; slug: string }[] };
+const PAGES = [
+  '',
+  ...drafts.map((d) => `components/${d.slug}/`),
+  ...areas.pages.map((p) =>
+    p.area === 'components' && p.slug === 'index' ? 'components/' : `${p.area}/${p.slug}/`,
+  ),
+].filter(
+  (p) => !process.env.PAGES || process.env.PAGES.split(',').some((only) => p.includes(only)),
+);
 
 const server = Bun.serve({
   port: 0,
@@ -58,10 +72,10 @@ function watch(page: Page, state: string): void {
 await mkdir(shots, { recursive: true });
 const browser = await chromium.launch();
 
-// Every page, every language: day, night, and a phone.
-for (const lang of LOCALES) {
+// Every page, every language: day, night, and a phone. ONLY=behavior skips this, to run the rest quickly.
+for (const lang of process.env.ONLY === 'behavior' ? [] : LOCALES) {
   for (const path of PAGES) {
-    const name = `${lang}-${path.replaceAll('/', '-').replace(/-$/, '')}`;
+    const name = `${lang}-${path.replaceAll('/', '-').replace(/-$/, '') || 'home'}`;
     for (const mode of ['light', 'dark'] as const) {
       const page = await browser.newPage({
         viewport: { width: 1440, height: 900 },
@@ -110,21 +124,23 @@ for (const lang of LOCALES) {
 {
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
   await page.goto(`${origin}/en/components/notice/`);
-  await page.click('#n-close .close');
+  await page.click('#ex-n-fechar .close');
   await page.waitForTimeout(700);
-  check(await page.locator('#n-close').isHidden(), 'notice: the close button did not close it');
-  await page.click('[data-notice-again="n-close"]');
-  check(await page.locator('#n-close').isVisible(), 'notice: show again did not bring it back');
-  await page.locator('#n-time').scrollIntoViewIfNeeded();
+  check(await page.locator('#ex-n-fechar').isHidden(), 'notice: the close button did not close it');
+  await page.click('[data-notice-show="ex-n-fechar"]');
+  check(await page.locator('#ex-n-fechar').isVisible(), 'notice: show again did not bring it back');
+  await page.locator('#ex-n-tempo').scrollIntoViewIfNeeded();
   await page.mouse.move(0, 0);
   await page.waitForTimeout(9000);
-  check(await page.locator('#n-time').isHidden(), 'notice: the timed notice did not go away');
-  await page.click('[data-notice-again="n-time"]');
+  check(await page.locator('#ex-n-tempo').isHidden(), 'notice: the timed notice did not go away');
+  await page.click('[data-notice-show="ex-n-tempo"]');
   await page.waitForTimeout(300);
-  await page.evaluate(() => document.getElementById('n-time')?.classList.remove('feitio-place'));
-  await page.click('[data-notice-again="n-time"]');
+  await page.evaluate(() =>
+    document.getElementById('ex-n-tempo')?.classList.remove('feitio-place'),
+  );
+  await page.click('[data-notice-show="ex-n-tempo"]');
   const placedAgain = await page
-    .locator('#n-time')
+    .locator('#ex-n-tempo')
     .evaluate((n) => n.classList.contains('feitio-place'));
   check(!placedAgain, 'notice: showing it again while on screen landed it again');
   await page.close();
@@ -157,6 +173,162 @@ for (const lang of LOCALES) {
   await page.click('[popovertarget="lang-list"]');
   await page.click('#lang-list a[hreflang="es"]');
   await page.waitForURL('**/es/components/button/');
+  await page.close();
+}
+
+// Forms: the Switch says its state, AM/PM swaps once per click, the SegmentedControl marks its choice,
+// the FilterField filters and counts, and the playground re-renders with its controls.
+{
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  await page.goto(`${origin}/en/components/switch/`);
+  await page.click('.playground .live .feitio-switch');
+  check(
+    (await page.locator('.playground .live .feitio-switch .state').textContent())?.trim() === 'On',
+    'switch: the state did not say On',
+  );
+  await page.click('[data-prop="state"][data-value="disabled"]');
+  check(
+    await page.locator('.playground .live .feitio-switch input').isDisabled(),
+    'switch playground: disabled did not apply',
+  );
+  await page.goto(`${origin}/en/components/timeinput/`);
+  await page.click('[data-prop="cycle"][data-value="12"]');
+  const before = (await page.locator('.playground .live .period').textContent())?.trim();
+  await page.click('.playground .live .period');
+  const after = (await page.locator('.playground .live .period').textContent())?.trim();
+  check(before !== after && Boolean(after), `timeinput: AM/PM did not swap (${before} → ${after})`);
+  await page.goto(`${origin}/en/components/segmented/`);
+  await page.click('[data-prop="count"][data-value="3"]');
+  await page.click('.playground .live .feitio-segmented button:nth-child(3)');
+  check(
+    (await page
+      .locator('.playground .live .feitio-segmented button:nth-child(3)')
+      .getAttribute('aria-pressed')) === 'true',
+    'segmented: the choice was not marked',
+  );
+  await page.goto(`${origin}/en/components/filterfield/`);
+  await page.fill('#pg-filter', 'plants');
+  const visible = await page.locator('#pg-filter-list li:not([hidden])').count();
+  check(visible === 1, `filterfield: ${visible} items left instead of 1`);
+  check(
+    ((await page.locator('[data-count="pg-filter-list"]').textContent()) ?? '').includes('1'),
+    'filterfield: the count did not follow',
+  );
+  // With the debounce and the async search on: it waits, then it is busy, then the results arrive.
+  await page.click('[data-prop="debounce"][data-value="on"]');
+  await page.click('[data-prop="async"][data-value="on"]');
+  await page.fill('#pg-filter', 'photos');
+  check(
+    (await page.locator('.playground .feitio-filter').getAttribute('data-state')) === 'waiting',
+    'filterfield: it did not wait (debounce)',
+  );
+  await page.waitForTimeout(800);
+  check(
+    (await page.locator('.playground .feitio-filter').getAttribute('data-state')) === 'busy',
+    'filterfield: it was not busy during the async search',
+  );
+  check(
+    ((await page.locator('[data-count="pg-filter-list"]').textContent()) ?? '').includes(
+      'Searching',
+    ),
+    'filterfield: the count did not say Searching',
+  );
+  await page.waitForTimeout(1300);
+  check(
+    (await page.locator('.playground .feitio-filter').getAttribute('data-state')) === null,
+    'filterfield: it stayed busy after the results',
+  );
+  check(
+    (await page.locator('#pg-filter-list li:not([hidden])').count()) === 1,
+    'filterfield: the async results were not applied',
+  );
+  await page.goto(`${origin}/en/components/field/`);
+  await page.click('[data-prop="state"][data-value="error"]');
+  check(
+    (await page.locator('.playground .live input').getAttribute('aria-invalid')) === 'true',
+    'field playground: the error did not mark the input',
+  );
+  await page.close();
+}
+
+// ScrollFade and BackToTop inside a box: the fade shows while there is more, BackToTop after half a box, and it goes back up.
+{
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  await page.goto(`${origin}/en/components/backtotop/`);
+  check(
+    (await page.locator('#pg-scroll .feitio-scroll-fade').getAttribute('data-visible')) !== null,
+    'scrollfade: no fade while there is more below',
+  );
+  await page.locator('#pg-scroll').evaluate((box) => box.scrollTo({ top: box.scrollHeight }));
+  await page.waitForTimeout(300);
+  check(
+    (await page.locator('#pg-scroll .feitio-back-to-top').getAttribute('data-visible')) !== null,
+    'backtotop: it did not show after scrolling',
+  );
+  check(
+    (await page.locator('#pg-scroll .feitio-scroll-fade').getAttribute('data-visible')) === null,
+    'scrollfade: the fade stayed at the end',
+  );
+  await page.click('#pg-scroll .feitio-back-to-top');
+  await page.waitForTimeout(900);
+  check(
+    (await page.locator('#pg-scroll').evaluate((box) => box.scrollTop)) === 0,
+    'backtotop: it did not go back to the top',
+  );
+  await page.close();
+}
+
+// Dialog and Drawer: the button opens them; the typed confirmation turns the danger action on; the Drawer opens from the chosen edge.
+{
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  await page.goto(`${origin}/en/components/dialog/`);
+  await page.click('[data-prop="kind"][data-value="word"]');
+  await page.click('.playground .live [data-open-dialog]');
+  await page.waitForTimeout(300);
+  check(
+    await page.locator('#pg-dialog').evaluate((d) => (d as HTMLDialogElement).open),
+    'dialog: the button did not open it',
+  );
+  check(
+    await page.locator('#pg-dialog [data-variant="danger"]').isDisabled(),
+    'dialog: the danger action was on before typing',
+  );
+  await page.keyboard.type('DELETE');
+  check(
+    await page.locator('#pg-dialog [data-variant="danger"]').isEnabled(),
+    'dialog: typing the word did not turn the action on',
+  );
+  await page.keyboard.press('Escape');
+  await page.goto(`${origin}/en/components/drawer/`);
+  await page.click('[data-prop="side"][data-value="bottom"]');
+  await page.click('.playground .live [popovertarget="pg-drawer"]');
+  await page.waitForTimeout(500);
+  check(
+    await page
+      .locator('#pg-drawer')
+      .evaluate((d) => d.matches(':popover-open') && d.getAttribute('data-side') === 'bottom'),
+    'drawer: it did not open from the bottom',
+  );
+  await page.close();
+}
+
+// Home, Try it: the new row slides in (the slide animation runs), and the notice lands as paper.
+{
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  await page.goto(`${origin}/en/`);
+  await page.click('#try-save');
+  await page.waitForTimeout(50);
+  const anim = await page
+    .locator('#try-list li')
+    .first()
+    .evaluate((li) => getComputedStyle(li).animationName);
+  check(anim === 'try-slide', `home: the new row did not slide (${anim})`);
+  check(await page.locator('#try-notice').isVisible(), 'home: the notice did not show');
+  await page.goto(`${origin}/en/design/espaco/`);
+  const bars = await page
+    .locator('.ruler .bar')
+    .evaluateAll((all) => all.map((b) => b.getBoundingClientRect().height));
+  check(bars.length === 7 && bars.every((h) => h > 0), 'space: the ruler bars do not show');
   await page.close();
 }
 

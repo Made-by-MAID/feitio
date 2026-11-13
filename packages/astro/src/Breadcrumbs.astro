@@ -1,0 +1,13 @@
+---
+/** Breadcrumbs: the path from the start to here; the last step is this page, not a link. */
+import Icon from './Icon.astro';
+
+interface Props {
+  items: { text: string; href: string }[];
+  current: string;
+  label?: string;
+  sprite?: string;
+}
+const { items, current, label = 'Você está em', sprite } = Astro.props;
+---
+<nav class="feitio-breadcrumbs" aria-label={label}><ol>{items.map((i, n) => <li>{n > 0 && <span class="sep" aria-hidden="true"><Icon name="chevron-right" sprite={sprite} /></span>}<a href={i.href}>{i.text}</a></li>)}<li><span class="sep" aria-hidden="true"><Icon name="chevron-right" sprite={sprite} /></span><span aria-current="page">{current}</span></li></ol></nav>

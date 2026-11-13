@@ -1,0 +1,14 @@
+---
+/** DoDont: the right way and the wrong way, side by side, each with its why in one sentence. Slots: do and dont. */
+import Icon from './Icon.astro';
+
+interface Props {
+  doWhy: string;
+  dontWhy: string;
+  doLabel?: string;
+  dontLabel?: string;
+  sprite?: string;
+}
+const { doWhy, dontWhy, doLabel = 'Faça assim', dontLabel = 'Não faça', sprite } = Astro.props;
+---
+<div class="pair feitio-dodont"><div class="do"><p class="verdict"><Icon name="check" sprite={sprite} />{doLabel}</p><div class="demo"><slot name="do" /></div><p class="why">{doWhy}</p></div><div class="dont"><p class="verdict"><Icon name="close" sprite={sprite} />{dontLabel}</p><div class="demo"><slot name="dont" /></div><p class="why">{dontWhy}</p></div></div>

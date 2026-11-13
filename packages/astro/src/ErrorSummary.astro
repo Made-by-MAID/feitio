@@ -1,0 +1,15 @@
+---
+/**
+ * ErrorSummary: every error of the form, at the top, each a link to its field. It takes the focus
+ * when the form is sent (role="alert", tabindex="-1").
+ */
+import Icon from './Icon.astro';
+
+interface Props {
+  title: string;
+  errors: { text: string; href: string }[];
+  sprite?: string;
+}
+const { title, errors, sprite } = Astro.props;
+---
+<div class="feitio-error-summary" role="alert" tabindex="-1"><h3><Icon name="close" sprite={sprite} />{title}</h3><ul>{errors.map((e) => <li><a href={e.href}>{e.text}</a></li>)}</ul></div>

@@ -9,6 +9,7 @@ import Menu from '@feitio/astro/Menu.astro';
 import Logo from '../components/Logo.astro';
 import '@feitio/core/css/fonts.css';
 import '@feitio/core/css/feitio.css';
+import '../styles/demos.css';
 import '../styles/site.css';
 import { HTML_LANG, LANG_NATIVE, LOCALES, type Locale, pathIn, WORDS } from '../i18n/ui.ts';
 
@@ -28,8 +29,20 @@ interface Props {
   lede?: string;
   /** A short label for this page in search results (the area's name). */
   searchArea?: string;
+  /** The home: no navigation, title or index; the slot is the whole main. */
+  bare?: boolean;
 }
-const { lang, title, area, areaHref, nav = [], toc = [], lede, searchArea } = Astro.props;
+const {
+  lang,
+  title,
+  area,
+  areaHref,
+  nav = [],
+  toc = [],
+  lede,
+  searchArea,
+  bare = false,
+} = Astro.props;
 const words = WORDS[lang];
 const base = import.meta.env.BASE_URL;
 const sprite = `${base}feitio/icons/sprite.svg`;
@@ -59,7 +72,7 @@ const GH =
 {LOCALES.map((l) => <link rel="alternate" hreflang={HTML_LANG[l]} href={pathIn(l, here, base)} />)}
 </head>
 <body>
-<a class="skip" href="#conteudo">{words.skip}</a>
+<a class="feitio-skip-link" href="#conteudo">{words.skip}</a>
 <header class="site-header">
   <a class="brand" href={`${base}${lang}/`}><Logo />Feitio</a>
   <nav class="areas" aria-label={words.menu}>
@@ -92,6 +105,9 @@ const GH =
     <p class="foot"><span><kbd class="feitio-kbd">↵</kbd> {words.searchFirst}</span><span><kbd class="feitio-kbd">↑</kbd><kbd class="feitio-kbd">↓</kbd> {words.searchChoose}</span><span><kbd class="feitio-kbd">Esc</kbd> {words.searchClose}</span></p>
   </form>
 </dialog>
+{bare ? (
+  <main class="home" id="conteudo" tabindex="-1" data-pagefind-body><slot /></main>
+) : (
 <div class:list={['site-body', { 'has-side': hasSide, 'has-toc': hasToc }]}>
   {hasSide && (
     <aside class="site-side" aria-label={words.menu}><div class="side-inner"><div class="feitio-nav">
@@ -120,9 +136,36 @@ const GH =
     </div></aside>
   )}
 </div>
+)}
 <a class="feitio-button feitio-back-to-top" data-size="small" href="#conteudo" data-pagefind-ignore><Icon name="chevron-down" sprite={sprite} />{words.top}</a>
 <span class="feitio-scroll-fade" aria-hidden="true"></span>
 <footer class="feitio-footer" data-pagefind-ignore><div class="inner"><span class="who"><Logo /><strong>Feitio</strong><span>© <span data-since="2026">2026</span></span></span><span>{words.madeBy} <a href="https://github.com/HenriqueArtur">@HenriqueArtur</a>.</span><ul><li><a href={`${base}${lang}/dev/changelog/`}>{words.changelog}</a></li><li><a href="https://github.com/Made-by-MAID/feitio/blob/main/LICENSE">{words.license}</a></li><li><a href="https://github.com/Made-by-MAID/feitio">GitHub</a></li></ul></div></footer>
 <script is:inline src={`${base}site.js`}></script>
+<script is:inline src={`${base}demos.js`}></script>
+<script>
+  // Every page wires the Notice behavior: the examples come as HTML, not through Notice.astro.
+  import { dialogs } from '@feitio/vanilla/dialog/source';
+  import { forms } from '@feitio/vanilla/forms/source';
+  import { notices } from '@feitio/vanilla/notice/source';
+  import { scrolls } from '@feitio/vanilla/scroll/source';
+  const page = window as Window & { feitioNotice?: ReturnType<typeof notices> };
+  page.feitioNotice ??= notices(window);
+  forms(window);
+  dialogs(window);
+  scrolls(window);
+  // A playground that swaps its HTML says so; the new ScrollFade and BackToTop get wired too.
+  document.addEventListener('feitio-rendered', (event) => scrolls(window, event.target as HTMLElement));
+  // The docs' stand-in for a server: an asynchronous FilterField in a demo answers after a second.
+  document.addEventListener('feitio-filter', (event) => {
+    const target = event.target as HTMLElement;
+    if (target.closest('[data-demo-async]')) window.setTimeout((event as CustomEvent<{ done: () => void }>).detail.done, 1000);
+  });
+  for (const b of document.querySelectorAll<HTMLElement>('[data-notice-show]')) {
+    b.addEventListener('click', () => {
+      const n = document.getElementById(b.dataset.noticeShow ?? '');
+      if (n) page.feitioNotice?.show(n);
+    });
+  }
+</script>
 </body>
 </html>

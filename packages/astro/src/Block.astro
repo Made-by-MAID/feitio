@@ -1,0 +1,8 @@
+---
+/** Block: a block of content on the page, on its own paper. */
+interface Props {
+  as?: 'div' | 'section' | 'article';
+}
+const { as: Tag = 'div' } = Astro.props;
+---
+<Tag class="feitio-block"><slot /></Tag>

@@ -1,0 +1,11 @@
+---
+/** ErrorMessage: a field's error, under it: what happened and how to fix it, with the X. The id ties it to the control (aria-describedby). */
+import Icon from './Icon.astro';
+
+interface Props {
+  id?: string;
+  sprite?: string;
+}
+const { id, sprite } = Astro.props;
+---
+<span class="feitio-error-message" id={id}><Icon name="close" sprite={sprite} /><slot /></span>

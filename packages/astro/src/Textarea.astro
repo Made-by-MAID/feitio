@@ -1,0 +1,12 @@
+---
+/** Textarea: several lines of text. It grows downward; the person can make it taller. */
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends HTMLAttributes<'textarea'> {
+  id: string;
+  invalid?: boolean;
+  describedBy?: string;
+}
+const { invalid, describedBy, class: extra, ...rest } = Astro.props;
+---
+<textarea class:list={['feitio-textarea', extra]} aria-invalid={invalid ? 'true' : undefined} aria-describedby={describedBy} {...rest}><slot /></textarea>

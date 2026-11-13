@@ -1,0 +1,12 @@
+---
+/** LinkCard: a door to another area. The whole card is the link: a title with the arrow, and one sentence. */
+import Icon from './Icon.astro';
+
+interface Props {
+  href: string;
+  title: string;
+  sprite?: string;
+}
+const { href, title, sprite } = Astro.props;
+---
+<a class="feitio-link-card" href={href}><strong>{title}<Icon name="chevron-right" sprite={sprite} /></strong><span><slot /></span></a>

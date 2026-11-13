@@ -1,23 +1,16 @@
 import type { Locale } from '../i18n/ui.ts';
 import type { NavGroup } from '../layouts/DocPage.astro';
+import { COMPONENTS } from './components/index.ts';
+import { GROUPS } from './components/types.ts';
 
-/** The Components area's side navigation. It grows as each component moves to the new site. */
+/** The Components area's side navigation: the groups in order, each with its pages. */
 export function componentsNav(lang: Locale, base: string, current: string): NavGroup[] {
-  const titles: Record<Locale, [string, string, string]> = {
-    pt: ['Ações', 'Texto e estrutura da página', 'Retorno e erros'],
-    en: ['Actions', 'Text and page structure', 'Feedback and errors'],
-    es: ['Acciones', 'Texto y estructura de la página', 'Retorno y errores'],
-    fr: ['Actions', 'Texte et structure de la page', 'Retour et erreurs'],
-    de: ['Aktionen', 'Text und Seitenstruktur', 'Rückmeldung und Fehler'],
-  };
-  const [actions, , feedback] = titles[lang];
-  const item = (name: string) => ({
-    text: name,
-    href: `${base}${lang}/components/${name.toLowerCase()}/`,
-    current: name === current,
-  });
-  return [
-    { title: actions, items: [item('Button')] },
-    { title: feedback, items: [item('Notice')] },
-  ];
+  return GROUPS.map(([key, title]) => ({
+    title: title[lang],
+    items: COMPONENTS.filter((c) => c.group === key).map((c) => ({
+      text: c.name,
+      href: `${base}${lang}/components/${c.slug}/`,
+      current: c.name === current,
+    })),
+  })).filter((g) => g.items.length > 0);
 }

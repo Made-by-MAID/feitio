@@ -150,84 +150,9 @@
 
   /* SegmentedControl: uma escolha entre poucas opções vizinhas, sempre à vista (dia e noite,
      idioma). Um grupo de botões; o escolhido leva aria-pressed e fica em tinta. */
-  .feitio-segmented {
-    display: inline-flex;
-    padding: 2px;
-    gap: 2px;
-    border: var(--feitio-border-width) solid var(--feitio-color-text);
-    border-radius: var(--feitio-radius);
-    font: var(--feitio-font-weight-bold) 0.85rem var(--feitio-font-ui);
-  }
-  .feitio-segmented button {
-    position: relative;
-    min-block-size: 28px;
-    padding: 0 var(--feitio-space-2);
-    color: var(--feitio-color-text);
-    background: transparent;
-    border: 0;
-    border-radius: calc(var(--feitio-radius-top-left) - 2px);
-    cursor: pointer;
-  }
-  .feitio-segmented button::after {
-    content: "";
-    position: absolute;
-    inset: -6px -1px;
-  }
-  .feitio-segmented button[aria-pressed="true"] {
-    color: var(--feitio-color-surface);
-    background: var(--feitio-color-text);
-  }
 
   /* Anchor: o índice da página, que acompanha a rolagem. O trecho atual fica em tinta e negrito,
      com a seta à mão na frente: sem faixa colorida do lado. */
-  .feitio-anchor {
-    font: var(--feitio-font-size-small) var(--feitio-font-ui);
-  }
-  .feitio-anchor .title {
-    margin: 0 0 var(--feitio-space-2);
-    font-weight: var(--feitio-font-weight-bold);
-  }
-  .feitio-anchor ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    display: grid;
-    gap: var(--feitio-space-1);
-  }
-  .feitio-anchor ul ul {
-    padding-inline-start: var(--feitio-space-3);
-    margin-block-start: var(--feitio-space-1);
-  }
-  .feitio-anchor a {
-    display: grid;
-    grid-template-columns: 0.9em minmax(0, 1fr);
-    gap: var(--feitio-space-1);
-    align-items: baseline;
-    padding-block: 0.15rem;
-    color: var(--feitio-color-text-soft);
-    text-decoration: none;
-    line-height: var(--feitio-line-height-heading);
-  }
-  .feitio-anchor a:hover {
-    color: var(--feitio-color-text);
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 0.2em;
-  }
-  .feitio-anchor a .feitio-icon {
-    inline-size: 0.8em;
-    block-size: 0.8em;
-    align-self: center;
-    opacity: 0;
-    transition: opacity var(--feitio-duration-change) var(--feitio-easing-change);
-  }
-  .feitio-anchor a[aria-current="location"] {
-    color: var(--feitio-color-text);
-    font-weight: var(--feitio-font-weight-bold);
-  }
-  .feitio-anchor a[aria-current="location"] .feitio-icon {
-    opacity: 1;
-  }
 
   /* CodeBlock: código com o botão Copiar, que diz "Copiado" no próprio lugar. */
   .feitio-code {
@@ -338,36 +263,6 @@
   }
 
   /* LinkCard: uma porta para outra área, com título, uma frase e a seta. O cartão inteiro é o link. */
-  .feitio-link-card {
-    display: grid;
-    gap: var(--feitio-space-2);
-    align-content: start;
-    padding: var(--feitio-space-4);
-    color: var(--feitio-color-text);
-    text-decoration: none;
-    background: var(--feitio-color-surface-top);
-    border: var(--feitio-border-width) solid var(--feitio-color-text);
-    border-radius: var(--feitio-radius);
-    transition:
-      box-shadow var(--feitio-duration-place) var(--feitio-easing-place),
-      translate var(--feitio-duration-place) var(--feitio-easing-place);
-  }
-  .feitio-link-card:hover {
-    box-shadow: var(--feitio-shadow-lift);
-    translate: -2px -2px;
-  }
-  .feitio-link-card strong {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--feitio-space-2);
-    font: var(--feitio-font-weight-bold) var(--feitio-font-size-h3) var(--feitio-font-ui);
-  }
-  .feitio-link-card span {
-    font: var(--feitio-font-size-small) var(--feitio-font-ui);
-    line-height: var(--feitio-line-height-text);
-    color: var(--feitio-color-text-soft);
-  }
 
   /* ScrollFade e BackToTop, como no guia da estrutura. */
   .feitio-scroll-fade {
@@ -1054,32 +949,8 @@ main[tabindex="-1"]:focus {
   }
 
   /* Divider: a linha fina que separa partes. O espaço em volta é do pai. */
-  .feitio-divider {
-    margin: 0;
-    border: 0;
-    border-block-start: var(--feitio-border-width) solid var(--feitio-color-line);
-  }
-  .feitio-divider[data-tone="ink"] {
-    border-block-start-color: var(--feitio-color-text);
-  }
 
   /* Kbd: uma tecla, escrita como no teclado. */
-  .feitio-kbd {
-    display: inline-block;
-    min-inline-size: 1.5em;
-    padding: 0 0.35em;
-    font:
-      0.82em / 1.5 ui-monospace,
-      "SF Mono",
-      Menlo,
-      monospace;
-    text-align: center;
-    color: var(--feitio-color-text);
-    background: var(--feitio-color-surface-top);
-    border: var(--feitio-border-width) solid var(--feitio-color-line);
-    border-block-end-width: 2px;
-    border-radius: 4px;
-  }
 
   /* Tag pequena: o "em breve", ao lado de um nome, sem quebrar a linha. */
   .feitio-nav a .feitio-tag[data-size="small"] {
@@ -1087,22 +958,6 @@ main[tabindex="-1"]:focus {
   }
 
   /* FilterField: o campo que filtra a lista logo abaixo e conta o que sobrou. */
-  .feitio-filter {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--feitio-space-2) var(--feitio-space-4);
-  }
-  .feitio-filter .feitio-input {
-    flex: 1 1 14rem;
-    max-inline-size: 22rem;
-    margin: 0;
-    padding-inline: var(--feitio-space-3);
-  }
-  .feitio-filter .count {
-    font: var(--feitio-font-size-small) var(--feitio-font-ui);
-    color: var(--feitio-color-text-soft);
-  }
 
   /* Swatch: a amostra de uma cor, com o traço de tinta em volta. */
   .feitio-swatch {
@@ -1116,87 +971,12 @@ main[tabindex="-1"]:focus {
   }
 
   /* Footer: a marca, os links e os anos. */
-  .feitio-footer {
-    padding: var(--feitio-space-5) var(--feitio-space-4);
-    border-block-start: var(--feitio-border-width) solid var(--feitio-color-line);
-    font: var(--feitio-font-size-small) var(--feitio-font-ui);
-    color: var(--feitio-color-text-soft);
-  }
-  .feitio-footer .inner {
-    max-inline-size: 90rem;
-    margin-inline: auto;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--feitio-space-3) var(--feitio-space-5);
-  }
-  .feitio-footer .who {
-    display: flex;
-    align-items: center;
-    gap: var(--feitio-space-2);
-  }
-  .feitio-footer .who strong {
-    color: var(--feitio-color-text);
-    font-weight: var(--feitio-font-weight-heavy);
-  }
-  .feitio-footer .brand-logo {
-    inline-size: 1.4rem;
-    block-size: 1.4rem;
-  }
-  .feitio-footer ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--feitio-space-2) var(--feitio-space-4);
-  }
-  .feitio-footer a {
-    color: var(--feitio-color-text-soft);
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 0.2em;
-  }
-  .feitio-footer a:hover {
-    color: var(--feitio-color-text);
-  }
 }
 .site-main > .feitio-breadcrumbs + h1 {
   margin-block-start: var(--feitio-space-3);
 }
 
 /* O seletor de idioma é de links (cada idioma é uma página), com a mesma cara do SegmentedControl. */
-.feitio-segmented a {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  min-block-size: 28px;
-  padding: 0 var(--feitio-space-2);
-  color: var(--feitio-color-text);
-  text-decoration: none;
-  border-radius: calc(var(--feitio-radius-top-left) - 2px);
-}
-.feitio-segmented a[aria-current="true"] {
-  color: var(--feitio-color-surface);
-  background: var(--feitio-color-text);
-}
-
-/* SkipLink: só aparece com o foco do teclado. */
-.skip {
-  position: absolute;
-  inset: var(--feitio-space-2) auto auto var(--feitio-space-2);
-  z-index: 10;
-  padding: var(--feitio-space-2) var(--feitio-space-3);
-  background: var(--feitio-color-surface-top);
-  border: var(--feitio-border-width) solid var(--feitio-color-text);
-  border-radius: var(--feitio-radius);
-  font: var(--feitio-font-weight-bold) var(--feitio-font-size-small) var(--feitio-font-ui);
-  translate: 0 -200%;
-}
-.skip:focus {
-  translate: 0 0;
-}
 
 /* Atributos: o nome à esquerda, o que faz à direita; no mobile, um embaixo do outro. */
 .attrs {
@@ -1310,4 +1090,122 @@ main[tabindex="-1"]:focus {
 }
 .playground > .feitio-code {
   border-radius: 0;
+}
+.playground > * {
+  min-inline-size: 0;
+}
+.example-title {
+  margin: 0;
+  font: var(--feitio-font-weight-bold) var(--feitio-font-size-h3) var(--feitio-font-ui);
+}
+.playground .stage .live {
+  inline-size: 100%;
+}
+.playground .stage .live:has(.header-frame) {
+  inline-size: 100%;
+}
+
+/* The pieces of the layout demos: plain numbered paper, so only the space is looked at. */
+.lay-box {
+  display: grid;
+  place-items: center;
+  min-inline-size: 3rem;
+  min-block-size: 2.5rem;
+  padding: 0 var(--feitio-space-3);
+  font: var(--feitio-font-weight-bold) var(--feitio-font-size-small) var(--feitio-font-ui);
+  background: var(--feitio-color-surface-top);
+  border: var(--feitio-border-width) solid var(--feitio-color-text);
+  border-radius: var(--feitio-radius);
+}
+.lay-box[data-wide] {
+  min-inline-size: 7rem;
+}
+.lay-box[data-empty] {
+  background: transparent;
+  border-style: dashed;
+  border-color: var(--feitio-color-text-soft);
+  color: var(--feitio-color-text-soft);
+  font-weight: var(--feitio-font-weight-regular);
+}
+.playground .live:has(> .feitio-grid, > .feitio-stack, > .feitio-inline) {
+  inline-size: 100%;
+}
+.playground .live > .feitio-grid,
+.playground .live > .feitio-inline,
+.playground .live > .feitio-stack {
+  inline-size: 100%;
+}
+.playground .live > .feitio-status-host {
+  inline-size: min(100%, 26rem);
+  padding: var(--feitio-space-4);
+  background: var(--feitio-color-surface-top);
+  border: var(--feitio-border-width) solid var(--feitio-color-line);
+  border-radius: var(--feitio-radius);
+}
+.playground
+  .live:has(
+    > div > .feitio-table-scroll,
+    > .feitio-summary-list,
+    > .feitio-task-list,
+    > .feitio-pagination
+  ) {
+  inline-size: 100%;
+}
+.playground .live > .feitio-summary-list,
+.playground .live > .feitio-task-list,
+.playground .live > .feitio-pagination {
+  inline-size: 100%;
+}
+/* The Header in a playground is a sample: not pinned to the top, and it gets the stage's width. */
+.site-header.header-demo {
+  position: static;
+  z-index: auto;
+  translate: none;
+}
+.playground
+  .live:has(
+    > .header-frame,
+    > .scroll-demo,
+    > .feitio-app-frame,
+    > .feitio-footer,
+    > dialog.search-sample
+  ) {
+  inline-size: 100%;
+}
+.playground .live > .feitio-footer {
+  inline-size: 100%;
+  border: var(--feitio-border-width) solid var(--feitio-color-line);
+  border-radius: var(--feitio-radius);
+}
+.playground .live > dialog.search-sample {
+  position: static;
+  display: block;
+  margin: 0 auto;
+  opacity: 1;
+  translate: none;
+}
+/* The Header sample: the whole border, so it reads as a piece on the stage. */
+.playground .live:has(> .header-sample) {
+  inline-size: 100%;
+}
+.header-sample .feitio-header {
+  border: var(--feitio-border-width) solid var(--feitio-color-text);
+  border-radius: var(--feitio-radius);
+}
+.pg-revealed {
+  font: var(--feitio-font-weight-bold) var(--feitio-font-size-small) var(--feitio-font-ui);
+  color: var(--feitio-color-text-soft);
+  border: var(--feitio-border-width) dashed var(--feitio-color-text-soft);
+  padding: 0 var(--feitio-space-2);
+  border-radius: var(--feitio-radius);
+  inline-size: fit-content;
+}
+.site-main :not(pre) > code {
+  overflow-wrap: anywhere;
+}
+.ruler .bar-cell {
+  margin: 0;
+}
+.ruler .bar-cell .bar {
+  display: block;
 }

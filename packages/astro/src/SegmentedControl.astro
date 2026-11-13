@@ -1,0 +1,11 @@
+---
+/** SegmentedControl: one choice among a few neighboring options, always in view; the chosen one is in ink. */
+interface Props {
+  label: string;
+  options: string[];
+  value?: string;
+}
+const { label, options, value } = Astro.props;
+const current = value ?? options[0];
+---
+<div class="feitio-segmented" role="group" aria-label={label}>{options.map((o) => <button type="button" aria-pressed={o === current ? 'true' : 'false'}>{o}</button>)}</div>

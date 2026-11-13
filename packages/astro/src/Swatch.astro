@@ -1,0 +1,9 @@
+---
+/** Swatch: a sample of a Feitio color, with the ink line around it; it follows the theme by itself. */
+interface Props {
+  /** A color role, like "accent" or "ok". */
+  role: string;
+}
+const { role } = Astro.props;
+---
+<span class="feitio-swatch" style={`--swatch: var(--feitio-color-${role})`}></span>

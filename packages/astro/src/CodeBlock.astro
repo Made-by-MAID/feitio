@@ -1,0 +1,18 @@
+---
+/** CodeBlock: code with colors and the Copy button, which says "Copied" in place. */
+interface Props {
+  code: string;
+  label?: string;
+  syntax?: 'html' | 'jsx' | 'shell';
+  copyLabel?: string;
+  copiedLabel?: string;
+}
+const {
+  code,
+  label = 'HTML',
+  syntax = 'html',
+  copyLabel = 'Copiar',
+  copiedLabel = 'Copiado',
+} = Astro.props;
+---
+<div class="feitio-code" data-lang={syntax}><div class="bar"><span>{label}</span><button type="button" class="feitio-button copy" data-size="small" data-done-label={copiedLabel}>{copyLabel}</button></div><pre tabindex="0"><code>{code}</code></pre></div>

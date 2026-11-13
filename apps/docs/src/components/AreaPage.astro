@@ -1,0 +1,37 @@
+---
+/** A page of an area, from the drafts: the DocPage with the area's navigation and the page's own HTML. */
+import { AREA_NAV, type AreaPage } from '../content/areas.ts';
+import { componentsNav } from '../content/nav.ts';
+import { type Locale, WORDS } from '../i18n/ui.ts';
+import DocPage, { type NavGroup } from '../layouts/DocPage.astro';
+
+interface Props {
+  page: AreaPage;
+  lang: Locale;
+}
+const { page, lang } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const html = page.html[lang].replaceAll('@@BASE@@', base).replaceAll('@@LANG@@', lang);
+const areaKey = { design: 'design', dev: 'dev', resources: 'res', components: 'comp' } as const;
+const nav: NavGroup[] =
+  page.area === 'components'
+    ? componentsNav(lang, base, page.slug === 'docpage' ? 'DocPage' : '')
+    : AREA_NAV[page.area].map((g) => ({
+        title: g.title[lang],
+        items: g.items
+          .filter((i) => !i.soon)
+          .map((i) => ({
+            text: i.text[lang],
+            href: `${base}${lang}/${page.area}/${i.slug}/`,
+            current: i.slug === page.slug,
+          })),
+      }));
+const toc = [...html.matchAll(/<h2 id="([^"]+)">([\s\S]*?)<\/h2>/g)].map((m) => ({
+  id: m[1] ?? '',
+  text: (m[2] ?? '').replace(/<[^>]+>/g, '').trim(),
+}));
+const words = WORDS[lang];
+---
+<DocPage lang={lang} title={page.title[lang]} area={areaKey[page.area]} nav={nav} toc={toc.length > 1 ? toc : []} lede={page.lede[lang]} searchArea={words.areas[areaKey[page.area]]}>
+  <Fragment set:html={html} />
+</DocPage>

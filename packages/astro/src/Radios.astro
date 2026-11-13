@@ -1,0 +1,17 @@
+---
+/** Radios: one choice among a few, all in view, in a Fieldset whose legend is the question. */
+interface Props {
+  legend: string;
+  name: string;
+  options: string[];
+  value?: string;
+  disabled?: boolean;
+  /** "inline" puts short options side by side. */
+  layout?: 'stack' | 'inline';
+}
+const { legend, name, options, value, disabled, layout = 'stack' } = Astro.props;
+---
+<fieldset class="feitio-fieldset" disabled={disabled}>
+  <legend class="feitio-label">{legend}</legend>
+  <div class="feitio-choices" data-layout={layout === 'inline' ? 'inline' : undefined}>{options.map((o) => <label class="feitio-choice"><input type="radio" name={name} value={o} checked={o === value} />{o}</label>)}</div>
+</fieldset>
