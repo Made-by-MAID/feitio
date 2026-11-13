@@ -15,7 +15,7 @@ await Bun.write(
       description:
         'Guidelines, tokens, CSS and components for Astro and React. Accessible, in five languages.',
       lang: 'npm @feitio',
-      host: 'made-by-maid.github.io/feitio',
+      host: 'feitio.bymaid.com',
     },
     1280,
     640,

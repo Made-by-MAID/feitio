@@ -24,6 +24,6 @@ Each behavior also has its own entry point (`@feitio/vanilla/notice`, `/menu`, `
 ([`@feitio/astro`](https://www.npmjs.com/package/@feitio/astro), or the HTML in the docs), and the
 styles from [`@feitio/core`](https://www.npmjs.com/package/@feitio/core).
 
-Docs: https://made-by-maid.github.io/feitio/
+Docs: https://feitio.bymaid.com/
 
 MIT.

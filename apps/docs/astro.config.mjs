@@ -5,7 +5,7 @@ import { defineConfig } from 'astro/config';
 // language. FEITIO_BASE sets the path when the site is served under one (GitHub Pages: /feitio/),
 // and FEITIO_SITE its origin, for canonical addresses, link previews and the sitemap.
 export default defineConfig({
-  site: process.env.FEITIO_SITE ?? 'https://made-by-maid.github.io',
+  site: process.env.FEITIO_SITE ?? 'https://feitio.bymaid.com',
   base: process.env.FEITIO_BASE ?? '/',
   trailingSlash: 'always',
   i18n: {

@@ -29,7 +29,7 @@ Components: [`@feitio/astro`](https://www.npmjs.com/package/@feitio/astro) and
 [`@feitio/react`](https://www.npmjs.com/package/@feitio/react). Behaviors for plain HTML:
 [`@feitio/vanilla`](https://www.npmjs.com/package/@feitio/vanilla).
 
-Guidelines, every component and when not to use it: https://made-by-maid.github.io/feitio/
+Guidelines, every component and when not to use it: https://feitio.bymaid.com/
 
 MIT. The Alegreya and Alegreya Sans fonts in `fonts/` are under the SIL Open Font License
 (`fonts/OFL.txt`).
