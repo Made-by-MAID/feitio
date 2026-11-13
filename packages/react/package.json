@@ -1,0 +1,40 @@
+{
+  "name": "@feitio/react",
+  "version": "0.0.0",
+  "description": "Feitio's components for React: the same HTML as the Astro components, with the behaviors wired by hooks.",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Made-by-MAID/feitio.git",
+    "directory": "packages/react"
+  },
+  "files": [
+    "dist",
+    "src",
+    "!src/**/*.spec.ts"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "rm -rf dist && NODE_ENV=production bun build src/index.ts --outdir dist --format esm --external react --external react/jsx-runtime && tsc -p tsconfig.build.json && bun scripts/fix-declarations.ts"
+  },
+  "peerDependencies": {
+    "react": ">=19"
+  },
+  "dependencies": {
+    "@feitio/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@feitio/vanilla": "workspace:*",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  }
+}
