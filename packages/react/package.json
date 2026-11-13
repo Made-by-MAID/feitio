@@ -1,6 +1,6 @@
 {
   "name": "@feitio/react",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Feitio's components for React: the same HTML as the Astro components, with the behaviors wired by hooks.",
   "keywords": [
     "feitio",
