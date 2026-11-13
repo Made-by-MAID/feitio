@@ -27,11 +27,11 @@ jobs:
           path: ~/.bun/install/cache
           key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
       - run: bun install --frozen-lockfile
-      # The docs site under /feitio/, with absolute links in the Markdown and llms.txt.
+      # The docs site at the root of its own domain, with absolute links in the Markdown and llms.txt.
       - run: bun run docs:build
         env:
-          FEITIO_BASE: /feitio/
-          FEITIO_SITE: https://made-by-maid.github.io
+          FEITIO_BASE: /
+          FEITIO_SITE: https://feitio.bymaid.com
       - uses: actions/upload-pages-artifact@v3
         with:
           path: apps/docs/dist
