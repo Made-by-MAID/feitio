@@ -12,7 +12,7 @@ Rules for anyone changing this repository, people and AI agents alike. Read the
   `var(--feitio-...)`. A missing value is a new token, not a literal.
 - Write a component's HTML twice. The Astro components (`@feitio/astro`) are the single
   source of the markup; `@feitio/vanilla` holds only behavior, and every port (React) must match the
-  Astro HTML.
+  Astro HTML: `packages/react/parity/` checks it.
 - Add a theme that changes anything but colors.
 - Draw an icon as a single continuous line (see [iconography](docs/guidelines/iconography.md)).
 
@@ -20,10 +20,14 @@ Rules for anyone changing this repository, people and AI agents alike. Read the
 
 - A Bun workspace: `packages/core` (`@feitio/core`: tokens, base CSS, component CSS, icons,
   illustrations), `packages/vanilla` (`@feitio/vanilla`: component behaviors), `packages/astro`
-  (`@feitio/astro`: the components' HTML) and `apps/docs` (the site, private). Root scripts run for
-  all of them.
-- A component is three files at most: its HTML in `packages/astro/src/<Name>.astro`, its styles in
-  `packages/core/css/components.css`, its behavior (if any) in `packages/vanilla/src/<name>/`. Its
+  (`@feitio/astro`: the components' HTML), `packages/react` (`@feitio/react`: the same components
+  for React) and `apps/docs` (the site, private). Root scripts run for all of them.
+- A component is four files at most: its HTML in `packages/astro/src/<Name>.astro`, its styles in
+  `packages/core/css/components.css`, its behavior (if any) in `packages/vanilla/src/<name>/`, and
+  its React twin in `packages/react/src/<Name>.tsx`, which renders the very same HTML and wires the
+  behavior with a hook when it mounts. A new component, or a new prop, gets its cases in
+  `packages/react/parity/cases.ts`; `bun run test:parity` compares both renders (after
+  `FEITIO_PARITY=1 bun run docs:build`) and drives the hooks in a real browser. Its
   docs page lives in `apps/docs/src/pages/[lang]/components/`, with its words per language in
   `apps/docs/src/content/`; examples render the component itself (`renderHtml`), so "Show code"
   always shows what runs.

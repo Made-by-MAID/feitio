@@ -1,14 +1,18 @@
 import { menuPosition, nextMenuIndex } from '../calculations/menu-focus.ts';
 
+/** Menus already wired: an Astro script and a React hook may both see one. */
+const wired = new WeakSet<HTMLElement>();
+
 /**
- * Wires every Feitio Menu under root: the button opens its list (the popover API does the opening,
+ * Wires every Feitio Menu under root, each only once: the button opens its list (the popover API does the opening,
  * Esc and the click outside); this places it next to the button, puts the focus on the current item,
  * and moves it with the arrows, Home and End.
  */
 export function wireMenus(window: Window, root: ParentNode): void {
   for (const list of root.querySelectorAll<HTMLElement>('.feitio-menu-list[popover]')) {
     const button = root.querySelector<HTMLElement>(`[popovertarget="${list.id}"]`);
-    if (!button) continue;
+    if (!button || wired.has(list)) continue;
+    wired.add(list);
     const items = (): HTMLElement[] => [...list.querySelectorAll<HTMLElement>('a, button')];
     list.addEventListener('toggle', (event) => {
       const open = (event as ToggleEvent).newState === 'open';

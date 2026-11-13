@@ -1,0 +1,8 @@
+---
+/** Hint: a short help under a label; the control points to it with aria-describedby. */
+interface Props {
+  id?: string;
+}
+const { id } = Astro.props;
+---
+<span class="feitio-hint" id={id}><slot /></span>

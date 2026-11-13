@@ -48,3 +48,25 @@ test('the close button closes it', async () => {
   await Bun.sleep(700);
   expect(notice.hidden).toBe(true);
 });
+
+test('a notice handed in as the root itself is wired too', async () => {
+  const { host, notice } = page(timed('ok', 0).replace(' hidden', ''));
+  wireNotices(host, notice);
+  (notice.querySelector('.close') as HTMLElement).click();
+  await Bun.sleep(700);
+  expect(notice.hidden).toBe(true);
+});
+
+test('wiring the same notice twice adds its close button once', async () => {
+  const { host, notice } = page(timed('ok', 0).replace(' hidden', ''));
+  const button = notice.querySelector('.close') as HTMLElement;
+  let listeners = 0;
+  const add = button.addEventListener.bind(button);
+  button.addEventListener = ((...args: Parameters<HTMLElement['addEventListener']>) => {
+    listeners += 1;
+    add(...args);
+  }) as HTMLElement['addEventListener'];
+  wireNotices(host, notice);
+  wireNotices(host, host.window.document);
+  expect(listeners).toBe(1);
+});

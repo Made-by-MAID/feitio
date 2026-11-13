@@ -1,0 +1,8 @@
+---
+/** Label: a control's name, tied to it by for (the control's id). */
+interface Props {
+  for: string;
+}
+const { for: target } = Astro.props;
+---
+<label class="feitio-label" for={target}><slot /></label>

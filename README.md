@@ -3,8 +3,8 @@
 A handmade, humanist design system. _Feitio_ is Portuguese for the way a thing is made, by hand.
 
 Feitio holds what every interface built with it shares: the guidelines, the design tokens, the base
-CSS, the icons and the illustrations. It has no components and no framework. Components live in a
-port per framework (`feitio-react`, `feitio-astro`...), each one built on this repository.
+CSS, the icons and the illustrations, and its components for Astro and React, which render the same
+HTML.
 
 ## The idea
 
@@ -80,6 +80,29 @@ const notice = notices(window);
 notice.show(document.getElementById('saved'));
 ```
 
+### Components
+
+The components come for Astro (`@feitio/astro`, the single source of their HTML) and for React
+(`@feitio/react`). Both render the same HTML, and a test holds them to it.
+
+```tsx
+import { Button, Field, Stack, TextInput } from '@feitio/react';
+
+<Stack gap={5}>
+  <Field label="Nome" for="nome" hint="Como aparece na notificação">
+    <TextInput id="nome" describedBy="nome-hint" />
+  </Field>
+  <Button variant="primary" type="submit">
+    Salvar
+  </Button>
+</Stack>;
+```
+
+The React components that have a behavior (Menu, Notice, Dialog, Switch, FilterField...) wire it
+themselves when they mount, with `@feitio/vanilla` underneath; `useNotices()` shows and closes a
+Notice from code. Icons read the sprite from `/feitio/icons/sprite.svg`, or from
+`<FeitioProvider sprite="...">`.
+
 ### A theme of your own
 
 A theme for outside work (a shop's landing page, a side project) changes **only the colors**. Add
@@ -103,6 +126,9 @@ A Bun workspace. Every published package shares one version.
 - `packages/vanilla` (`@feitio/vanilla`): component behaviors in plain JavaScript.
 - `packages/astro` (`@feitio/astro`): the components, the single source of their HTML. Their styles
   are in `@feitio/core/css/components.css`.
+- `packages/react` (`@feitio/react`): the same components for React. `parity/` renders every case in
+  both and compares the HTML, then drives the hooks in a real browser (`bun run test:parity`, part
+  of `bun run test:docs`).
 - `apps/docs`: the documentation site, in Astro, one set of pages per language (PT, EN, ES, FR, DE),
   searched with Pagefind. `bun run docs:dev` to work on it, `bun run docs:build` to build it.
   Every page also comes as Markdown (`index.md` next to it), and each language has an `llms.txt`
@@ -112,7 +138,7 @@ A Bun workspace. Every published package shares one version.
   (the root `index.html` sends visitors there).
 - `skills/feitio/`: a skill for AI coding agents that build interfaces with Feitio.
 
-Coming next: the rest of the components and pages on the new site, then `@feitio/react`.
+Coming next: more components (DateInput, Avatar) and page templates.
 
 ## Work on it
 
