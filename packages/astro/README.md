@@ -31,6 +31,6 @@ import TextInput from '@feitio/astro/TextInput.astro';
 - Icons read the sprite at `/feitio/icons/sprite.svg` (copy `@feitio/core/icons/sprite.svg` there),
   or wherever each component's `sprite` prop says.
 
-Every component, when to use it and when not to: https://made-by-maid.github.io/feitio/
+Every component, when to use it and when not to: https://feitio.bymaid.com/
 
 MIT.
