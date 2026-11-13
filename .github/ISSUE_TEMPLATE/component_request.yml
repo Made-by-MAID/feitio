@@ -1,0 +1,23 @@
+name: New component or change
+description: Propose a component, a variant or a change to one.
+labels: [proposal]
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: What it is for
+      description: The screen or task where you needed it, and why the existing components did not serve.
+    validations:
+      required: true
+  - type: textarea
+    id: not
+    attributes:
+      label: When not to use it
+      description: Every Feitio component says when not to use it. What should people use instead in those cases?
+    validations:
+      required: true
+  - type: textarea
+    id: examples
+    attributes:
+      label: Examples
+      description: Sketches, screenshots or links to how others solve it (optional).

@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Documentation
+    url: https://made-by-maid.github.io/feitio/
+    about: Guidelines, every component and when not to use it.
+  - name: Report a vulnerability
+    url: https://github.com/Made-by-MAID/feitio/security/advisories/new
+    about: Privately, never in a public issue.
