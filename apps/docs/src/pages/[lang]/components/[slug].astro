@@ -58,7 +58,15 @@ const toc = [
   ...sections.map((s) => ({
     id: s.id,
     text: s.title[lang],
-    children: [...s.body.matchAll(/<h3 id="([^"]+)">([\s\S]*?)<\/h3>/g)].map((m) => ({
+    // The headings inside a live example (a Kanban's columns) belong to the example, not to the page.
+    children: [
+      ...s.body
+        .replace(
+          /<div class="live"[^>]*>[\s\S]*?<\/div>\s*<div class="about">/g,
+          '<div class="about">',
+        )
+        .matchAll(/<h3 id="([^"]+)">([\s\S]*?)<\/h3>/g),
+    ].map((m) => ({
       id: m[1] ?? '',
       text: (m[2] ?? '').replace(/<[^>]+>/g, ''),
     })),

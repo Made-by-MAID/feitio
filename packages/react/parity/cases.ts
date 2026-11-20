@@ -257,6 +257,53 @@ export const cases: ParityCase[] = [
     slots: { default: 'escolhas' },
   },
   { id: 'fieldset-hint', component: 'Fieldset', props: { legend: 'Quando', hint: 'Escolha um' } },
+  {
+    id: 'kanban',
+    component: 'Kanban',
+    props: {
+      id: 'k',
+      label: 'Posts',
+      columns: [
+        {
+          id: 'ideia',
+          title: 'Ideia',
+          create: { label: 'Nova ideia', field: 'Título da ideia' },
+        },
+        { id: 'rascunho', title: 'Rascunho', empty: 'Nenhum texto em andamento.' },
+        { id: 'publicado', title: 'Publicado' },
+      ],
+    },
+  },
+  {
+    id: 'kanban-current',
+    component: 'Kanban',
+    props: {
+      id: 'k2',
+      label: 'Board',
+      current: 'b',
+      moveLabel: 'Move to',
+      columns: [
+        {
+          id: 'a',
+          title: 'A',
+          create: { label: 'New', field: 'Title', save: 'Save', cancel: 'Cancel' },
+        },
+        { id: 'b', title: 'B' },
+      ],
+    },
+  },
+  {
+    id: 'kanban-card',
+    component: 'KanbanCard',
+    props: { id: 'c1', name: 'O goleiro', to: ['agendado', 'recusado'] },
+    slots: { default: 'Conteúdo' },
+  },
+  {
+    id: 'kanban-card-fixed',
+    component: 'KanbanCard',
+    props: { id: 'c2', name: 'Feitio', fixedLabel: 'fixed', moveLabel: 'Move' },
+    slots: { default: 'Conteúdo' },
+  },
   { id: 'filter', component: 'FilterField', props: { id: 'f', list: 'l', label: 'Filtrar' } },
   {
     id: 'filter-async',

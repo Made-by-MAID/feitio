@@ -1,0 +1,23 @@
+---
+/**
+ * KanbanCard: one card of a Kanban column, lifted paper held by a strip of tape. Its content is free
+ * (a title, a picture, a Tag, a list). to lists the columns it may go to; with none, it stays put and
+ * says so. The move button opens the list of those columns, for the phone and the keyboard.
+ */
+import Icon from './Icon.astro';
+
+interface Props {
+  id: string;
+  /** The card's name, for screen readers (and the move button's label). */
+  name: string;
+  /** The columns it may go to, by id. */
+  to?: string[];
+  /** The move button's word; screen readers hear it with the card's name. */
+  moveLabel?: string;
+  /** What a card that cannot move says. */
+  fixedLabel?: string;
+  sprite?: string;
+}
+const { id, name, to = [], moveLabel = 'Mover', fixedLabel = 'fixo', sprite } = Astro.props;
+---
+<article class="feitio-kanban-card" data-id={id} data-to={to.length ? to.join(' ') : undefined} aria-label={name}><slot />{to.length ? <button type="button" class="feitio-button move" data-size="small" aria-label={`${moveLabel}: ${name}`} aria-haspopup="true" aria-expanded="false">{moveLabel}<Icon name="chevron-down" sprite={sprite} /></button> : <span class="fixed">{fixedLabel}</span>}</article>

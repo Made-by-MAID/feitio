@@ -227,7 +227,7 @@ menu?.addEventListener('beforetoggle', (e) => {
   menu.style.left = `${r.left}px`;
 });
 try {
-  addEventListener('scroll', () => menu.matches(':popover-open') && menu.hidePopover(), {
+  addEventListener('scroll', () => menu?.matches(':popover-open') && menu.hidePopover(), {
     passive: true,
   });
 } catch (error) {

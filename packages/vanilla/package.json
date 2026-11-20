@@ -1,7 +1,7 @@
 {
   "name": "@feitio/vanilla",
   "version": "0.2.1",
-  "description": "Feitio's component behaviors in plain JavaScript, for any HTML: Notice, Menu, Dialog, form controls, scroll and status.",
+  "description": "Feitio's component behaviors in plain JavaScript, for any HTML: Notice, Menu, Dialog, form controls, scroll, status and Kanban.",
   "keywords": [
     "feitio",
     "design-system",
@@ -64,11 +64,16 @@
       "types": "./dist/types/dialog/index.d.ts",
       "default": "./dist/dialog.js"
     },
-    "./dialog/source": "./src/dialog/index.ts"
+    "./dialog/source": "./src/dialog/index.ts",
+    "./kanban": {
+      "types": "./dist/types/kanban/index.d.ts",
+      "default": "./dist/kanban.js"
+    },
+    "./kanban/source": "./src/kanban/index.ts"
   },
   "scripts": {
-    "build": "rm -rf dist && bun build src/index.ts src/notice/index.ts src/menu/index.ts src/forms/index.ts src/status/index.ts src/scroll/index.ts src/dialog/index.ts --outdir dist --format esm --entry-naming [dir]/[name].[ext] --root src && bun run rename && tsc -p tsconfig.build.json && bun scripts/fix-declarations.ts",
-    "rename": "mv dist/index.js dist/feitio.js && for m in notice menu forms status scroll dialog; do mv dist/$m/index.js dist/$m.js && rmdir dist/$m; done"
+    "build": "rm -rf dist && bun build src/index.ts src/notice/index.ts src/menu/index.ts src/forms/index.ts src/status/index.ts src/scroll/index.ts src/dialog/index.ts src/kanban/index.ts --outdir dist --format esm --entry-naming [dir]/[name].[ext] --root src && bun run rename && tsc -p tsconfig.build.json && bun scripts/fix-declarations.ts",
+    "rename": "mv dist/index.js dist/feitio.js && for m in notice menu forms status scroll dialog kanban; do mv dist/$m/index.js dist/$m.js && rmdir dist/$m; done"
   },
   "dependencies": {
     "@feitio/core": "workspace:*"

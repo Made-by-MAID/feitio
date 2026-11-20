@@ -1,5 +1,6 @@
 import { dialogs } from '@feitio/vanilla/dialog/source';
 import { forms } from '@feitio/vanilla/forms/source';
+import { kanbans } from '@feitio/vanilla/kanban/source';
 import { menus } from '@feitio/vanilla/menu/source';
 import { scrolls } from '@feitio/vanilla/scroll/source';
 import { noticeApi } from './notices.ts';
@@ -27,4 +28,9 @@ export function wireNotice(element: HTMLElement): void {
 /** The ScrollFade or BackToTop next to this element (each one is wired once). */
 export function wireScroll(element: HTMLElement): void {
   scrolls(window, element.parentElement ?? element);
+}
+
+/** One Kanban: its tabs, dragging, the move button and the new card. */
+export function wireKanban(element: HTMLElement): void {
+  kanbans(window, element);
 }

@@ -24,6 +24,8 @@ import Header from '@feitio/astro/Header.astro';
 import Heading from '@feitio/astro/Heading.astro';
 import Icon from '@feitio/astro/Icon.astro';
 import Inline from '@feitio/astro/Inline.astro';
+import Kanban from '@feitio/astro/Kanban.astro';
+import KanbanCard from '@feitio/astro/KanbanCard.astro';
 import Kbd from '@feitio/astro/Kbd.astro';
 import Link from '@feitio/astro/Link.astro';
 import LinkCard from '@feitio/astro/LinkCard.astro';
@@ -358,6 +360,102 @@ export async function playgroundFor(
         },
       ],
       combos: await combos(keys, ([v]) => renderHtml(Heading, { level: Number(v) }, PH)),
+    };
+  }
+  if (slug === 'kanban') {
+    const cols = [
+      words('Ideia', 'Idea', 'Idea', 'Idée', 'Idee'),
+      words('Rascunho', 'Draft', 'Borrador', 'Brouillon', 'Entwurf'),
+      words('Publicado', 'Published', 'Publicado', 'Publié', 'Veröffentlicht'),
+    ];
+    const move = words('Mover', 'Move', 'Mover', 'Déplacer', 'Verschieben');
+    const board = async (create: boolean) => {
+      const card = (id: string, name: string, meta: string, to: string[]) =>
+        renderHtml(
+          KanbanCard,
+          { id, name, to, moveLabel: move, sprite },
+          `<strong>${name}</strong><span>${meta}</span>`,
+        );
+      return renderHtml(
+        Kanban,
+        {
+          id: 'pg-kanban',
+          label: words('Quadro', 'Board', 'Tablero', 'Tableau', 'Board'),
+          current: 'a',
+          moveLabel: words('Mover para', 'Move to', 'Mover a', 'Déplacer vers', 'Verschieben nach'),
+          sprite,
+          columns: [
+            {
+              id: 'a',
+              title: cols[0],
+              ...(create
+                ? {
+                    create: {
+                      label: words(
+                        'Nova ideia',
+                        'New idea',
+                        'Nueva idea',
+                        'Nouvelle idée',
+                        'Neue Idee',
+                      ),
+                      field: words('Título', 'Title', 'Título', 'Titre', 'Titel'),
+                      save: words('Salvar', 'Save', 'Guardar', 'Enregistrer', 'Speichern'),
+                      cancel: words('Cancelar', 'Cancel', 'Cancelar', 'Annuler', 'Abbrechen'),
+                    },
+                  }
+                : {}),
+            },
+            { id: 'b', title: cols[1] },
+            {
+              id: 'c',
+              title: cols[2],
+              empty: words(
+                'Nada publicado.',
+                'Nothing published.',
+                'Nada publicado.',
+                'Rien de publié.',
+                'Nichts veröffentlicht.',
+              ),
+            },
+          ],
+        },
+        {
+          a: await card('pg-1', PH, words('Hoje', 'Today', 'Hoy', "Aujourd'hui", 'Heute'), ['b']),
+          b: await card(
+            'pg-2',
+            words(
+              'Rascunho do post',
+              'Post draft',
+              'Borrador del post',
+              'Brouillon du post',
+              'Beitragsentwurf',
+            ),
+            words('Ontem', 'Yesterday', 'Ayer', 'Hier', 'Gestern'),
+            ['c', 'a'],
+          ),
+        },
+      );
+    };
+    return {
+      placeholder: PH,
+      text: words(
+        'Cache que mente',
+        'The cache that lies',
+        'La caché que miente',
+        'Le cache qui ment',
+        'Der Cache, der lügt',
+      ),
+      controls: [
+        {
+          name: 'create',
+          label: words('Novo cartão', 'New card', 'Nueva tarjeta', 'Nouvelle carte', 'Neue Karte'),
+          options: [
+            { value: '', label: words('Sim', 'Yes', 'Sí', 'Oui', 'Ja') },
+            { value: 'off', label: words('Não', 'No', 'No', 'Non', 'Nein') },
+          ],
+        },
+      ],
+      combos: { '': await board(true), off: await board(false) },
     };
   }
   if (slug === 'kbd') {
