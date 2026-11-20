@@ -1,5 +1,8 @@
 import { edgesVisible } from '../calculations/kanban-motion.ts';
 
+/** How far from the row's start the chosen tab lands: the width of the faded side, 3rem. */
+const REVEAL_MARGIN = 48;
+
 /**
  * A row that scrolls sideways (the tabs, the columns): its sides fade while there is more to see. The
  * tab row also scrolls with the mouse wheel and by dragging it with the mouse; touch scrolls by itself.
@@ -15,6 +18,18 @@ export function wireScrollRow(box: HTMLElement): void {
     end?.toggleAttribute('data-visible', seen.end);
   };
   row.addEventListener('scroll', sync, { passive: true });
+  if (row.classList.contains('tabs')) {
+    // The stage a phone opens on starts in view, clear of the faded side, not past the end of the row.
+    const reveal = (): void => {
+      const tab = row.querySelector<HTMLElement>('[aria-pressed="true"]');
+      if (!tab) return;
+      const offset =
+        tab.getBoundingClientRect().left - row.getBoundingClientRect().left + row.scrollLeft;
+      row.scrollLeft = Math.max(0, offset - REVEAL_MARGIN);
+    };
+    reveal();
+    void row.ownerDocument.fonts?.ready.then(reveal);
+  }
   if (typeof ResizeObserver === 'function') new ResizeObserver(sync).observe(row);
   sync();
   if (!row.classList.contains('tabs')) return;

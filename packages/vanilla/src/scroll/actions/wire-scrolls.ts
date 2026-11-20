@@ -31,6 +31,13 @@ export function wireScrolls(window: Window, root: ParentNode): void {
     };
     (box ?? window).addEventListener('scroll', update, { passive: true });
     window.addEventListener('resize', update);
+    // The content may grow or shrink with no scroll at all (a tab, a list filtered, a details
+    // opened): the fade follows its size too, so it never shows over a page with nothing below.
+    if (typeof ResizeObserver === 'function') {
+      const sizes = new ResizeObserver(update);
+      if (box) for (const child of box.children) sizes.observe(child);
+      else sizes.observe(document.body);
+    }
     update();
     if (!fade) {
       element.addEventListener('click', (event) => {
