@@ -212,6 +212,7 @@ const GH =
   // Every page wires the Notice behavior: the examples come as HTML, not through Notice.astro.
   import { dialogs } from '@feitio/vanilla/dialog/source';
   import { forms } from '@feitio/vanilla/forms/source';
+  import { kanbans } from '@feitio/vanilla/kanban/source';
   import { notices } from '@feitio/vanilla/notice/source';
   import { scrolls } from '@feitio/vanilla/scroll/source';
   const page = window as Window & { feitioNotice?: ReturnType<typeof notices> };
@@ -225,6 +226,38 @@ const GH =
   document.addEventListener('feitio-filter', (event) => {
     const target = event.target as HTMLElement;
     if (target.closest('[data-demo-async]')) window.setTimeout((event as CustomEvent<{ done: () => void }>).detail.done, 1000);
+  });
+  // The Kanban demo: a move says so in the Notice above the board; a new idea becomes a card.
+  kanbans(window);
+  document.addEventListener('feitio-kanban-move', (event) => {
+    const demo = (event.target as HTMLElement).closest<HTMLElement>('[data-demo-kanban]');
+    const notice = demo?.querySelector<HTMLElement>(':scope > .feitio-notice');
+    if (!demo || !notice) return;
+    const { card, from, to } = (event as CustomEvent<{ card: HTMLElement; from: string; to: string }>).detail;
+    const title = (id: string) => demo.querySelector(`.col[data-col="${id}"] h3`)?.textContent ?? id;
+    const fill = (text: string) => text.replace('{to}', title(to)).replace('{from}', title(from)).replace('{card}', card.getAttribute('aria-label') ?? '');
+    const strong = notice.querySelector('strong');
+    const p = notice.querySelector('p');
+    if (strong) strong.textContent = fill(notice.dataset.title ?? '');
+    if (p) p.textContent = fill(notice.dataset.text ?? '');
+    page.feitioNotice?.show(notice);
+  });
+  let fresh = 0;
+  document.addEventListener('feitio-kanban-create', (event) => {
+    const { element, text } = (event as CustomEvent<{ element: HTMLElement; text: string }>).detail;
+    const model = element.closest('.feitio-kanban')?.querySelector<HTMLElement>('.feitio-kanban-card[data-to]');
+    if (!model) return;
+    const card = model.cloneNode(true) as HTMLElement;
+    card.dataset.id = `new-${++fresh}`;
+    card.dataset.to = element.nextElementSibling?.getAttribute('data-col') ?? model.dataset.to ?? '';
+    card.setAttribute('aria-label', text);
+    for (const child of [...card.children]) if (!child.classList.contains('move')) child.remove();
+    const strong = document.createElement('strong');
+    strong.textContent = text;
+    card.prepend(strong);
+    const move = card.querySelector('.move');
+    move?.setAttribute('aria-label', `${(move.getAttribute('aria-label') ?? '').split(':')[0]}: ${text}`);
+    element.insertBefore(card, element.querySelector(':scope > .add'));
   });
   for (const b of document.querySelectorAll<HTMLElement>('[data-notice-show]')) {
     b.addEventListener('click', () => {

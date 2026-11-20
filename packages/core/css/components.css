@@ -2133,6 +2133,377 @@
     font: var(--feitio-font-size-small) var(--feitio-font-ui);
     color: var(--feitio-color-text-soft);
   }
+
+  /* Kanban: work in columns, one per stage. On a wide screen, a file of folders, each with its tab on
+       top; the cards are lifted paper held by a strip of tape, a little turned, as if pinned by hand.
+       On a phone (the board's own width under 40rem), the stages become a row of tabs with a dot each
+       (full when the stage has cards) and only the chosen stage shows. The card's content is free:
+       the board gives the paper, the tape and the move button. */
+  .feitio-kanban {
+    --feitio-kanban-col: 17rem;
+    --feitio-kanban-col-empty: 11rem;
+    /* It measures itself (container queries), so it takes the width it is given, never its content's. */
+    container-type: inline-size;
+    display: grid;
+    box-sizing: border-box;
+    inline-size: 100%;
+    min-inline-size: 0;
+    font-family: var(--feitio-font-ui);
+  }
+  /* The board moves on springs (the script); a CSS transition on sizes or spacing would also animate
+       the switch between phone and folders, and the cards would lag behind the hand. Only colors and
+       fades change by transition here. */
+  .feitio-kanban,
+  .feitio-kanban *,
+  .feitio-kanban-ghost,
+  .feitio-kanban-ghost * {
+    transition-property: color, background-color, border-color, opacity;
+  }
+  .feitio-kanban-scroll {
+    position: relative;
+    min-inline-size: 0;
+  }
+  /* The fade at the sides, the ScrollFade turned on its side: only where there is more to scroll. */
+  .feitio-kanban-scroll > .edge {
+    position: absolute;
+    inset-block: 0;
+    z-index: 1;
+    inline-size: 3rem;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity var(--feitio-duration-change) var(--feitio-easing-change);
+  }
+  .feitio-kanban-scroll > .edge.start {
+    inset-inline-start: 0;
+    background: linear-gradient(
+      to left,
+      transparent,
+      var(--feitio-scroll-fade-to, var(--feitio-color-surface))
+    );
+  }
+  .feitio-kanban-scroll > .edge.end {
+    inset-inline-end: 0;
+    background: linear-gradient(
+      to right,
+      transparent,
+      var(--feitio-scroll-fade-to, var(--feitio-color-surface))
+    );
+  }
+  .feitio-kanban-scroll > .edge[data-visible] {
+    opacity: 1;
+  }
+  .feitio-kanban .tabs {
+    display: flex;
+    gap: var(--feitio-space-3);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    padding-block: var(--feitio-space-1) var(--feitio-space-4);
+  }
+  .feitio-kanban .tabs button {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--feitio-space-1);
+    min-block-size: var(--feitio-control-min-size-small);
+    padding: 0;
+    font: var(--feitio-font-weight-bold) var(--feitio-font-size-small) var(--feitio-font-ui);
+    white-space: nowrap;
+    color: var(--feitio-color-text-soft);
+    background: none;
+    border: 0;
+    cursor: pointer;
+  }
+  .feitio-kanban .tabs button::before {
+    content: "";
+    inline-size: 0.6rem;
+    block-size: 0.6rem;
+    border-radius: 50%;
+    border: var(--feitio-border-width) solid currentColor;
+  }
+  .feitio-kanban .tabs button[data-has]::before {
+    background: currentColor;
+  }
+  .feitio-kanban .tabs button[aria-pressed="true"] {
+    color: var(--feitio-color-text);
+    text-decoration: underline;
+    text-underline-offset: 0.3em;
+  }
+  .feitio-kanban .tabs .n,
+  .feitio-kanban .col-head .n {
+    font-weight: var(--feitio-font-weight-regular);
+  }
+  .feitio-kanban .cols {
+    display: grid;
+  }
+  .feitio-kanban .col {
+    display: none;
+    gap: var(--feitio-space-5);
+    align-content: start;
+    min-inline-size: 0;
+  }
+  .feitio-kanban .col[data-current] {
+    display: grid;
+  }
+  .feitio-kanban .col-head {
+    display: none;
+    align-items: baseline;
+    gap: var(--feitio-space-2);
+  }
+  .feitio-kanban .col-head h3 {
+    margin: 0;
+    font-size: var(--feitio-font-size-body);
+    white-space: nowrap;
+  }
+  .feitio-kanban .col-head .n {
+    font-size: var(--feitio-font-size-small);
+    color: var(--feitio-color-text-soft);
+  }
+  .feitio-kanban .empty {
+    margin: 0;
+    font: italic var(--feitio-font-size-small) var(--feitio-font-text);
+    color: var(--feitio-color-text-soft);
+  }
+  .feitio-kanban .add {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--feitio-space-1);
+    min-block-size: var(--feitio-control-min-size);
+    padding: var(--feitio-space-2);
+    font: var(--feitio-font-weight-bold) var(--feitio-font-size-small) var(--feitio-font-ui);
+    color: var(--feitio-color-text-soft);
+    background: none;
+    border: var(--feitio-border-width) dashed var(--feitio-color-text-soft);
+    border-radius: var(--feitio-radius);
+    cursor: pointer;
+  }
+  .feitio-kanban .add:hover {
+    color: var(--feitio-color-text);
+    border-color: var(--feitio-color-text);
+  }
+  .feitio-kanban .add:focus-visible {
+    outline: var(--feitio-focus-width) solid var(--feitio-color-accent);
+    outline-offset: var(--feitio-focus-offset);
+  }
+  /* Where the card would land. */
+  .feitio-kanban .slot {
+    border: 2px dashed var(--feitio-color-accent);
+    border-radius: var(--feitio-radius);
+  }
+
+  /* The card: lifted paper, a strip of tape on top. Its content is whatever the page puts in it. */
+  .feitio-kanban-card {
+    position: relative;
+    display: grid;
+    gap: var(--feitio-space-1);
+    padding: var(--feitio-space-4) var(--feitio-space-3) var(--feitio-space-3);
+    color: var(--feitio-color-text);
+    background: var(--feitio-color-surface-top);
+    border: var(--feitio-border-width) solid var(--feitio-color-text);
+    border-radius: var(--feitio-radius);
+    box-shadow: var(--feitio-shadow-lift);
+  }
+  .feitio-kanban-card::before {
+    content: "";
+    position: absolute;
+    inset-block-start: calc(var(--feitio-space-2) * -1);
+    inset-inline-start: 50%;
+    translate: -50% 0;
+    rotate: -2deg;
+    inline-size: 3.5rem;
+    block-size: var(--feitio-space-4);
+    background: var(--feitio-color-line);
+    opacity: 0.8;
+    pointer-events: none;
+  }
+  .feitio-kanban .col > .feitio-kanban-card:nth-child(odd of .feitio-kanban-card) {
+    rotate: -0.5deg;
+  }
+  .feitio-kanban .col > .feitio-kanban-card:nth-child(even of .feitio-kanban-card) {
+    rotate: 0.6deg;
+  }
+  .feitio-kanban-card:has(> .move) {
+    padding-inline-end: calc(var(--feitio-space-3) + var(--feitio-control-min-size-small));
+  }
+  .feitio-kanban-card > .move {
+    position: absolute;
+    inset-block-start: var(--feitio-space-2);
+    inset-inline-end: var(--feitio-space-2);
+  }
+  .feitio-kanban-card > .fixed {
+    position: absolute;
+    inset-block-start: var(--feitio-space-3);
+    inset-inline-end: var(--feitio-space-3);
+    font-size: var(--feitio-font-size-small);
+    color: var(--feitio-color-text-soft);
+  }
+  /* The new card's form, in the column, as a card that is not pinned yet. */
+  .feitio-kanban-card.draft {
+    rotate: none;
+    gap: var(--feitio-space-2);
+  }
+  .feitio-kanban-card.draft label {
+    font: var(--feitio-font-weight-bold) var(--feitio-font-size-small) var(--feitio-font-ui);
+  }
+  .feitio-kanban-card.draft .actions {
+    display: flex;
+    gap: var(--feitio-space-2);
+  }
+  /* The card in the hand follows the pointer with no transition. */
+  .feitio-kanban-ghost {
+    position: fixed;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    z-index: 60;
+    margin: 0;
+    pointer-events: none;
+  }
+  .feitio-kanban-ghost > .feitio-kanban-card {
+    rotate: none;
+  }
+  [data-kanban-dragging],
+  [data-kanban-dragging] * {
+    cursor: grabbing;
+    user-select: none;
+  }
+  /* The move list: a Menu list with its title on top. */
+  .feitio-kanban-menu .head {
+    padding: var(--feitio-space-1) var(--feitio-space-2);
+    font-weight: var(--feitio-font-weight-bold);
+    color: var(--feitio-color-text-soft);
+  }
+  .feitio-kanban-menu button {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  /* The board in miniature, when the columns do not fit: a rectangle per column, a line per card,
+       and the part in view in orange. Touching it takes the board there. */
+  .feitio-kanban .minimap {
+    display: none;
+  }
+
+  @container (min-width: 40rem) {
+    .feitio-kanban .tabs-scroll {
+      display: none;
+    }
+    .feitio-kanban .cols {
+      display: flex;
+      gap: var(--feitio-space-3);
+      align-items: stretch;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding-block: var(--feitio-space-6) var(--feitio-space-3);
+    }
+    .feitio-kanban .col {
+      position: relative;
+      display: grid;
+      flex: 1 0 var(--feitio-kanban-col);
+      min-block-size: 26rem;
+      padding: var(--feitio-space-5) var(--feitio-space-3) var(--feitio-space-3);
+      background: var(--feitio-color-surface-raised);
+      border: var(--feitio-border-width) solid var(--feitio-color-text);
+      border-radius: 0 var(--feitio-radius-top-right) var(--feitio-radius-bottom-right)
+        var(--feitio-radius-bottom-left);
+    }
+    .feitio-kanban .col[data-empty]:not(:has(> .add)) {
+      flex: 0 0 var(--feitio-kanban-col-empty);
+    }
+    /* The folder's tab, joined to its folder: a patch hides the folder's line under the tab, with
+         room to spare for columns that land on half pixels. */
+    .feitio-kanban .col-head {
+      position: absolute;
+      inset-block-end: 100%;
+      inset-inline-start: calc(var(--feitio-border-width) * -1);
+      display: flex;
+      padding: var(--feitio-space-1) var(--feitio-space-3);
+      background: var(--feitio-color-surface-raised);
+      border: var(--feitio-border-width) solid var(--feitio-color-text);
+      border-block-end: 0;
+      border-radius: var(--feitio-radius-top-left) var(--feitio-radius-top-right) 0 0;
+    }
+    .feitio-kanban .col-head::after {
+      content: "";
+      position: absolute;
+      inset-inline: 0;
+      inset-block-end: calc(var(--feitio-border-width) * -1 - 4px);
+      block-size: calc(var(--feitio-border-width) + 5px);
+      background: var(--feitio-color-surface-raised);
+    }
+    .feitio-kanban .col[data-empty] {
+      background: transparent;
+      border-color: var(--feitio-color-line);
+      border-style: dashed;
+    }
+    .feitio-kanban .col[data-empty] .col-head {
+      color: var(--feitio-color-text-soft);
+      background: var(--feitio-color-surface);
+      border-color: var(--feitio-color-line);
+      border-style: dashed;
+    }
+    .feitio-kanban .col[data-empty] .col-head::after {
+      background: var(--feitio-color-surface);
+    }
+    .feitio-kanban[data-dragging] .col[data-blocked] {
+      opacity: 0.4;
+    }
+    .feitio-kanban .col[data-over],
+    .feitio-kanban .col[data-over] .col-head {
+      border-color: var(--feitio-color-accent);
+      border-style: solid;
+    }
+    .feitio-kanban .col > .feitio-kanban-card:has(> .move) {
+      cursor: grab;
+    }
+    .feitio-kanban .minimap:not([hidden]) {
+      position: sticky;
+      inset-block-end: var(--feitio-space-3);
+      z-index: 2;
+      display: flex;
+      gap: 2px;
+      inline-size: max-content;
+      margin: var(--feitio-space-3) 0 0 auto;
+      padding: var(--feitio-space-1);
+      background: var(--feitio-color-surface-top);
+      border: var(--feitio-border-width) solid var(--feitio-color-text);
+      border-radius: var(--feitio-radius);
+      box-shadow: var(--feitio-shadow-lift);
+      cursor: pointer;
+      touch-action: none;
+    }
+    .feitio-kanban .minimap .m-col {
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      block-size: 3.5rem;
+      padding: 3px 2px;
+      background: var(--feitio-color-surface-raised);
+      border-radius: 2px;
+    }
+    .feitio-kanban .minimap .m-col[data-empty] {
+      background: transparent;
+      outline: 1px dashed var(--feitio-color-line);
+      outline-offset: -1px;
+    }
+    .feitio-kanban .minimap .m-card {
+      flex: none;
+      block-size: 5px;
+      background: var(--feitio-color-text-soft);
+      border-radius: 1px;
+    }
+    .feitio-kanban .minimap .view {
+      position: absolute;
+      inset-block: 2px;
+      border: 2px solid var(--feitio-color-accent);
+      border-radius: 3px;
+      pointer-events: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .feitio-kanban .col > .feitio-kanban-card {
+      rotate: none;
+    }
+  }
 }
 
 @keyframes feitio-filter-wait {

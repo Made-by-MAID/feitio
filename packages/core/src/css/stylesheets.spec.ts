@@ -23,6 +23,8 @@ test('the components read no Feitio variable that the tokens or the base do not 
     '--notice-p',
     '--feitio-gap',
     '--feitio-grid-min',
+    '--feitio-kanban-col',
+    '--feitio-kanban-col-empty',
     '--feitio-filter-debounce',
     '--feitio-scroll-fade-bleed',
     '--feitio-scroll-fade-to',

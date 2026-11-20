@@ -316,6 +316,78 @@ for (const mode of ['light', 'dark'] as const) {
     (await page.locator('#pg-filter-list li:not([hidden])').count()) === 1,
     'filterfield: the async results were not applied',
   );
+  // Kanban: the move button lists only where the card may go; the move says so above the board.
+  await page.goto(`${origin}/en/components/kanban/`);
+  await page.click('#kb-en .feitio-kanban-card[data-id="k10"] .move');
+  const choices = await page.locator('#kb-en-move button').allTextContents();
+  check(choices.join(',') === 'Published', `kanban: the move list offered ${choices.join(',')}`);
+  await page.click('#kb-en-move button');
+  await page.waitForTimeout(400);
+  check(
+    (await page
+      .locator('#kb-en .col[data-col="publicado"] .feitio-kanban-card[data-id="k10"]')
+      .count()) === 1,
+    'kanban: the card did not move with the button',
+  );
+  check(
+    ((await page.locator('#kb-en .col[data-col="publicado"] .col-head .n').textContent()) ?? '') ===
+      '2',
+    'kanban: the count did not follow the move',
+  );
+  check(
+    (
+      (await page
+        .locator('[data-demo-kanban]:has(#kb-en) > .feitio-notice strong')
+        .first()
+        .textContent()) ?? ''
+    ).includes('Published'),
+    'kanban: the notice above the board did not say where the card went',
+  );
+  // Dragging with the mouse: the card follows, the folder opens, and letting go moves it.
+  const drag = page.locator('#kb-en .feitio-kanban-card[data-id="k11"]');
+  await drag.scrollIntoViewIfNeeded();
+  const from = await drag.boundingBox();
+  const art = await page.locator('#kb-en .col[data-col="arte"]').boundingBox();
+  if (from && art) {
+    await page.mouse.move(from.x + 30, from.y + from.height - 12);
+    await page.mouse.down();
+    await page.mouse.move(art.x + art.width / 2, art.y + 120, { steps: 20 });
+    check(
+      (await page.locator('.feitio-kanban-ghost').count()) === 1,
+      'kanban: the held card did not follow the hand',
+    );
+    check(
+      (await page.locator('#kb-en .col[data-col="arte"] .slot').count()) === 1,
+      'kanban: the folder did not open a place',
+    );
+    await page.mouse.up();
+    await page.waitForTimeout(400);
+    check(
+      (await page
+        .locator('#kb-en .col[data-col="arte"] .feitio-kanban-card[data-id="k11"]')
+        .count()) === 1,
+      'kanban: letting go did not move the card',
+    );
+  }
+  // A new idea: the form takes the button's place, and saving adds the card.
+  await page.click('#kb-en .col[data-col="ideia"] .add');
+  await page.fill('#kb-en .col[data-col="ideia"] .draft textarea', 'A fresh idea');
+  await page.click('#kb-en .col[data-col="ideia"] .draft [type="submit"]');
+  check(
+    (await page
+      .locator('#kb-en .col[data-col="ideia"] .feitio-kanban-card[aria-label="A fresh idea"]')
+      .count()) === 1,
+    'kanban: the new idea did not become a card',
+  );
+  // On a phone the stages are tabs: one shows at a time.
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.click('#kb-en .tabs [data-col="publicado"]');
+  check(
+    (await page.locator('#kb-en .col[data-col="publicado"]').isVisible()) &&
+      !(await page.locator('#kb-en .col[data-col="aprovado"]').isVisible()),
+    'kanban: the phone tabs did not switch the stage',
+  );
+  await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto(`${origin}/en/components/field/`);
   await page.click('[data-prop="state"][data-value="error"]');
   check(

@@ -1,0 +1,51 @@
+---
+/**
+ * Kanban: work in columns, one per stage, and cards that go from one to the next. Wide, a file of
+ * folders, each with its tab; on a phone, a row of stage tabs and one stage at a time. The cards of a
+ * column go in the slot named after it (KanbanCard). A column may offer a new-card button (create);
+ * the board then sends feitio-kanban-create with what was written, and the page adds the card. Every
+ * move, by dragging or by the card's button, sends feitio-kanban-move (cancelable) first.
+ */
+import Icon from './Icon.astro';
+
+type Column = {
+  id: string;
+  title: string;
+  /** What an empty column says, inviting to act. */
+  empty?: string;
+  /** The new-card button: its words, the field's label, and the words of Save and Cancel. */
+  create?: { label: string; field: string; save?: string; cancel?: string };
+};
+interface Props {
+  id: string;
+  /** The board's name, for screen readers. */
+  label: string;
+  columns: Column[];
+  /** The stage a phone shows first; the first column when left out. */
+  current?: string;
+  /** The title of the move list. */
+  moveLabel?: string;
+  sprite?: string;
+}
+const { id, label, columns, current, moveLabel = 'Mover para', sprite } = Astro.props;
+const shown = current ?? columns[0]?.id;
+const rendered = await Promise.all(
+  columns.map(async (c) => {
+    const html = Astro.slots.has(c.id) ? await Astro.slots.render(c.id) : '';
+    return { ...c, html, n: (html.match(/class="feitio-kanban-card"/g) ?? []).length };
+  }),
+);
+---
+<div class="feitio-kanban" id={id} data-move-label={moveLabel}>
+  <div class="feitio-kanban-scroll tabs-scroll"><span class="edge start" aria-hidden="true"></span><div class="tabs" role="group" aria-label={label}>{rendered.map((c) => <button type="button" data-col={c.id} aria-pressed={c.id === shown ? 'true' : 'false'} data-has={c.n ? '' : undefined}>{c.title} <span class="n">{c.n}</span></button>)}</div><span class="edge end" aria-hidden="true"></span></div>
+  <div class="feitio-kanban-scroll"><span class="edge start" aria-hidden="true"></span><div class="cols">{rendered.map((c) => <div class="col" role="group" data-col={c.id} aria-labelledby={`${id}-${c.id}`} data-current={c.id === shown ? '' : undefined} data-empty={c.n ? undefined : ''}><div class="col-head"><h3 id={`${id}-${c.id}`}>{c.title}</h3><span class="n">{c.n}</span></div>{c.empty && <p class="empty" hidden={c.n > 0}>{c.empty}</p>}<Fragment set:html={c.html} />{c.create && <button type="button" class="add" data-field={c.create.field} data-save={c.create.save ?? 'Salvar'} data-cancel={c.create.cancel ?? 'Cancelar'}><Icon name="plus" sprite={sprite} />{c.create.label}</button>}</div>)}</div><span class="edge end" aria-hidden="true"></span></div>
+  <div class="minimap" aria-hidden="true" hidden></div>
+</div>
+<script>
+  import { kanbans } from '@feitio/vanilla/kanban/source';
+  const page = window as Window & { feitioKanban?: boolean };
+  if (!page.feitioKanban) {
+    page.feitioKanban = true;
+    kanbans(window);
+  }
+</script>

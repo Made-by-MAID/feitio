@@ -30,6 +30,8 @@ export * from './Heading.tsx';
 export * from './Hint.tsx';
 export * from './Icon.tsx';
 export * from './Inline.tsx';
+export * from './Kanban.tsx';
+export * from './KanbanCard.tsx';
 export * from './Kbd.tsx';
 export * from './Label.tsx';
 export * from './Link.tsx';

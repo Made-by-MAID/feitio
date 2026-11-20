@@ -9,7 +9,7 @@ npm install @feitio/core @feitio/vanilla
 ```
 
 ```js
-import { dialogs, forms, menus, notices, scrolls } from '@feitio/vanilla';
+import { dialogs, forms, kanbans, menus, notices, scrolls } from '@feitio/vanilla';
 
 const notice = notices(window); // close buttons, and timed notices that pause under the pointer
 notice.show(document.getElementById('saved'));
@@ -17,10 +17,11 @@ menus(window); // Menu: position, focus, arrow keys
 forms(window); // Switch, SegmentedControl, TimeInput, FilterField
 dialogs(window); // openers, typed confirmation, reset on close
 scrolls(window); // ScrollFade and BackToTop
+kanbans(window); // Kanban: tabs, dragging, the move button, the new card; feitio-kanban-move and -create
 ```
 
 Each behavior also has its own entry point (`@feitio/vanilla/notice`, `/menu`, `/forms`,
-`/status`, `/scroll`, `/dialog`). The markup comes from Feitio's components
+`/status`, `/scroll`, `/dialog`, `/kanban`). The markup comes from Feitio's components
 ([`@feitio/astro`](https://www.npmjs.com/package/@feitio/astro), or the HTML in the docs), and the
 styles from [`@feitio/core`](https://www.npmjs.com/package/@feitio/core).
 

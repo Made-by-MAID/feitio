@@ -23,8 +23,10 @@ export function Saved() {
 ```
 
 - **Behaviors wire themselves.** Menu, Notice, Dialog, Switch, SegmentedControl, TimeInput,
-  FilterField, ScrollFade, BackToTop and AppShell bring their JavaScript (from `@feitio/vanilla`)
-  when they mount. Nothing to call.
+  FilterField, ScrollFade, BackToTop, AppShell and Kanban bring their JavaScript (from
+  `@feitio/vanilla`) when they mount. Nothing to call.
+- **Kanban from state.** Pass each column's `KanbanCard`s in `cards`; `onMove` gets
+  `{ id, from, to, index }` (move the card in your state) and `onCreate` gets the column and the text.
 - **Notices from code.** `const { show, close } = useNotices()`, then `show(element)` with the
   element a Notice's `ref` points to.
 - **Feedback from state.** A StatusOverlay follows its `state` and `label` props.
