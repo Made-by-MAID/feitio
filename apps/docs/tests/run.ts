@@ -76,7 +76,15 @@ await mkdir(shots, { recursive: true });
 const browser = await chromium.launch();
 
 // Every page, every language: day, night, and a phone. ONLY=behavior skips this, to run the rest quickly.
-for (const lang of process.env.ONLY === 'behavior' ? [] : LOCALES) {
+// It takes minutes and prints its progress, so a run in CI never looks stuck.
+const pageLangs = process.env.ONLY === 'behavior' ? [] : LOCALES;
+const pageTotal = pageLangs.length * PAGES.length;
+let pageDone = 0;
+if (pageTotal)
+  console.log(
+    `Pages: ${pageTotal} (${PAGES.length} in ${pageLangs.length} languages), day, night and phone`,
+  );
+for (const lang of pageLangs) {
   for (const path of PAGES) {
     const name = `${lang}-${path.replaceAll('/', '-').replace(/-$/, '') || 'home'}`;
     for (const mode of ['light', 'dark'] as const) {
@@ -101,8 +109,12 @@ for (const lang of process.env.ONLY === 'behavior' ? [] : LOCALES) {
     if (lang === 'pt')
       await phone.screenshot({ path: join(shots, `${name}-phone.png`), fullPage: true });
     await phone.close();
+    pageDone += 1;
+    if (pageDone % 25 === 0 || pageDone === pageTotal)
+      console.log(`Pages: ${pageDone} of ${pageTotal}, ${problems.length} problem(s) so far`);
   }
 }
+console.log('Behaviors: playgrounds, Notice, Menu, forms, Kanban…');
 
 // Search and link previews, read from the built files: every page in every language has its
 // description, canonical, the five languages plus x-default, its preview image (which exists), and is
@@ -379,8 +391,21 @@ for (const mode of ['light', 'dark'] as const) {
       .count()) === 1,
     'kanban: the new idea did not become a card',
   );
-  // On a phone the stages are tabs: one shows at a time.
+  // On a phone the stages are tabs: one shows at a time, and the chosen one opens in view.
   await page.setViewportSize({ width: 390, height: 844 });
+  {
+    const phone = await browser.newPage({ viewport: { width: 390, height: 844 } });
+    await phone.goto(`${origin}/en/components/kanban/`);
+    await phone.waitForTimeout(400);
+    const seen = await phone.locator('#kb-en .tabs').evaluate((row) => {
+      const tab = row.querySelector('[aria-pressed="true"]') as HTMLElement;
+      const r = row.getBoundingClientRect();
+      const t = tab.getBoundingClientRect();
+      return t.left >= r.left && t.right <= r.right;
+    });
+    check(seen, 'kanban: the chosen stage opened out of view in the tab row');
+    await phone.close();
+  }
   await page.click('#kb-en .tabs [data-col="publicado"]');
   check(
     (await page.locator('#kb-en .col[data-col="publicado"]').isVisible()) &&
@@ -420,6 +445,18 @@ for (const mode of ['light', 'dark'] as const) {
   check(
     (await page.locator('#pg-scroll').evaluate((box) => box.scrollTop)) === 0,
     'backtotop: it did not go back to the top',
+  );
+  // The content shrinks with no scroll at all: the fade leaves, since nothing is below anymore.
+  await page.locator('#pg-scroll').evaluate((box) => {
+    for (const child of [...box.children]) {
+      if (!child.matches('.feitio-scroll-fade, .feitio-back-to-top'))
+        (child as HTMLElement).style.display = 'none';
+    }
+  });
+  await page.waitForTimeout(300);
+  check(
+    (await page.locator('#pg-scroll .feitio-scroll-fade').getAttribute('data-visible')) === null,
+    'scrollfade: the fade stayed after the content shrank',
   );
   await page.close();
 }
