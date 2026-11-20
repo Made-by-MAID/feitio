@@ -1,6 +1,6 @@
 {
   "name": "@feitio/core",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Feitio's foundation: design tokens, the layered base CSS, the hand-drawn icons and illustrations.",
   "keywords": [
     "feitio",
