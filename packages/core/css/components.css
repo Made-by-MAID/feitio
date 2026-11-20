@@ -2142,6 +2142,7 @@
   .feitio-kanban {
     --feitio-kanban-col: 17rem;
     --feitio-kanban-col-empty: 11rem;
+    --feitio-kanban-tab: 2.25rem;
     /* It measures itself (container queries), so it takes the width it is given, never its content's. */
     container-type: inline-size;
     display: grid;
@@ -2152,11 +2153,11 @@
   }
   /* The board moves on springs (the script); a CSS transition on sizes or spacing would also animate
        the switch between phone and folders, and the cards would lag behind the hand. Only colors and
-       fades change by transition here. */
+       fades change by transition here. The buttons inside keep their own (the lift on hover). */
   .feitio-kanban,
-  .feitio-kanban *,
+  .feitio-kanban :not(.feitio-button, .feitio-button *),
   .feitio-kanban-ghost,
-  .feitio-kanban-ghost * {
+  .feitio-kanban-ghost :not(.feitio-button, .feitio-button *) {
     transition-property: color, background-color, border-color, opacity;
   }
   .feitio-kanban-scroll {
@@ -2323,18 +2324,13 @@
   .feitio-kanban .col > .feitio-kanban-card:nth-child(even of .feitio-kanban-card) {
     rotate: 0.6deg;
   }
-  .feitio-kanban-card:has(> .move) {
-    padding-inline-end: calc(var(--feitio-space-3) + var(--feitio-control-min-size-small));
-  }
-  .feitio-kanban-card > .move {
-    position: absolute;
-    inset-block-start: var(--feitio-space-2);
-    inset-inline-end: var(--feitio-space-2);
+  /* The move button, with its word, closes the card at the end; a card that cannot move says so there. */
+  .feitio-kanban-card > .move,
+  .feitio-kanban-card > .fixed {
+    justify-self: end;
+    margin-block-start: var(--feitio-space-1);
   }
   .feitio-kanban-card > .fixed {
-    position: absolute;
-    inset-block-start: var(--feitio-space-3);
-    inset-inline-end: var(--feitio-space-3);
     font-size: var(--feitio-font-size-small);
     color: var(--feitio-color-text-soft);
   }
@@ -2392,44 +2388,49 @@
       align-items: stretch;
       overflow-x: auto;
       scrollbar-width: none;
-      padding-block: var(--feitio-space-6) var(--feitio-space-3);
+      padding-block: var(--feitio-space-2) var(--feitio-space-3);
     }
+    /* The column is only a frame: the folder (::before) and its tab (.col-head) are both drawn from its
+         very edge, at 0, with no offset to round. The tab has a fixed height and the folder's top line
+         sits right under it, so the tab's paper covers that line and its side lines continue the folder's. */
     .feitio-kanban .col {
       position: relative;
+      isolation: isolate;
       display: grid;
       flex: 1 0 var(--feitio-kanban-col);
       min-block-size: 26rem;
-      padding: var(--feitio-space-5) var(--feitio-space-3) var(--feitio-space-3);
+      padding: calc(var(--feitio-kanban-tab) + var(--feitio-space-4)) var(--feitio-space-3)
+        var(--feitio-space-3);
+    }
+    .feitio-kanban .col::before {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      inset: calc(var(--feitio-kanban-tab) - var(--feitio-border-width)) 0 0 0;
       background: var(--feitio-color-surface-raised);
       border: var(--feitio-border-width) solid var(--feitio-color-text);
       border-radius: 0 var(--feitio-radius-top-right) var(--feitio-radius-bottom-right)
         var(--feitio-radius-bottom-left);
+      pointer-events: none;
     }
     .feitio-kanban .col[data-empty]:not(:has(> .add)) {
       flex: 0 0 var(--feitio-kanban-col-empty);
     }
-    /* The folder's tab, joined to its folder: a patch hides the folder's line under the tab, with
-         room to spare for columns that land on half pixels. */
     .feitio-kanban .col-head {
       position: absolute;
-      inset-block-end: 100%;
-      inset-inline-start: calc(var(--feitio-border-width) * -1);
+      inset-block-start: 0;
+      inset-inline-start: 0;
       display: flex;
-      padding: var(--feitio-space-1) var(--feitio-space-3);
+      align-items: center;
+      box-sizing: border-box;
+      block-size: var(--feitio-kanban-tab);
+      padding: 0 var(--feitio-space-3);
       background: var(--feitio-color-surface-raised);
       border: var(--feitio-border-width) solid var(--feitio-color-text);
       border-block-end: 0;
       border-radius: var(--feitio-radius-top-left) var(--feitio-radius-top-right) 0 0;
     }
-    .feitio-kanban .col-head::after {
-      content: "";
-      position: absolute;
-      inset-inline: 0;
-      inset-block-end: calc(var(--feitio-border-width) * -1 - 4px);
-      block-size: calc(var(--feitio-border-width) + 5px);
-      background: var(--feitio-color-surface-raised);
-    }
-    .feitio-kanban .col[data-empty] {
+    .feitio-kanban .col[data-empty]::before {
       background: transparent;
       border-color: var(--feitio-color-line);
       border-style: dashed;
@@ -2440,13 +2441,10 @@
       border-color: var(--feitio-color-line);
       border-style: dashed;
     }
-    .feitio-kanban .col[data-empty] .col-head::after {
-      background: var(--feitio-color-surface);
-    }
     .feitio-kanban[data-dragging] .col[data-blocked] {
       opacity: 0.4;
     }
-    .feitio-kanban .col[data-over],
+    .feitio-kanban .col[data-over]::before,
     .feitio-kanban .col[data-over] .col-head {
       border-color: var(--feitio-color-accent);
       border-style: solid;

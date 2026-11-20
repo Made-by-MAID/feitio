@@ -12,7 +12,7 @@ interface Props {
   name: string;
   /** The columns it may go to, by id. */
   to?: string[];
-  /** The move button's words, before the card's name. */
+  /** The move button's word; screen readers hear it with the card's name. */
   moveLabel?: string;
   /** What a card that cannot move says. */
   fixedLabel?: string;
@@ -20,4 +20,4 @@ interface Props {
 }
 const { id, name, to = [], moveLabel = 'Mover', fixedLabel = 'fixo', sprite } = Astro.props;
 ---
-<article class="feitio-kanban-card" data-id={id} data-to={to.length ? to.join(' ') : undefined} aria-label={name}><slot />{to.length ? <button type="button" class="feitio-button move" data-size="small" aria-label={`${moveLabel}: ${name}`} aria-haspopup="true" aria-expanded="false"><Icon name="chevron-down" sprite={sprite} /></button> : <span class="fixed">{fixedLabel}</span>}</article>
+<article class="feitio-kanban-card" data-id={id} data-to={to.length ? to.join(' ') : undefined} aria-label={name}><slot />{to.length ? <button type="button" class="feitio-button move" data-size="small" aria-label={`${moveLabel}: ${name}`} aria-haspopup="true" aria-expanded="false">{moveLabel}<Icon name="chevron-down" sprite={sprite} /></button> : <span class="fixed">{fixedLabel}</span>}</article>

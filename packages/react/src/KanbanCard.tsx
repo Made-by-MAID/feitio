@@ -7,7 +7,7 @@ export interface KanbanCardProps {
   name: string;
   /** The columns it may go to, by id. */
   to?: string[];
-  /** The move button's words, before the card's name. */
+  /** The move button's word; screen readers hear it with the card's name. */
   moveLabel?: string;
   /** What a card that cannot move says. */
   fixedLabel?: string;
@@ -43,6 +43,7 @@ export function KanbanCard({
           aria-haspopup="true"
           aria-expanded="false"
         >
+          {moveLabel}
           <Icon name="chevron-down" sprite={sprite} />
         </button>
       ) : (
