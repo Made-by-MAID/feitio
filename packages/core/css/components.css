@@ -1910,10 +1910,6 @@
     opacity: 1;
     translate: 0 0;
   }
-  .feitio-dialog[open] {
-    opacity: 0;
-    translate: 0 var(--feitio-space-3);
-  }
   .feitio-dialog::backdrop {
     background: color-mix(in oklch, var(--feitio-color-shadow) 45%, transparent);
   }

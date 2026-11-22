@@ -2,6 +2,7 @@ import { expect, test } from 'bun:test';
 import { join } from 'node:path';
 import { readTextFile } from '../tokens/actions/read-text-file.ts';
 import { definedVariables, usedVariables } from './calculations/css-variables.ts';
+import { hiddenOpenStates } from './calculations/hidden-open-states.ts';
 
 const cssFolder = join(import.meta.dir, '..', '..', 'css');
 
@@ -32,4 +33,9 @@ test('the components read no Feitio variable that the tokens or the base do not 
   ]);
   const unknown = [...usedVariables(components)].filter((name) => !declared.has(name));
   expect(unknown).toEqual([]);
+});
+
+test('no open state of a component is left invisible: opacity 0 only where an entry starts', async () => {
+  const components = (await readTextFile(join(cssFolder, 'components.css'))) ?? '';
+  expect(hiddenOpenStates(components)).toEqual([]);
 });
