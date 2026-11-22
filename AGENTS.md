@@ -34,7 +34,7 @@ Rules for anyone changing this repository, people and AI agents alike. Read the
 - Every docs page exists in all five languages (PT, EN, ES, FR, DE). New words go in all five.
 - For agents, read `/<lang>/llms.txt` (an index) or `/<lang>/llms-full.txt` (everything) on the published site, or any page's `index.md`.
 - A component enters with its tests in `apps/docs/tests/run.ts`, a real browser over the built site:
-  axe by day and at night in every language, no sideways scroll on a phone, and its behavior
+  full axe by day and axe's color contrast at night, in every language, no sideways scroll on a phone, and its behavior
   (clicks, keyboard, focus). Lighthouse runs too (`apps/docs/tests/lighthouse.ts`): accessibility, best
   practices and SEO stay at 100 and performance above its floor, or the docs check fails. `bun run test:docs` builds the site and runs them. A component page
   with props worth trying gets a Playground (every combination rendered by the component itself).
