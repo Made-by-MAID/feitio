@@ -3,6 +3,9 @@
  * two HTMLs must match. Slots are plain text: in React the default slot is children and a named slot
  * is the prop of the same name (logo, footer, do, dont).
  */
+/** The parity cases whose HTML may carry a style attribute: the legacy Grid length, nothing else. */
+export const INLINE_STYLE_ALLOWED = ['grid-length'];
+
 export interface ParityCase {
   id: string;
   component: string;
@@ -383,7 +386,12 @@ export const cases: ParityCase[] = [
     slots: { logo: 'Logo' },
   },
   { id: 'grid', component: 'Grid', props: {}, slots: { default: 'peças' } },
-  { id: 'grid-min', component: 'Grid', props: { gap: 2, min: '9rem', as: 'ul' } },
+  { id: 'grid-min', component: 'Grid', props: { gap: 2, min: 'narrow', as: 'ul' } },
+  { id: 'grid-wide', component: 'Grid', props: { min: 'wide' } },
+  { id: 'grid-regular', component: 'Grid', props: { min: 'regular' } },
+  // The one inline style left, kept for compatibility: a Grid min that is not a step. The docs test
+  // allows it here only (INLINE_STYLE_ALLOWED); a strict CSP blocks it.
+  { id: 'grid-length', component: 'Grid', props: { min: '9rem' } },
   {
     id: 'heatmap',
     component: 'Heatmap',
@@ -482,6 +490,18 @@ export const cases: ParityCase[] = [
   { id: 'masonry-min', component: 'Masonry', props: { gap: 3, min: 'wide', as: 'ul' } },
   { id: 'masonry-narrow', component: 'Masonry', props: { min: 'narrow' } },
   { id: 'masonry-regular', component: 'Masonry', props: { min: 'regular' } },
+  {
+    id: 'masonry-max',
+    component: 'Masonry',
+    props: { min: 'narrow', max: 3 },
+    slots: { default: 'blocos' },
+  },
+  {
+    id: 'masonry-uncapped',
+    component: 'Masonry',
+    props: { min: 'narrow' },
+    slots: { default: 'blocos' },
+  },
   {
     id: 'label',
     component: 'Label',
@@ -672,6 +692,7 @@ export const cases: ParityCase[] = [
     },
   },
   { id: 'swatch', component: 'Swatch', props: { role: 'accent' } },
+  { id: 'swatch-ok-surface', component: 'Swatch', props: { role: 'ok-surface' } },
   { id: 'switch', component: 'Switch', props: { label: 'Avisos' } },
   {
     id: 'switch-on',

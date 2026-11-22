@@ -1,9 +1,12 @@
 ---
-/** Swatch: a sample of a Feitio color, with the ink line around it; it follows the theme by itself. */
+/**
+ * Swatch: a sample of a Feitio color, with the ink line around it; it follows the theme by itself.
+ * The role is a data attribute, never an inline style, so it works under a strict CSP.
+ */
 interface Props {
-  /** A color role, like "accent" or "ok". */
+  /** A color role, like "accent" or "ok" (surface, surface-raised, surface-top, text, text-soft, accent, accent-strong, on-accent, line, shadow, ok, warn, error and their -surface). */
   role: string;
 }
 const { role } = Astro.props;
 ---
-<span class="feitio-swatch" style={`--swatch: var(--feitio-color-${role})`}></span>
+<span class="feitio-swatch" data-role={role}></span>

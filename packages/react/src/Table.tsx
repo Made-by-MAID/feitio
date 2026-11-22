@@ -21,7 +21,7 @@ export interface TableProps {
 export function Table({ id, caption, columns, rows, compact }: TableProps): ReactElement {
   const cap = `${id}-cap`;
   return (
-    <div data-density={compact ? 'compact' : undefined} style={{ inlineSize: '100%' }}>
+    <div className="feitio-table-frame" data-density={compact ? 'compact' : undefined}>
       {/* biome-ignore lint/a11y/useSemanticElements: the same HTML as the Astro Table. */}
       <div
         className="feitio-table-scroll"
