@@ -37,7 +37,7 @@
     },
     "packages/astro": {
       "name": "@feitio/astro",
-      "version": "0.4.0",
+      "version": "0.5.0",
       "dependencies": {
         "@feitio/core": "workspace:*",
         "@feitio/vanilla": "workspace:*",
@@ -51,11 +51,11 @@
     },
     "packages/core": {
       "name": "@feitio/core",
-      "version": "0.4.0",
+      "version": "0.5.0",
     },
     "packages/react": {
       "name": "@feitio/react",
-      "version": "0.4.0",
+      "version": "0.5.0",
       "dependencies": {
         "@feitio/core": "workspace:*",
       },
@@ -72,7 +72,7 @@
     },
     "packages/vanilla": {
       "name": "@feitio/vanilla",
-      "version": "0.4.0",
+      "version": "0.5.0",
       "dependencies": {
         "@feitio/core": "workspace:*",
       },
