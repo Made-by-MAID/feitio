@@ -70,6 +70,10 @@
     "word": {
       "$value": { "value": 0.5, "unit": "rem" },
       "$description": "The least room on each side of a short word inside a border (a Tag, a key, a small button): a letter that reaches past its width, like the f of Off, stays clear of the hand-cut corner."
+    },
+    "word-block": {
+      "$value": { "value": 0.0625, "unit": "rem" },
+      "$description": "The least room above and below a short word inside a border, for the tightest ones (a small Tag, a key): a letter that reaches below the line, like y or j, stays clear of the border."
     }
   },
   "size": {

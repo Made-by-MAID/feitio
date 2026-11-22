@@ -204,7 +204,7 @@
   .feitio-kbd {
     display: inline-block;
     min-inline-size: 1.6em;
-    padding: 0 var(--feitio-inset-word);
+    padding: var(--feitio-inset-word-block) var(--feitio-inset-word);
     text-align: center;
     font: var(--feitio-font-weight-bold) 0.85em var(--feitio-font-ui);
     color: var(--feitio-color-text);
@@ -328,10 +328,10 @@
     background: var(--feitio-color-error-surface);
     border-color: var(--feitio-color-error);
   }
-  /* Small, it keeps the room on the sides: a last letter that reaches past its width (the f of "Off")
-     must stay clear of the hand-cut corner. */
+  /* Small, it keeps the room around the word: a last letter that reaches past its width (the f of
+     "Off") or below the line (y, j) must stay clear of the border and its hand-cut corners. */
   .feitio-tag[data-size="small"] {
-    padding-block: 0;
+    padding-block: var(--feitio-inset-word-block);
     font-weight: var(--feitio-font-weight-medium);
   }
   .feitio-tag .feitio-icon {

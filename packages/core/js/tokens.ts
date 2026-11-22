@@ -26,6 +26,7 @@ export const tokens = {
   'measure.column-narrow': 'var(--feitio-measure-column-narrow)',
   'measure.column-wide': 'var(--feitio-measure-column-wide)',
   'inset.word': 'var(--feitio-inset-word)',
+  'inset.word-block': 'var(--feitio-inset-word-block)',
   'size.square': 'var(--feitio-size-square)',
   'radius.top-left': 'var(--feitio-radius-top-left)',
   'radius.top-right': 'var(--feitio-radius-top-right)',
