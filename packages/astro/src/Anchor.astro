@@ -1,5 +1,10 @@
 ---
-/** Anchor: the page index, following the scroll; the current part in ink, with the hand-drawn arrow. */
+/**
+ * Anchor: the page index, following the scroll; the current part in ink, with the hand-drawn arrow.
+ * Its behavior comes from @feitio/vanilla (anchors): smooth scroll, the hash, the focus, and the
+ * section in view. sticky keeps it in view in a side column, with its own scroll when it is taller
+ * than the screen.
+ */
 import Icon from './Icon.astro';
 
 interface Props {
@@ -11,8 +16,10 @@ interface Props {
     children?: { id: string; text: string; current?: boolean }[];
   }[];
   label?: string;
+  /** Stays in view while the page scrolls, in a side column (data-sticky). */
+  sticky?: boolean;
   sprite?: string;
 }
-const { title, items, label, sprite } = Astro.props;
+const { title, items, label, sticky, sprite } = Astro.props;
 ---
-<nav class="feitio-anchor" aria-label={label ?? title}>{title && <p class="title">{title}</p>}<ul>{items.map((t) => <li><a href={`#${t.id}`} aria-current={t.current ? 'location' : undefined}><Icon name="chevron-right" sprite={sprite} />{t.text}</a>{t.children && <ul>{t.children.map((c) => <li><a href={`#${c.id}`} aria-current={c.current ? 'location' : undefined}><Icon name="chevron-right" sprite={sprite} />{c.text}</a></li>)}</ul>}</li>)}</ul></nav>
+<nav class="feitio-anchor" aria-label={label ?? title} data-sticky={sticky ? '' : undefined}>{title && <p class="title">{title}</p>}<ul>{items.map((t) => <li><a href={`#${t.id}`} aria-current={t.current ? 'location' : undefined}><Icon name="chevron-right" sprite={sprite} />{t.text}</a>{t.children && <ul>{t.children.map((c) => <li><a href={`#${c.id}`} aria-current={c.current ? 'location' : undefined}><Icon name="chevron-right" sprite={sprite} />{c.text}</a></li>)}</ul>}</li>)}</ul></nav>

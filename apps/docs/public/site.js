@@ -49,22 +49,7 @@ header.addEventListener('focusin', () => {
   delete header.dataset.hidden;
 });
 
-// ---- Anchor: marca o trecho em que a pessoa está.
-const headings = [...document.querySelectorAll('.site-main h2[id], .site-main h3[id]')];
-function spy() {
-  let current = headings[0];
-  for (const h of headings) if (h.getBoundingClientRect().top < 140) current = h;
-  if (innerHeight + scrollY >= document.documentElement.scrollHeight - 4) current = headings.at(-1);
-  for (const a of document.querySelectorAll('.feitio-anchor a')) {
-    if (current && a.getAttribute('href') === `#${current.id}`)
-      a.setAttribute('aria-current', 'location');
-    else a.removeAttribute('aria-current');
-  }
-}
-if (headings.length) {
-  addEventListener('scroll', spy, { passive: true });
-  spy();
-}
+// ---- Anchor: the index follows the scroll through @feitio/vanilla's anchors (DocPage wires it).
 for (const a of document.querySelectorAll('.toc-mobile .feitio-anchor a'))
   a.addEventListener('click', () => {
     a.closest('details').open = false;

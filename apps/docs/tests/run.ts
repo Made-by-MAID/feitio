@@ -1,11 +1,12 @@
 /**
  * The documentation site in a real browser, as a person uses it. For every page in every language:
- * no broken request or script error, no axe violation by day and at night, no sideways scroll on a
- * phone. Then each component's behavior: the playground, the Notice's close and time, the language
+ * no broken request or script error, no axe violation by day (every rule) and no contrast failure at
+ * night (axe's color-contrast: only the colors change at night), no sideways scroll on a phone. Then each component's behavior: the playground, the Notice's close and time, the language
  * Menu with the keyboard. Screenshots go to tests/screenshots/ for a human to look at.
  * Run with `bun run test:docs` (it builds the site first).
  */
 import { mkdir, readFile } from 'node:fs/promises';
+import { cpus } from 'node:os';
 import { join } from 'node:path';
 import { parseHTML } from 'linkedom';
 import { chromium, type Page } from 'playwright';
@@ -60,7 +61,7 @@ function fixture(ids: string[], mode: string): Response {
 }
 const FIXTURE_CSS = `body { margin: 0; padding: var(--feitio-space-4); background: var(--feitio-color-surface); color: var(--feitio-color-text); }
 .fixture { display: inline-block; margin: var(--feitio-space-2); vertical-align: top; }
-.fixture:has(.feitio-heatmap, .feitio-masonry) { display: block; }`;
+.fixture:has(.feitio-heatmap, .feitio-masonry, .feitio-app) { display: block; }`;
 
 const server = Bun.serve({
   port: 0,
@@ -91,72 +92,140 @@ function check(condition: boolean, what: string): void {
   if (!condition) problems.push(what);
 }
 
-async function axe(page: Page, state: string): Promise<void> {
-  await page.addScriptTag({ content: axeSource });
-  const results = (await page.evaluate('axe.run(document)')) as AxeResults;
+/** axe on the page: every rule, or only color contrast (the night run: only colors change). */
+async function axe(page: Page, state: string, contrastOnly = false): Promise<void> {
+  if ((await page.evaluate('typeof axe')) === 'undefined')
+    await page.addScriptTag({ content: axeSource });
+  const options = contrastOnly ? "{ runOnly: { type: 'rule', values: ['color-contrast'] } }" : '{}';
+  const results = (await page.evaluate(`axe.run(document, ${options})`)) as AxeResults;
   for (const violation of results.violations) {
     const where = violation.nodes.map((node) => node.target.join(' ')).join(', ');
     problems.push(`${state}: ${violation.id} (${violation.help}) at ${where}`);
   }
 }
 
-function watch(page: Page, state: string): void {
-  page.on('pageerror', (error) => problems.push(`${state}: script error: ${error.message}`));
-  page.on('requestfailed', (request) => problems.push(`${state}: failed request ${request.url()}`));
+/**
+ * Reports what goes wrong on a page under its name. A page that is reused for many URLs passes the
+ * name as a function, read when each event happens; a request is reported under the URL it was made
+ * for, and one that a new navigation cut short (net::ERR_ABORTED) belongs to the page left behind.
+ */
+function watch(page: Page, state: string | (() => string)): void {
+  const name = typeof state === 'string' ? () => state : state;
+  const madeFor = new WeakMap<object, string>();
+  page.on('pageerror', (error) => problems.push(`${name()}: script error: ${error.message}`));
+  page.on('requestfailed', (request) => {
+    const when = madeFor.get(request) ?? name();
+    if (request.failure()?.errorText === 'net::ERR_ABORTED' && when !== name()) return;
+    problems.push(`${when}: failed request ${request.url()}`);
+  });
   // Nothing goes to anyone else: no fonts, scripts or images from another site (privacy).
   page.on('request', (request) => {
+    madeFor.set(request, name());
     const url = request.url();
     if (!url.startsWith(origin) && !url.startsWith('data:'))
-      problems.push(`${state}: request to another site ${url}`);
+      problems.push(`${name()}: request to another site ${url}`);
   });
   page.on('response', (response) => {
     if (response.status() >= 400 && response.url().startsWith(origin))
-      problems.push(`${state}: ${response.status()} ${response.url()}`);
+      problems.push(
+        `${madeFor.get(response.request()) ?? name()}: ${response.status()} ${response.url()}`,
+      );
   });
+}
+
+/** Waits for what a check needs: the page loaded, its fonts in, and two frames painted. */
+async function settled(page: Page): Promise<void> {
+  await page.waitForLoadState('load');
+  await page.evaluate(() =>
+    document.fonts.ready.then(
+      () =>
+        new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(() => done(0)))),
+    ),
+  );
 }
 
 await mkdir(shots, { recursive: true });
 const browser = await chromium.launch();
 
-// Every page, every language: day, night, and a phone. ONLY=behavior skips this, to run the rest quickly.
-// It takes minutes and prints its progress, so a run in CI never looks stuck.
+// Every page, every language: day (full axe), night (axe's color contrast: only colors change at
+// night) and a phone (no sideways scroll). ONLY=behavior skips this, to run the rest quickly.
+// A small pool of workers shares the pages; each worker keeps three pages open (day, night, phone)
+// and only navigates them, with axe loaded on each navigation by an init script. DOCS_WORKERS sets
+// the pool (4 on CI, whose runner has 4 vCPUs; locally, half the CPUs, between 2 and 8: each
+// worker drives three Chromium pages, and more workers than that only make them wait). It prints its
+// progress, so a run in CI never looks stuck.
 const pageLangs = process.env.ONLY === 'behavior' ? [] : LOCALES;
-const pageTotal = pageLangs.length * PAGES.length;
+const pageList = pageLangs.flatMap((lang) =>
+  PAGES.map((path) => ({
+    lang,
+    path,
+    name: `${lang}-${path.replaceAll('/', '-').replace(/-$/, '') || 'home'}`,
+  })),
+);
+const pageTotal = pageList.length;
+const workers = Math.max(
+  1,
+  Math.min(
+    pageTotal,
+    Number(process.env.DOCS_WORKERS) ||
+      (process.env.CI ? 4 : Math.min(8, Math.max(2, Math.floor(cpus().length / 2)))),
+  ),
+);
+let pageNext = 0;
 let pageDone = 0;
+const pagesStarted = performance.now();
 if (pageTotal)
   console.log(
-    `Pages: ${pageTotal} (${PAGES.length} in ${pageLangs.length} languages), day, night and phone`,
+    `Pages: ${pageTotal} (${PAGES.length} in ${pageLangs.length} languages), day, night and phone, ${workers} at a time`,
   );
-for (const lang of pageLangs) {
-  for (const path of PAGES) {
-    const name = `${lang}-${path.replaceAll('/', '-').replace(/-$/, '') || 'home'}`;
-    for (const mode of ['light', 'dark'] as const) {
-      const page = await browser.newPage({
-        viewport: { width: 1440, height: 900 },
-        colorScheme: mode,
-      });
-      watch(page, `${name} ${mode}`);
-      await page.goto(`${origin}/${lang}/${path}`);
-      await page.waitForTimeout(400);
-      await axe(page, `${name} ${mode}`);
-      if (lang === 'pt')
-        await page.screenshot({ path: join(shots, `${name}-${mode}.png`), fullPage: true });
-      await page.close();
+
+async function pageWorker(): Promise<void> {
+  let label = '';
+  const open = async (options: Parameters<typeof browser.newPage>[0]): Promise<Page> => {
+    const page = await browser.newPage(options);
+    await page.addInitScript({ content: axeSource });
+    return page;
+  };
+  const day = await open({ viewport: { width: 1440, height: 900 }, colorScheme: 'light' });
+  const night = await open({ viewport: { width: 1440, height: 900 }, colorScheme: 'dark' });
+  const phone = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  watch(day, () => label);
+  watch(night, () => label);
+  while (pageNext < pageTotal) {
+    const item = pageList[pageNext++];
+    if (!item) break;
+    const url = `${origin}/${item.lang}/${item.path}`;
+    for (const [mode, page] of [
+      ['light', day],
+      ['dark', night],
+    ] as const) {
+      label = `${item.name} ${mode}`;
+      await page.goto(url);
+      await settled(page);
+      await axe(page, label, mode === 'dark');
+      if (item.lang === 'pt')
+        await page.screenshot({ path: join(shots, `${item.name}-${mode}.png`), fullPage: true });
     }
-    const phone = await browser.newPage({ viewport: { width: 390, height: 844 } });
-    await phone.goto(`${origin}/${lang}/${path}`);
+    await phone.goto(url);
+    await settled(phone);
     const sideways = await phone.evaluate(
       () => document.documentElement.scrollWidth > window.innerWidth,
     );
-    check(!sideways, `${name} phone: sideways scroll`);
-    if (lang === 'pt')
-      await phone.screenshot({ path: join(shots, `${name}-phone.png`), fullPage: true });
-    await phone.close();
+    check(!sideways, `${item.name} phone: sideways scroll`);
+    if (item.lang === 'pt')
+      await phone.screenshot({ path: join(shots, `${item.name}-phone.png`), fullPage: true });
     pageDone += 1;
     if (pageDone % 25 === 0 || pageDone === pageTotal)
       console.log(`Pages: ${pageDone} of ${pageTotal}, ${problems.length} problem(s) so far`);
   }
+  // The pages are left behind: what they do after this belongs to no check.
+  label = 'closed';
+  await Promise.all([day.close(), night.close(), phone.close()]);
 }
+
+await Promise.all(Array.from({ length: pageTotal ? workers : 0 }, () => pageWorker()));
+if (pageTotal)
+  console.log(`Pages: done in ${((performance.now() - pagesStarted) / 1000).toFixed(0)}s`);
 console.log('Behaviors: playgrounds, Notice, Menu, forms, Kanban…');
 
 // Search and link previews, read from the built files: every page in every language has its
@@ -700,6 +769,130 @@ for (const [width, name] of [
       if (combos.some((json) => /\sstyle=/.test(json)))
         problems.push(`inline style: ${lang}/${draft.slug}: a playground combination`);
     }
+}
+
+// Anchor: a click scrolls the box smoothly to the section, writes the hash, moves the focus there
+// and marks the link; scrolling the box marks the section in view. With reduced motion, at once.
+{
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  watch(page, 'anchor');
+  await page.goto(`${origin}/en/components/anchor/`);
+  const demo = page.locator('.anchor-demo');
+  const box = demo.locator('.anchor-demo-box');
+  await demo.scrollIntoViewIfNeeded();
+  check(
+    (await demo.locator('a[aria-current="location"]').getAttribute('href')) === '#demo-water',
+    'anchor: on load the first section is not the current one',
+  );
+  // Sample the box's scroll on every frame while it travels: smooth means positions in between.
+  const samples = box.evaluate(
+    (b) =>
+      new Promise<number[]>((resolve) => {
+        const seen: number[] = [];
+        const start = performance.now();
+        const frame = (): void => {
+          seen.push(b.scrollTop);
+          if (performance.now() - start < 1500) requestAnimationFrame(frame);
+          else resolve(seen);
+        };
+        requestAnimationFrame(frame);
+      }),
+  );
+  await demo.locator('a[href="#demo-soil"]').click();
+  const seen = await samples;
+  const landed = await box.evaluate((b) => {
+    const target = b.querySelector('#demo-soil') as HTMLElement;
+    return target.getBoundingClientRect().top - b.getBoundingClientRect().top;
+  });
+  const end = await box.evaluate((b) => b.scrollTop);
+  check(
+    seen.some((top) => top > 0 && top < end - 1),
+    `anchor: the scroll did not travel smoothly (${[...new Set(seen.map(Math.round))].join(', ')})`,
+  );
+  check(Math.abs(landed - 16) < 4, `anchor: the section landed ${landed}px from the box's top`);
+  check(
+    new URL(page.url()).hash === '#demo-soil',
+    `anchor: the hash is "${new URL(page.url()).hash}"`,
+  );
+  check(
+    (await page.evaluate(() => document.activeElement?.id)) === 'demo-soil',
+    'anchor: the focus did not move to the section',
+  );
+  check(
+    (await demo.locator('a[aria-current="location"]').getAttribute('href')) === '#demo-soil',
+    'anchor: the clicked section is not the current one',
+  );
+  await box.evaluate((b) => {
+    const target = b.querySelector('#demo-light') as HTMLElement;
+    b.scrollTop += target.getBoundingClientRect().top - b.getBoundingClientRect().top;
+  });
+  await page.waitForTimeout(300);
+  check(
+    (await demo.locator('a[aria-current="location"]').getAttribute('href')) === '#demo-light',
+    'anchor: scrolling the box did not mark the section in view',
+  );
+  // The page's own index follows the window's scroll too.
+  await page.evaluate(() => {
+    const target = document.getElementById('a11y') as HTMLElement;
+    window.scrollTo(0, target.getBoundingClientRect().top + window.scrollY - 20);
+  });
+  await page.waitForTimeout(400);
+  check(
+    (await page.locator('.site-toc a[aria-current="location"]').getAttribute('href')) === '#a11y',
+    'anchor: the page index does not follow the window',
+  );
+  await page.close();
+  const still = await browser.newPage({
+    viewport: { width: 1440, height: 900 },
+    reducedMotion: 'reduce',
+  });
+  await still.goto(`${origin}/en/components/anchor/`);
+  const stillBox = still.locator('.anchor-demo-box');
+  await still.locator('.anchor-demo a[href="#demo-pruning"]').click();
+  const atOnce = await stillBox.evaluate((b) => b.scrollTop);
+  await still.waitForTimeout(800);
+  const later = await stillBox.evaluate((b) => b.scrollTop);
+  check(
+    atOnce > 0 && atOnce === later,
+    `anchor: with reduced motion the scroll is not instant (${atOnce}, then ${later})`,
+  );
+  await still.close();
+}
+
+// AppShell on a wide screen: the navigation column stays put while a long page scrolls.
+{
+  const page = await browser.newPage({
+    viewport: { width: 1440, height: 900 },
+    reducedMotion: 'reduce',
+  });
+  watch(page, 'app shell');
+  await page.goto(`${origin}/fixture?ids=app-shell&mode=light`);
+  await page.evaluate(`(() => {
+    const app = document.querySelector('.feitio-app');
+    const frame = document.createElement('div');
+    frame.className = 'feitio-app-frame';
+    app.before(frame);
+    frame.append(app);
+    const main = app.querySelector('.feitio-app-main');
+    for (let i = 0; i < 200; i += 1) {
+      const p = document.createElement('p');
+      p.textContent = 'A long page, line ' + (i + 1);
+      main.append(p);
+    }
+    window.scrollTo(0, 2000);
+  })()`);
+  await page.waitForTimeout(200);
+  const nav = (await page.evaluate(`(() => {
+    const link = document.querySelector('.feitio-app-nav a').getBoundingClientRect();
+    return { top: link.top, bottom: link.bottom, width: link.width, scrolled: window.scrollY };
+  })()`)) as { top: number; bottom: number; width: number; scrolled: number };
+  check(nav.width > 0, 'app shell: the navigation column is not shown at 1440px');
+  check(nav.scrolled >= 2000, `app shell: the page scrolled only ${nav.scrolled}px`);
+  check(
+    nav.top >= 0 && nav.bottom <= 900,
+    `app shell: after scrolling 2000px the nav's first link is at ${nav.top}px, out of view`,
+  );
+  await page.close();
 }
 
 // Masonry's max: on a 2560px screen, six narrow blocks would make more than three columns; with

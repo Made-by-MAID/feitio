@@ -14,6 +14,7 @@
       "!apps/docs/src/content/home.json",
       "!apps/docs/public/demos.js",
       "!.changeset/*.md",
+      "!**/CHANGELOG.md",
       "!.github/**/*.md"
     ]
   },

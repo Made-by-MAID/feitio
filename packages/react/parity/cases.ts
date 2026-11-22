@@ -94,6 +94,11 @@ export const cases: ParityCase[] = [
     },
   },
   {
+    id: 'anchor-sticky',
+    component: 'Anchor',
+    props: { title: 'Nesta página', sticky: true, items: [{ id: 'c', text: 'Cuidados' }] },
+  },
+  {
     id: 'anchor-label',
     component: 'Anchor',
     props: { label: 'Índice', items: [{ id: 'x', text: 'X' }] },

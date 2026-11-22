@@ -1,3 +1,4 @@
+import Anchor from '@feitio/astro/Anchor.astro';
 import Block from '@feitio/astro/Block.astro';
 import Heatmap from '@feitio/astro/Heatmap.astro';
 import Masonry from '@feitio/astro/Masonry.astro';
@@ -225,7 +226,79 @@ export function orderBoxes(count: number): string {
 }
 
 /** The live examples of a page, by key, or none. */
-export async function liveExamples(slug: string, lang: Locale): Promise<Record<string, string>> {
+/**
+ * An Anchor beside a box that scrolls, with four sections: a click scrolls the box to the section,
+ * and the scroll marks the section in view. The behavior is the page's anchors(window).
+ */
+export async function anchorDemo(lang: Locale, sprite: string): Promise<string> {
+  const sections = [
+    {
+      id: 'demo-water',
+      title: w('Água', 'Water', 'Agua', 'Arrosage', 'Gießen'),
+      text: w(
+        'Regue quando a terra secar a dois dedos de fundo; a raiz encharcada apodrece.',
+        'Water when the soil is dry two fingers deep; soaked roots rot.',
+        'Riega cuando la tierra esté seca a dos dedos de hondo; la raíz encharcada se pudre.',
+        'Arrosez quand la terre est sèche sur deux doigts ; les racines noyées pourrissent.',
+        'Gieß, wenn die Erde zwei Finger tief trocken ist; nasse Wurzeln faulen.',
+      ),
+    },
+    {
+      id: 'demo-light',
+      title: w('Luz', 'Light', 'Luz', 'Lumière', 'Licht'),
+      text: w(
+        'Perto da janela, sem sol direto do meio-dia; vire o vaso a cada semana.',
+        'Near the window, out of the midday sun; turn the pot every week.',
+        'Cerca de la ventana, sin el sol directo del mediodía; gira la maceta cada semana.',
+        'Près de la fenêtre, à l’abri du soleil de midi ; tournez le pot chaque semaine.',
+        'Nah am Fenster, ohne Mittagssonne; dreh den Topf jede Woche.',
+      ),
+    },
+    {
+      id: 'demo-soil',
+      title: w('Terra', 'Soil', 'Tierra', 'Terre', 'Erde'),
+      text: w(
+        'Terra solta, com casca de pinus e um pouco de areia, para a água passar.',
+        'Loose soil, with pine bark and a little sand, so the water runs through.',
+        'Tierra suelta, con corteza de pino y algo de arena, para que el agua pase.',
+        'Une terre légère, avec de l’écorce de pin et un peu de sable, pour que l’eau passe.',
+        'Lockere Erde mit Pinienrinde und etwas Sand, damit das Wasser abläuft.',
+      ),
+    },
+    {
+      id: 'demo-pruning',
+      title: w('Poda', 'Pruning', 'Poda', 'Taille', 'Schnitt'),
+      text: w(
+        'Corte as folhas secas rente ao caule, com a tesoura limpa.',
+        'Cut dry leaves close to the stem, with clean scissors.',
+        'Corta las hojas secas a ras del tallo, con la tijera limpia.',
+        'Coupez les feuilles sèches au ras de la tige, avec des ciseaux propres.',
+        'Schneid trockene Blätter dicht am Stiel ab, mit sauberer Schere.',
+      ),
+    },
+  ];
+  const label = w('Cuidados', 'Care', 'Cuidados', 'Soins', 'Pflege')[lang];
+  const box = sections
+    .map(
+      (section) =>
+        `<section><h3 id="${section.id}">${section.title[lang]}</h3>${`<p>${section.text[lang]}</p>`.repeat(3)}</section>`,
+    )
+    .join('');
+  const anchor = await renderHtml(Anchor, {
+    title: label,
+    label: `${label}: ${w('nesta caixa', 'in this box', 'en esta caja', 'dans cette boîte', 'in diesem Kasten')[lang]}`,
+    items: sections.map((section) => ({ id: section.id, text: section.title[lang] })),
+    sprite,
+  });
+  return `<div class="anchor-demo"><div class="anchor-demo-box" tabindex="0" role="region" aria-label="${label}">${box}</div>${anchor}</div>`;
+}
+
+export async function liveExamples(
+  slug: string,
+  lang: Locale,
+  sprite = '',
+): Promise<Record<string, string>> {
+  if (slug === 'anchor') return { 'anchor-follow': await anchorDemo(lang, sprite) };
   if (slug === 'masonry')
     return {
       'masonry-areas': await renderHtml(Masonry, { gap: 3 }, await areaBlocks(lang)),

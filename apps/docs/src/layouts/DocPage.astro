@@ -210,6 +210,7 @@ const GH =
 <script is:inline src={`${base}demos.js`}></script>
 <script>
   // Every page wires the Notice behavior: the examples come as HTML, not through Notice.astro.
+  import { anchors } from '@feitio/vanilla/anchor/source';
   import { dialogs } from '@feitio/vanilla/dialog/source';
   import { forms } from '@feitio/vanilla/forms/source';
   import { kanbans } from '@feitio/vanilla/kanban/source';
@@ -220,6 +221,8 @@ const GH =
   forms(window);
   dialogs(window);
   scrolls(window);
+  // The page's index (and the Anchor demos): smooth scroll, the hash, the focus, the section in view.
+  anchors(window);
   // A playground that swaps its HTML says so; the new ScrollFade and BackToTop get wired too.
   document.addEventListener('feitio-rendered', (event) => scrolls(window, event.target as HTMLElement));
   // The docs' stand-in for a server: an asynchronous FilterField in a demo answers after a second.

@@ -25,7 +25,7 @@ const base = import.meta.env.BASE_URL;
 const sprite = `${base}feitio/icons/sprite.svg`;
 const words = WORDS[lang];
 // A live example marked @@RENDER:key@@ is rendered by the component itself (content/examples.ts).
-const live = await liveExamples(doc.slug, lang);
+const live = await liveExamples(doc.slug, lang, sprite);
 const fill = (html: string) =>
   html
     .replaceAll('@@BASE@@', base)

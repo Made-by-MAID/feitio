@@ -1,3 +1,4 @@
+import { anchors } from '@feitio/vanilla/anchor/source';
 import { dialogs } from '@feitio/vanilla/dialog/source';
 import { forms } from '@feitio/vanilla/forms/source';
 import { kanbans } from '@feitio/vanilla/kanban/source';
@@ -28,6 +29,11 @@ export function wireNotice(element: HTMLElement): void {
 /** The ScrollFade or BackToTop next to this element (each one is wired once). */
 export function wireScroll(element: HTMLElement): void {
   scrolls(window, element.parentElement ?? element);
+}
+
+/** One Anchor: the smooth scroll to its sections and the link of the section in view. */
+export function wireAnchor(element: HTMLElement): void {
+  anchors(window, element.parentElement ?? element);
 }
 
 /** One Kanban: its tabs, dragging, the move button and the new card. */
