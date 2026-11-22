@@ -1,0 +1,53 @@
+---
+/**
+ * Heatmap: a grid of fixed positions for a value over time, like 13 weeks by 7 days or 7 days by 24
+ * hours. A real table: the caption names it, the labels are headers, and every square says its
+ * title and its level to a screen reader. The legend under it gives each level its words, so color
+ * never speaks alone. No inline style: the table lays out any number of rows and columns itself,
+ * and the squares keep their size until the width runs out.
+ */
+interface Level {
+  id: string;
+  label: string;
+  tone: 'ok' | 'warn' | 'error' | 'empty' | 'low' | 'mid' | 'high';
+}
+interface Cell {
+  level: string;
+  title: string;
+}
+interface Props {
+  id?: string;
+  caption: string;
+  /** One label per row; an empty one shows nothing (GitHub labels every other weekday). */
+  rows: (string | null | undefined)[];
+  /** One label per column; a label runs over the unlabelled columns after it (a month over its weeks). */
+  columns: (string | null | undefined)[];
+  /** One list per row, one cell per column. */
+  cells: (Cell | null | undefined)[][];
+  /** The legend, in order. */
+  levels: Level[];
+}
+const { id, caption, rows, columns, cells, levels } = Astro.props;
+const spans: { label: string; span: number }[] = [];
+for (const label of columns) {
+  const last = spans[spans.length - 1];
+  if (label || !last) spans.push({ label: label || '', span: 1 });
+  else last.span += 1;
+}
+function square(cell: Cell | null | undefined) {
+  if (!cell) return { tone: 'empty', text: '' };
+  const level = levels.find((l) => l.id === cell.level);
+  return {
+    tone: level?.tone ?? 'empty',
+    text: level ? `${cell.title}, ${level.label}` : cell.title,
+  };
+}
+---
+<div class="feitio-heatmap" id={id}>
+  <table>
+    <caption>{caption}</caption>
+    <thead><tr><td></td>{spans.map((s) => s.label ? <th scope="col" colspan={s.span > 1 ? s.span : undefined}><span>{s.label}</span></th> : <td colspan={s.span > 1 ? s.span : undefined}></td>)}</tr></thead>
+    <tbody>{rows.map((label, r) => <tr>{label ? <th scope="row">{label}</th> : <td></td>}{columns.map((_, c) => { const s = square(cells[r]?.[c]); return s.text ? <td data-tone={s.tone} title={s.text}><span class="feitio-visually-hidden">{s.text}</span></td> : <td data-tone={s.tone}></td>; })}</tr>)}</tbody>
+  </table>
+  <ul class="legend">{levels.map((l) => <li><span class="swatch" data-tone={l.tone}></span>{l.label}</li>)}</ul>
+</div>

@@ -4,8 +4,8 @@
  * size, radius and duration is a token. Em ratios size an icon to the text next to it.
  */
 @layer feitio.components {
-  /* Stack, Inline, Grid: the space between pieces belongs to the parent, from the scale (data-gap
-     1 to 7). The children never bring their own margin. */
+  /* Stack, Inline, Grid, Masonry: the space between pieces belongs to the parent, from the scale
+     (data-gap 1 to 7). The children never bring their own margin. */
   .feitio-stack {
     display: flex;
     flex-direction: column;
@@ -29,7 +29,47 @@
   }
   .feitio-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(var(--feitio-grid-min, 15rem), 100%), 1fr));
+    grid-template-columns: repeat(
+        auto-fit,
+        minmax(min(var(--feitio-grid-min, var(--feitio-measure-column)), 100%), 1fr)
+      );
+  }
+  /* Masonry: blocks in columns that fit the width, each right under the one before, none split
+     between two columns, none stretched. Today in CSS columns, so the reading order goes down a
+     column, then the next; where the browser has native masonry (grid-lanes), the same markup is
+     laid out by rows instead. The space under a block is the gap between columns. The narrowest
+     column is a step (data-min), never an inline style, so a strict CSP lets it through. */
+  .feitio-masonry {
+    --feitio-masonry-min: var(--feitio-measure-column);
+    columns: var(--feitio-masonry-min);
+    column-gap: var(--feitio-gap, var(--feitio-space-4));
+    padding: 0;
+    list-style: none;
+  }
+  .feitio-masonry > * {
+    break-inside: avoid;
+    margin: 0 0 var(--feitio-gap, var(--feitio-space-4));
+    min-inline-size: 0;
+  }
+  .feitio-masonry > :last-child {
+    margin-block-end: 0;
+  }
+  .feitio-masonry[data-min="narrow"] {
+    --feitio-masonry-min: var(--feitio-measure-column-narrow);
+  }
+  .feitio-masonry[data-min="wide"] {
+    --feitio-masonry-min: var(--feitio-measure-column-wide);
+  }
+  @supports (display: grid-lanes) {
+    .feitio-masonry {
+      display: grid-lanes;
+      grid-template-columns: repeat(auto-fill, minmax(min(var(--feitio-masonry-min), 100%), 1fr));
+      gap: var(--feitio-gap, var(--feitio-space-4));
+      columns: auto;
+    }
+    .feitio-masonry > * {
+      margin: 0;
+    }
   }
   .feitio-stack,
   .feitio-inline,
@@ -164,7 +204,7 @@
   .feitio-kbd {
     display: inline-block;
     min-inline-size: 1.6em;
-    padding: 0 var(--feitio-space-1);
+    padding: var(--feitio-inset-word-block) var(--feitio-inset-word);
     text-align: center;
     font: var(--feitio-font-weight-bold) 0.85em var(--feitio-font-ui);
     color: var(--feitio-color-text);
@@ -238,7 +278,8 @@
   .feitio-button[data-size="small"] {
     position: relative;
     min-block-size: var(--feitio-control-min-size-small);
-    padding: var(--feitio-control-padding-block-small) var(--feitio-control-padding-inline-small);
+    padding: var(--feitio-control-padding-block-small)
+      max(var(--feitio-control-padding-inline-small), var(--feitio-inset-word));
     gap: var(--feitio-space-1);
   }
   /* The small button keeps a finger-sized hit area around it. */
@@ -263,7 +304,7 @@
     display: inline-flex;
     align-items: center;
     gap: var(--feitio-space-1);
-    padding: calc(var(--feitio-space-1) / 2) var(--feitio-space-2);
+    padding: calc(var(--feitio-space-1) / 2) var(--feitio-inset-word);
     border-radius: var(--feitio-radius);
     font: var(--feitio-font-weight-bold) var(--feitio-font-size-small) var(--feitio-font-ui);
     line-height: var(--feitio-line-height-heading);
@@ -287,8 +328,10 @@
     background: var(--feitio-color-error-surface);
     border-color: var(--feitio-color-error);
   }
+  /* Small, it keeps the room around the word: a last letter that reaches past its width (the f of
+     "Off") or below the line (y, j) must stay clear of the border and its hand-cut corners. */
   .feitio-tag[data-size="small"] {
-    padding: 0 var(--feitio-space-1);
+    padding-block: var(--feitio-inset-word-block);
     font-weight: var(--feitio-font-weight-medium);
   }
   .feitio-tag .feitio-icon {
@@ -766,7 +809,7 @@
   .feitio-segmented button {
     position: relative;
     min-block-size: 28px;
-    padding: 0 var(--feitio-space-2);
+    padding: 0 var(--feitio-inset-word);
     color: var(--feitio-color-text);
     background: transparent;
     border: 0;
@@ -874,7 +917,7 @@
     display: inline-flex;
     align-items: center;
     min-block-size: 28px;
-    padding: 0 var(--feitio-space-2);
+    padding: 0 var(--feitio-inset-word);
     color: var(--feitio-color-text);
     text-decoration: none;
     border-radius: calc(var(--feitio-radius-top-left) - 2px);
@@ -2128,6 +2171,112 @@
     padding: 0 var(--feitio-space-4) var(--feitio-space-4);
     font: var(--feitio-font-size-small) var(--feitio-font-ui);
     color: var(--feitio-color-text-soft);
+  }
+
+  /* Heatmap: a grid of fixed positions for a value over time (13 weeks by 7 days, 7 days by 24
+     hours). A real table, with no inline style: the browser lays out any number of rows and columns.
+     Each square is the cell's ::before, at most size-square wide; the table only narrows its columns
+     when the width runs out. The labels are small and soft and take no width of their own: a
+     column's label runs over the unlabelled columns it spans and is clipped at the next one. The
+     caption names it, under the grid; the legend under that gives every tone its words. */
+  .feitio-heatmap {
+    display: grid;
+    justify-items: start;
+    gap: var(--feitio-space-3);
+    min-inline-size: 0;
+  }
+  .feitio-heatmap > table {
+    max-inline-size: 100%;
+    border-collapse: separate;
+    border-spacing: var(--feitio-space-1);
+    margin: calc(var(--feitio-space-1) * -1);
+    font: var(--feitio-font-size-small) var(--feitio-font-ui);
+    line-height: var(--feitio-line-height-heading);
+    color: var(--feitio-color-text-soft);
+  }
+  .feitio-heatmap caption {
+    caption-side: bottom;
+    padding: var(--feitio-space-2) var(--feitio-space-1) 0;
+    text-align: start;
+    color: var(--feitio-color-text);
+  }
+  .feitio-heatmap th,
+  .feitio-heatmap td {
+    padding: 0;
+    font-weight: var(--feitio-font-weight-regular);
+    text-align: start;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+  .feitio-heatmap thead th {
+    overflow: hidden;
+  }
+  .feitio-heatmap thead th > span {
+    display: block;
+    inline-size: 0;
+  }
+  /* A row's label takes no height of its own: the row is as tall as its squares, even when they shrink. */
+  .feitio-heatmap tbody th {
+    padding-inline-end: var(--feitio-space-1);
+    line-height: 0;
+  }
+  .feitio-heatmap td[data-tone] {
+    inline-size: var(--feitio-size-square);
+  }
+  .feitio-heatmap td[data-tone]::before {
+    content: "";
+    display: block;
+  }
+  .feitio-heatmap td[data-tone]::before,
+  .feitio-heatmap .swatch {
+    aspect-ratio: 1;
+    background: var(--feitio-color-line);
+    border-radius: calc(var(--feitio-radius-top-left) / 3) calc(var(--feitio-radius-top-right) / 3)
+      calc(var(--feitio-radius-bottom-right) / 3) calc(var(--feitio-radius-bottom-left) / 3);
+    box-shadow: inset 0 0 0 var(--feitio-border-width) var(--feitio-color-line);
+  }
+  .feitio-heatmap td[data-tone="ok"]::before,
+  .feitio-heatmap .swatch[data-tone="ok"] {
+    background: var(--feitio-color-ok);
+  }
+  .feitio-heatmap td[data-tone="warn"]::before,
+  .feitio-heatmap .swatch[data-tone="warn"] {
+    background: var(--feitio-color-warn);
+  }
+  .feitio-heatmap td[data-tone="error"]::before,
+  .feitio-heatmap .swatch[data-tone="error"] {
+    background: var(--feitio-color-error);
+  }
+  /* The intensity scale is ink: more of it, darker by day and brighter at night. */
+  .feitio-heatmap td[data-tone="low"]::before,
+  .feitio-heatmap .swatch[data-tone="low"] {
+    background: color-mix(in oklch, var(--feitio-color-text-soft), var(--feitio-color-surface));
+  }
+  .feitio-heatmap td[data-tone="mid"]::before,
+  .feitio-heatmap .swatch[data-tone="mid"] {
+    background: var(--feitio-color-text-soft);
+  }
+  .feitio-heatmap td[data-tone="high"]::before,
+  .feitio-heatmap .swatch[data-tone="high"] {
+    background: var(--feitio-color-text);
+  }
+  .feitio-heatmap > .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--feitio-space-1) var(--feitio-space-3);
+    padding: 0;
+    list-style: none;
+    font: var(--feitio-font-size-small) var(--feitio-font-ui);
+    color: var(--feitio-color-text-soft);
+  }
+  .feitio-heatmap > .legend > li {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--feitio-space-1);
+  }
+  .feitio-heatmap .swatch {
+    flex: none;
+    inline-size: var(--feitio-size-square);
   }
 
   /* Kanban: work in columns, one per stage. On a wide screen, a file of folders, each with its tab on

@@ -51,6 +51,36 @@
     "reading": {
       "$value": { "value": 46, "unit": "rem" },
       "$description": "The widest a reading column gets."
+    },
+    "column": {
+      "$value": { "value": 15, "unit": "rem" },
+      "$description": "The narrowest a column of a Grid or a Masonry gets, unless the page asks for another."
+    },
+    "column-narrow": {
+      "$value": { "value": 10, "unit": "rem" },
+      "$description": "A narrow column of a Masonry: small blocks, more columns."
+    },
+    "column-wide": {
+      "$value": { "value": 20, "unit": "rem" },
+      "$description": "A wide column of a Masonry: long blocks, fewer columns."
+    }
+  },
+  "inset": {
+    "$type": "dimension",
+    "word": {
+      "$value": { "value": 0.5, "unit": "rem" },
+      "$description": "The least room on each side of a short word inside a border (a Tag, a key, a small button): a letter that reaches past its width, like the f of Off, stays clear of the hand-cut corner."
+    },
+    "word-block": {
+      "$value": { "value": 0.0625, "unit": "rem" },
+      "$description": "The least room above and below a short word inside a border, for the tightest ones (a small Tag, a key): a letter that reaches below the line, like y or j, stays clear of the border."
+    }
+  },
+  "size": {
+    "$type": "dimension",
+    "square": {
+      "$value": { "value": 1, "unit": "rem" },
+      "$description": "A square that carries a value: a Heatmap's cell at full size (it only shrinks when the width runs out) and its swatch in the legend."
     }
   },
   "radius": {

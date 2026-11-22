@@ -8,6 +8,7 @@
 import Playground from '../../../components/Playground.astro';
 import { COMPONENTS, type DraftComponent } from '../../../content/components/index.ts';
 import { w } from '../../../content/components/types.ts';
+import { liveExamples } from '../../../content/examples.ts';
 import { componentsNav } from '../../../content/nav.ts';
 import { playgroundFor } from '../../../content/playgrounds.ts';
 import { LOCALES, type Locale, WORDS } from '../../../i18n/ui.ts';
@@ -23,7 +24,17 @@ const lang = Astro.params.lang as Locale;
 const base = import.meta.env.BASE_URL;
 const sprite = `${base}feitio/icons/sprite.svg`;
 const words = WORDS[lang];
-const fill = (html: string) => html.replaceAll('@@BASE@@', base).replaceAll('@@LANG@@', lang);
+// A live example marked @@RENDER:key@@ is rendered by the component itself (content/examples.ts).
+const live = await liveExamples(doc.slug, lang);
+const fill = (html: string) =>
+  html
+    .replaceAll('@@BASE@@', base)
+    .replaceAll('@@LANG@@', lang)
+    .replace(/@@RENDER:([\w-]+)@@/g, (_m, key: string) => {
+      const example = live[key];
+      if (example === undefined) throw new Error(`No live example "${key}" for ${doc.slug}`);
+      return example;
+    });
 const sections = doc.sections.map((s) => ({ ...s, body: fill(s.html[lang]) }));
 
 // The Playground: the component's own combinations when it has them; otherwise its first example, alone.

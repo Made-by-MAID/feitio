@@ -23,6 +23,12 @@
     --feitio-space-6: 4rem;
     --feitio-space-7: 6rem;
     --feitio-measure-reading: 46rem;
+    --feitio-measure-column: 15rem;
+    --feitio-measure-column-narrow: 10rem;
+    --feitio-measure-column-wide: 20rem;
+    --feitio-inset-word: 0.5rem;
+    --feitio-inset-word-block: 0.0625rem;
+    --feitio-size-square: 1rem;
     --feitio-radius-top-left: 6px;
     --feitio-radius-top-right: 10px;
     --feitio-radius-bottom-right: 6px;

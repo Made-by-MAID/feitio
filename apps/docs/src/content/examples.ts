@@ -1,0 +1,242 @@
+import Block from '@feitio/astro/Block.astro';
+import Heatmap from '@feitio/astro/Heatmap.astro';
+import Masonry from '@feitio/astro/Masonry.astro';
+import Stack from '@feitio/astro/Stack.astro';
+import type { Locale } from '../i18n/ui.ts';
+import { renderHtml } from '../lib/render.ts';
+import { w } from './components/types.ts';
+
+/**
+ * The live examples a page's drafts mark with @@RENDER:key@@, rendered by the component itself at
+ * build time, so the example always shows what the component draws. Data that depends on the
+ * language (weekdays, months, dates) comes from Intl.
+ */
+
+type Axis = (string | undefined)[];
+type Level = {
+  id: string;
+  label: string;
+  tone: 'ok' | 'warn' | 'error' | 'empty' | 'low' | 'mid' | 'high';
+};
+type Cell = { level: string; title: string };
+export type HeatmapSetting = {
+  caption: string;
+  rows: Axis;
+  columns: Axis;
+  cells: Cell[][];
+  levels: Level[];
+};
+
+const DAY = 86_400_000;
+/** The last day shown: a Sunday, fixed so the pages build the same every time. */
+const LAST_SUNDAY = Date.UTC(2026, 10, 22);
+
+function dayFormat(lang: Locale, options: Intl.DateTimeFormatOptions): Intl.DateTimeFormat {
+  return new Intl.DateTimeFormat(lang, { timeZone: 'UTC', ...options });
+}
+
+/** Monday to Sunday, short, in the page's language. */
+function weekdays(lang: Locale, weekday: 'short' | 'long'): string[] {
+  const format = dayFormat(lang, { weekday });
+  // 2026-11-16 is a Monday.
+  return Array.from({ length: 7 }, (_, i) => format.format(Date.UTC(2026, 10, 16 + i)));
+}
+
+function hour(h: number): string {
+  return `${String(h).padStart(2, '0')}h`;
+}
+
+function stateLevels(lang: Locale): Level[] {
+  return [
+    {
+      id: 'up',
+      tone: 'ok',
+      label: w(
+        'Todas respondidas',
+        'All answered',
+        'Todas respondidas',
+        'Toutes répondues',
+        'Alle beantwortet',
+      )[lang],
+    },
+    {
+      id: 'some',
+      tone: 'warn',
+      label: w(
+        'Algumas falharam',
+        'Some missed',
+        'Algunas fallaron',
+        'Certaines manquées',
+        'Einige verpasst',
+      )[lang],
+    },
+    {
+      id: 'down',
+      tone: 'error',
+      label: w('Fora do ar', 'Down', 'Caído', 'En panne', 'Ausgefallen')[lang],
+    },
+    {
+      id: 'none',
+      tone: 'empty',
+      label: w('Sem dados', 'No data', 'Sin datos', 'Pas de données', 'Keine Daten')[lang],
+    },
+  ];
+}
+
+/** The day at row r (Monday first) and column c (the oldest of 13 weeks first). */
+function dayAt(r: number, c: number): number {
+  return LAST_SUNDAY - ((12 - c) * 7 + (6 - r)) * DAY;
+}
+
+/** 13 weeks by 7 days: every other weekday labelled, a month only on the week it starts. */
+function weeksAxes(lang: Locale): { rows: Axis; columns: Axis } {
+  const days = weekdays(lang, 'short');
+  const month = dayFormat(lang, { month: 'short' });
+  return {
+    rows: days.map((d, i) => (i % 2 === 0 ? d : undefined)),
+    columns: Array.from({ length: 13 }, (_, c) => {
+      const monday = new Date(dayAt(0, c));
+      return monday.getUTCDate() <= 7 ? month.format(monday) : undefined;
+    }),
+  };
+}
+
+export function weeksSetting(lang: Locale): HeatmapSetting {
+  const date = dayFormat(lang, { dateStyle: 'medium' });
+  const started = Date.UTC(2026, 8, 9);
+  return {
+    caption: w(
+      'Últimas 13 semanas, um quadrado por dia',
+      'Last 13 weeks, one square a day',
+      'Últimas 13 semanas, un cuadrado por día',
+      'Les 13 dernières semaines, un carré par jour',
+      'Die letzten 13 Wochen, ein Quadrat pro Tag',
+    )[lang],
+    ...weeksAxes(lang),
+    cells: Array.from({ length: 7 }, (_, r) =>
+      Array.from({ length: 13 }, (_, c) => {
+        const day = dayAt(r, c);
+        const level =
+          day < started
+            ? 'none'
+            : c === 12 && r === 6
+              ? 'down'
+              : (r * 7 + c) % 19 === 3
+                ? 'some'
+                : 'up';
+        return { level, title: date.format(day) };
+      }),
+    ),
+    levels: stateLevels(lang),
+  };
+}
+
+/** 7 days by 24 hours: every day labelled, the hours every 6. */
+export function hoursSetting(lang: Locale): HeatmapSetting {
+  const long = weekdays(lang, 'long');
+  return {
+    caption: w(
+      'Últimos 7 dias, um quadrado por hora',
+      'Last 7 days, one square an hour',
+      'Últimos 7 días, un cuadrado por hora',
+      'Les 7 derniers jours, un carré par heure',
+      'Die letzten 7 Tage, ein Quadrat pro Stunde',
+    )[lang],
+    rows: weekdays(lang, 'short'),
+    columns: Array.from({ length: 24 }, (_, c) => (c % 6 === 0 ? hour(c) : undefined)),
+    cells: long.map((day, r) =>
+      Array.from({ length: 24 }, (_, c) => ({
+        level:
+          r === 6 && c >= 12 ? (c > 13 ? 'none' : 'down') : (r * 24 + c) % 37 === 5 ? 'some' : 'up',
+        title: `${day} ${String(c).padStart(2, '0')}:00`,
+      })),
+    ),
+    levels: stateLevels(lang),
+  };
+}
+
+/** A count over 13 weeks, on the intensity scale. */
+export function countSetting(lang: Locale): HeatmapSetting {
+  const date = dayFormat(lang, { dateStyle: 'medium' });
+  const counts = ['0', '1', '2', '3'];
+  return {
+    caption: w(
+      'Notas escritas nas últimas 13 semanas',
+      'Notes written in the last 13 weeks',
+      'Notas escritas en las últimas 13 semanas',
+      'Notes écrites ces 13 dernières semaines',
+      'Notizen der letzten 13 Wochen',
+    )[lang],
+    ...weeksAxes(lang),
+    cells: Array.from({ length: 7 }, (_, r) =>
+      Array.from({ length: 13 }, (_, c) => ({
+        level: counts[r > 4 ? (r + c) % 2 : (r * 5 + c * 3) % 4] ?? '0',
+        title: date.format(dayAt(r, c)),
+      })),
+    ),
+    levels: [
+      { id: '0', tone: 'empty', label: w('Nenhuma', 'None', 'Ninguna', 'Aucune', 'Keine')[lang] },
+      { id: '1', tone: 'low', label: w('1 a 2', '1 to 2', '1 a 2', '1 à 2', '1 bis 2')[lang] },
+      { id: '2', tone: 'mid', label: w('3 a 5', '3 to 5', '3 a 5', '3 à 5', '3 bis 5')[lang] },
+      {
+        id: '3',
+        tone: 'high',
+        label: w('6 ou mais', '6 or more', '6 o más', '6 ou plus', '6 oder mehr')[lang],
+      },
+    ],
+  };
+}
+
+/** Blocks of different lengths, like the areas of a home screen: from one line to five. */
+export async function areaBlocks(lang: Locale, item: 'div' | 'li' = 'div'): Promise<string> {
+  const names = [
+    w('Saúde', 'Health', 'Salud', 'Santé', 'Gesundheit'),
+    w('Tarefas', 'Tasks', 'Tareas', 'Tâches', 'Aufgaben'),
+    w('Lembretes', 'Reminders', 'Recordatorios', 'Rappels', 'Erinnerungen'),
+    w('Notas', 'Notes', 'Notas', 'Notes', 'Notizen'),
+    w('Dinheiro', 'Money', 'Dinero', 'Argent', 'Geld'),
+    w('Casa', 'Home', 'Casa', 'Maison', 'Zuhause'),
+  ];
+  const line = w('Item', 'Item', 'Elemento', 'Élément', 'Eintrag')[lang];
+  const lengths = [3, 1, 5, 2, 4, 1];
+  const blocks: string[] = [];
+  for (const [i, name] of names.entries()) {
+    const lines = Array.from(
+      { length: lengths[i] ?? 1 },
+      (_, n) => `<span>${line} ${n + 1}</span>`,
+    ).join('');
+    const block = await renderHtml(
+      Block,
+      {},
+      await renderHtml(Stack, { gap: 2 }, `<strong>${name[lang]}</strong>${lines}`),
+    );
+    blocks.push(item === 'li' ? `<li>${block}</li>` : block);
+  }
+  return blocks.join('');
+}
+
+/** Numbered pieces of three heights (site.css), to show the order going down a column. */
+export function orderBoxes(count: number): string {
+  const heights = ['1', '2', '3', '1', '3', '2', '1', '2'];
+  return Array.from(
+    { length: count },
+    (_, i) => `<span class="lay-box" data-height="${heights[i % heights.length]}">${i + 1}</span>`,
+  ).join('');
+}
+
+/** The live examples of a page, by key, or none. */
+export async function liveExamples(slug: string, lang: Locale): Promise<Record<string, string>> {
+  if (slug === 'masonry')
+    return {
+      'masonry-areas': await renderHtml(Masonry, { gap: 3 }, await areaBlocks(lang)),
+      'masonry-order': await renderHtml(Masonry, { gap: 3, min: 'narrow' }, orderBoxes(8)),
+      'masonry-list': await renderHtml(Masonry, { gap: 3, as: 'ul' }, await areaBlocks(lang, 'li')),
+    };
+  if (slug === 'heatmap')
+    return {
+      'heatmap-weeks': await renderHtml(Heatmap, { id: 'ex-hm-weeks', ...weeksSetting(lang) }),
+      'heatmap-hours': await renderHtml(Heatmap, { id: 'ex-hm-hours', ...hoursSetting(lang) }),
+      'heatmap-count': await renderHtml(Heatmap, { id: 'ex-hm-count', ...countSetting(lang) }),
+    };
+  return {};
+}

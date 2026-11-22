@@ -1,0 +1,16 @@
+---
+/**
+ * Masonry: blocks in columns that fit the width, each right under the one before, none split between
+ * two columns, none stretched. The reading order goes down a column, then the next: put what matters
+ * first. Where the browser has native masonry, the same markup is laid out by rows. No inline style:
+ * the narrowest column is a step (narrow, regular, wide), so it works under a strict CSP.
+ */
+interface Props {
+  gap?: 1 | 2 | 3 | 4 | 5 | 6 | 7;
+  /** The narrowest a column may get: narrow (10rem), regular (15rem, the default) or wide (20rem). */
+  min?: 'narrow' | 'regular' | 'wide';
+  as?: 'div' | 'ul';
+}
+const { gap = 4, min, as: Tag = 'div' } = Astro.props;
+---
+<Tag class="feitio-masonry" data-gap={gap} data-min={min && min !== 'regular' ? min : undefined}><slot /></Tag>
