@@ -1,5 +1,13 @@
 # @feitio/astro
 
+## 0.3.2
+
+### Patch Changes
+
+- Updated dependencies [48f2c95]
+  - @feitio/core@0.3.2
+  - @feitio/vanilla@0.3.2
+
 ## 0.3.1
 
 ### Patch Changes

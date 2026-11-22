@@ -1,5 +1,11 @@
 # @feitio/core
 
+## 0.3.2
+
+### Patch Changes
+
+- 48f2c95: An open Dialog shows again. `components.css` had a second `.feitio-dialog[open]` rule with `opacity: 0` outside its `@starting-style`, so every open Dialog stayed invisible behind its backdrop. A test now refuses an open state hidden that way.
+
 ## 0.3.1
 
 No changes in this release.
