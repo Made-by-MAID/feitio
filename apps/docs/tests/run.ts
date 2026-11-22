@@ -60,7 +60,7 @@ function fixture(ids: string[], mode: string): Response {
 }
 const FIXTURE_CSS = `body { margin: 0; padding: var(--feitio-space-4); background: var(--feitio-color-surface); color: var(--feitio-color-text); }
 .fixture { display: inline-block; margin: var(--feitio-space-2); vertical-align: top; }
-.fixture:has(.feitio-heatmap, .feitio-masonry) { display: block; }`;
+.fixture:has(.feitio-heatmap, .feitio-masonry, .feitio-app) { display: block; }`;
 
 const server = Bun.serve({
   port: 0,
@@ -700,6 +700,130 @@ for (const [width, name] of [
       if (combos.some((json) => /\sstyle=/.test(json)))
         problems.push(`inline style: ${lang}/${draft.slug}: a playground combination`);
     }
+}
+
+// Anchor: a click scrolls the box smoothly to the section, writes the hash, moves the focus there
+// and marks the link; scrolling the box marks the section in view. With reduced motion, at once.
+{
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  watch(page, 'anchor');
+  await page.goto(`${origin}/en/components/anchor/`);
+  const demo = page.locator('.anchor-demo');
+  const box = demo.locator('.anchor-demo-box');
+  await demo.scrollIntoViewIfNeeded();
+  check(
+    (await demo.locator('a[aria-current="location"]').getAttribute('href')) === '#demo-water',
+    'anchor: on load the first section is not the current one',
+  );
+  // Sample the box's scroll on every frame while it travels: smooth means positions in between.
+  const samples = box.evaluate(
+    (b) =>
+      new Promise<number[]>((resolve) => {
+        const seen: number[] = [];
+        const start = performance.now();
+        const frame = (): void => {
+          seen.push(b.scrollTop);
+          if (performance.now() - start < 1500) requestAnimationFrame(frame);
+          else resolve(seen);
+        };
+        requestAnimationFrame(frame);
+      }),
+  );
+  await demo.locator('a[href="#demo-soil"]').click();
+  const seen = await samples;
+  const landed = await box.evaluate((b) => {
+    const target = b.querySelector('#demo-soil') as HTMLElement;
+    return target.getBoundingClientRect().top - b.getBoundingClientRect().top;
+  });
+  const end = await box.evaluate((b) => b.scrollTop);
+  check(
+    seen.some((top) => top > 0 && top < end - 1),
+    `anchor: the scroll did not travel smoothly (${[...new Set(seen.map(Math.round))].join(', ')})`,
+  );
+  check(Math.abs(landed - 16) < 4, `anchor: the section landed ${landed}px from the box's top`);
+  check(
+    new URL(page.url()).hash === '#demo-soil',
+    `anchor: the hash is "${new URL(page.url()).hash}"`,
+  );
+  check(
+    (await page.evaluate(() => document.activeElement?.id)) === 'demo-soil',
+    'anchor: the focus did not move to the section',
+  );
+  check(
+    (await demo.locator('a[aria-current="location"]').getAttribute('href')) === '#demo-soil',
+    'anchor: the clicked section is not the current one',
+  );
+  await box.evaluate((b) => {
+    const target = b.querySelector('#demo-light') as HTMLElement;
+    b.scrollTop += target.getBoundingClientRect().top - b.getBoundingClientRect().top;
+  });
+  await page.waitForTimeout(300);
+  check(
+    (await demo.locator('a[aria-current="location"]').getAttribute('href')) === '#demo-light',
+    'anchor: scrolling the box did not mark the section in view',
+  );
+  // The page's own index follows the window's scroll too.
+  await page.evaluate(() => {
+    const target = document.getElementById('a11y') as HTMLElement;
+    window.scrollTo(0, target.getBoundingClientRect().top + window.scrollY - 20);
+  });
+  await page.waitForTimeout(400);
+  check(
+    (await page.locator('.site-toc a[aria-current="location"]').getAttribute('href')) === '#a11y',
+    'anchor: the page index does not follow the window',
+  );
+  await page.close();
+  const still = await browser.newPage({
+    viewport: { width: 1440, height: 900 },
+    reducedMotion: 'reduce',
+  });
+  await still.goto(`${origin}/en/components/anchor/`);
+  const stillBox = still.locator('.anchor-demo-box');
+  await still.locator('.anchor-demo a[href="#demo-pruning"]').click();
+  const atOnce = await stillBox.evaluate((b) => b.scrollTop);
+  await still.waitForTimeout(800);
+  const later = await stillBox.evaluate((b) => b.scrollTop);
+  check(
+    atOnce > 0 && atOnce === later,
+    `anchor: with reduced motion the scroll is not instant (${atOnce}, then ${later})`,
+  );
+  await still.close();
+}
+
+// AppShell on a wide screen: the navigation column stays put while a long page scrolls.
+{
+  const page = await browser.newPage({
+    viewport: { width: 1440, height: 900 },
+    reducedMotion: 'reduce',
+  });
+  watch(page, 'app shell');
+  await page.goto(`${origin}/fixture?ids=app-shell&mode=light`);
+  await page.evaluate(`(() => {
+    const app = document.querySelector('.feitio-app');
+    const frame = document.createElement('div');
+    frame.className = 'feitio-app-frame';
+    app.before(frame);
+    frame.append(app);
+    const main = app.querySelector('.feitio-app-main');
+    for (let i = 0; i < 200; i += 1) {
+      const p = document.createElement('p');
+      p.textContent = 'A long page, line ' + (i + 1);
+      main.append(p);
+    }
+    window.scrollTo(0, 2000);
+  })()`);
+  await page.waitForTimeout(200);
+  const nav = (await page.evaluate(`(() => {
+    const link = document.querySelector('.feitio-app-nav a').getBoundingClientRect();
+    return { top: link.top, bottom: link.bottom, width: link.width, scrolled: window.scrollY };
+  })()`)) as { top: number; bottom: number; width: number; scrolled: number };
+  check(nav.width > 0, 'app shell: the navigation column is not shown at 1440px');
+  check(nav.scrolled >= 2000, `app shell: the page scrolled only ${nav.scrolled}px`);
+  check(
+    nav.top >= 0 && nav.bottom <= 900,
+    `app shell: after scrolling 2000px the nav's first link is at ${nav.top}px, out of view`,
+  );
+  await page.close();
 }
 
 // Masonry's max: on a 2560px screen, six narrow blocks would make more than three columns; with

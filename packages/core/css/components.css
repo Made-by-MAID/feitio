@@ -1587,15 +1587,18 @@
     .feitio-app-nav .drawer-header {
       display: none;
     }
+    /* The navigation column stays put: sticky at the top of the viewport (it starts below the header,
+       which scrolls away), as tall as the viewport, with its own scroll when it is longer. */
     .feitio-app-nav[popover] {
       grid-area: nav;
       display: grid;
       grid-template-rows: minmax(0, 1fr) auto;
-      position: static;
-      inset: auto;
+      position: sticky;
+      inset: 0 auto auto;
+      align-self: start;
       inline-size: auto;
-      block-size: auto;
-      overflow: visible;
+      block-size: 100dvh;
+      overflow: hidden;
       translate: none;
       border-inline-start: 0;
       border-inline-end: var(--feitio-border-width) solid var(--feitio-color-line);
@@ -1603,7 +1606,8 @@
     }
     .feitio-app-nav .drawer-body {
       padding: var(--feitio-space-4) var(--feitio-space-3);
-      overflow: visible;
+      overflow-y: auto;
+      overscroll-behavior: contain;
     }
     .feitio-app-nav .drawer-footer {
       padding-inline: var(--feitio-space-3);
@@ -1855,6 +1859,18 @@
   }
   .feitio-anchor a[aria-current="location"] .feitio-icon {
     opacity: 1;
+  }
+  /* In a side column it stays in view while the page scrolls, with its own scroll when it is taller
+     than the screen. The padding keeps the focus ring inside the box that scrolls. */
+  .feitio-anchor[data-sticky] {
+    position: sticky;
+    inset-block-start: var(--feitio-space-4);
+    align-self: start;
+    max-block-size: calc(100dvh - var(--feitio-space-4) * 2);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: var(--feitio-space-2);
+    margin: calc(var(--feitio-space-2) * -1);
   }
   .feitio-footer {
     padding: var(--feitio-space-5) var(--feitio-space-4);

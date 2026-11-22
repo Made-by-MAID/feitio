@@ -1,4 +1,5 @@
 /** Feitio's component behaviors in plain JavaScript. Each one also has its own entry point. */
+export { anchors } from './anchor/index.ts';
 export { dialogs } from './dialog/index.ts';
 export { forms } from './forms/index.ts';
 export { kanbans } from './kanban/index.ts';

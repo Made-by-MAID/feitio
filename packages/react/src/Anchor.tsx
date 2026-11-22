@@ -1,4 +1,6 @@
-import type { ReactElement } from 'react';
+import { type ReactElement, useRef } from 'react';
+import { useElementBehavior } from './actions/use-element-behavior.ts';
+import { wireAnchor } from './actions/wire.ts';
 import { Icon } from './Icon.tsx';
 
 export interface AnchorItem {
@@ -12,13 +14,25 @@ export interface AnchorProps {
   title?: string;
   items: AnchorItem[];
   label?: string;
+  /** Stays in view while the page scrolls, in a side column (data-sticky). */
+  sticky?: boolean;
   sprite?: string;
 }
 
-/** Anchor: the page index, following the scroll; the current part in ink, with the hand-drawn arrow. */
-export function Anchor({ title, items, label, sprite }: AnchorProps): ReactElement {
+/**
+ * Anchor: the page index, following the scroll; the current part in ink, with the hand-drawn arrow.
+ * When it mounts, a click scrolls smoothly to the section and the scroll marks the section in view.
+ */
+export function Anchor({ title, items, label, sticky, sprite }: AnchorProps): ReactElement {
+  const ref = useRef<HTMLElement>(null);
+  useElementBehavior(ref, 'anchor', wireAnchor);
   return (
-    <nav className="feitio-anchor" aria-label={label ?? title}>
+    <nav
+      className="feitio-anchor"
+      aria-label={label ?? title}
+      data-sticky={sticky ? '' : undefined}
+      ref={ref}
+    >
       {title && <p className="title">{title}</p>}
       <ul>
         {items.map((t) => (

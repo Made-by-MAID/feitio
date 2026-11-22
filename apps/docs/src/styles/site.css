@@ -1136,6 +1136,39 @@ main[tabindex="-1"]:focus {
   color: var(--feitio-color-text-soft);
   font-weight: var(--feitio-font-weight-regular);
 }
+/* The Anchor demo: a box that scrolls, its index beside it (above it on a phone). */
+.live > .anchor-demo {
+  flex: 1 1 100%;
+  min-inline-size: 0;
+}
+.anchor-demo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 10rem;
+  gap: var(--feitio-space-4);
+}
+.anchor-demo-box {
+  block-size: 16rem;
+  overflow-y: auto;
+  padding: var(--feitio-space-3) var(--feitio-space-4);
+  border: var(--feitio-border-width) solid var(--feitio-color-line);
+  border-radius: var(--feitio-radius);
+}
+.anchor-demo-box h3[id] {
+  margin-block: var(--feitio-space-3) var(--feitio-space-2);
+  scroll-margin-block-start: var(--feitio-space-3);
+  font: var(--feitio-font-weight-bold) var(--feitio-font-size-h3) var(--feitio-font-ui);
+}
+.anchor-demo-box p {
+  margin-block: 0 var(--feitio-space-2);
+}
+@media (max-width: 40rem) {
+  .anchor-demo {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .anchor-demo > .feitio-anchor {
+    order: -1;
+  }
+}
 /* Masonry and Heatmap take the example's whole width: their columns come from it. */
 .live > .feitio-masonry,
 .live > .feitio-heatmap {
