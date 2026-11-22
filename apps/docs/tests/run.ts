@@ -9,6 +9,7 @@ import { mkdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { parseHTML } from 'linkedom';
 import { chromium, type Page } from 'playwright';
+import { inkPastBorder } from './calculations/ink-past-border.ts';
 
 type AxeResults = { violations: { id: string; help: string; nodes: { target: string[] }[] }[] };
 
@@ -33,10 +34,51 @@ const PAGES = [
   (p) => !process.env.PAGES || process.env.PAGES.split(',').some((only) => p.includes(only)),
 );
 
+const core = join(repo, 'packages', 'core');
+const parityFile = Bun.file(join(dist, 'parity.json'));
+const parity = (await parityFile.exists())
+  ? ((await parityFile.json()) as Record<string, string>)
+  : {};
+
+/**
+ * A page with some components as the Astro components render them (the parity cases), Feitio's own
+ * CSS and fonts, and a Content Security Policy that forbids inline styles and scripts, like a
+ * consumer's strict page. Nothing on it may need a style attribute to look right.
+ */
+function fixture(ids: string[], mode: string): Response {
+  const body = ids
+    .map((id) => `<div class="fixture" data-case="${id}">${parity[id] ?? ''}</div>`)
+    .join('');
+  const html = `<!doctype html><html lang="en"><meta charset="utf-8"><title>Fixture</title><link rel="stylesheet" href="/core/css/fonts.css"><link rel="stylesheet" href="/core/css/feitio.css"><link rel="stylesheet" href="/fixture.css"><body class="feitio-root" data-theme="casa" data-mode="${mode}">${body}</body></html>`;
+  return new Response(html, {
+    headers: {
+      'content-type': 'text/html; charset=utf-8',
+      'content-security-policy': "default-src 'self'; style-src 'self'; script-src 'none'",
+    },
+  });
+}
+const FIXTURE_CSS = `body { margin: 0; padding: var(--feitio-space-4); background: var(--feitio-color-surface); color: var(--feitio-color-text); }
+.fixture { display: inline-block; margin: var(--feitio-space-2); vertical-align: top; }
+.fixture:has(.feitio-heatmap, .feitio-masonry) { display: block; }`;
+
 const server = Bun.serve({
   port: 0,
   async fetch(request) {
-    const path = decodeURIComponent(new URL(request.url).pathname);
+    const url = new URL(request.url);
+    const path = decodeURIComponent(url.pathname);
+    if (path === '/fixture')
+      return fixture(
+        (url.searchParams.get('ids') ?? '').split(','),
+        url.searchParams.get('mode') ?? 'light',
+      );
+    if (path === '/fixture.css')
+      return new Response(FIXTURE_CSS, { headers: { 'content-type': 'text/css' } });
+    if (path.startsWith('/core/')) {
+      const file = Bun.file(join(core, path.slice('/core/'.length)));
+      return (await file.exists())
+        ? new Response(file)
+        : new Response('not found', { status: 404 });
+    }
     const file = Bun.file(join(dist, path.endsWith('/') ? `${path}index.html` : path));
     return (await file.exists()) ? new Response(file) : new Response('not found', { status: 404 });
   },
@@ -512,6 +554,192 @@ for (const mode of ['light', 'dark'] as const) {
     .locator('.ruler .bar')
     .evaluateAll((all) => all.map((b) => b.getBoundingClientRect().height));
   check(bars.length === 7 && bars.every((h) => h > 0), 'space: the ruler bars do not show');
+  await page.close();
+}
+
+// No letter is cut by a border (issue #24): every bordered component that wraps a short word, with
+// words that end in letters reaching past their width, by day and at night. The ink of each word
+// (measured with a canvas in the page's own font) must stay at least 1px inside the inner edge of
+// every border or background around it, its hand-cut corners included.
+{
+  const ids = Object.keys(parity).filter((id) => id.startsWith('glyph-'));
+  check(ids.length > 0, 'glyphs: no glyph-* case in parity.json (build with FEITIO_PARITY=1)');
+  for (const mode of ['light', 'dark'] as const) {
+    const page = await browser.newPage({
+      viewport: { width: 1440, height: 900 },
+      reducedMotion: 'reduce',
+    });
+    watch(page, `glyphs ${mode}`);
+    page.on('console', (message) => {
+      if (message.text().includes('Content Security Policy'))
+        problems.push(`glyphs ${mode}: ${message.text()}`);
+    });
+    await page.goto(`${origin}/fixture?ids=${ids.join(',')}&mode=${mode}`);
+    const results = (await page.evaluate(`(async () => {
+      const inkPastBorder = ${inkPastBorder.toString()};
+      await document.fonts.ready;
+      const canvas = document.createElement('canvas').getContext('2d');
+      const out = [];
+      for (const fixture of document.querySelectorAll('.fixture')) {
+        const walker = document.createTreeWalker(fixture, NodeFilter.SHOW_TEXT);
+        for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+          const raw = node.textContent;
+          const text = raw.trim();
+          const element = node.parentElement;
+          if (!text || element.closest('.feitio-visually-hidden')) continue;
+          const style = getComputedStyle(element);
+          const font = [style.fontStyle, style.fontWeight, style.fontSize, style.fontFamily].join(' ');
+          await document.fonts.load(font, text);
+          canvas.font = font;
+          const metrics = canvas.measureText(text);
+          const range = document.createRange();
+          const start = raw.length - raw.trimStart().length;
+          range.setStart(node, start);
+          range.setEnd(node, start + text.length);
+          const box = range.getBoundingClientRect();
+          const baseline = box.top + metrics.fontBoundingBoxAscent;
+          const ink = {
+            left: box.left - metrics.actualBoundingBoxLeft,
+            right: box.left + metrics.actualBoundingBoxRight,
+            top: baseline - metrics.actualBoundingBoxAscent,
+            bottom: baseline + metrics.actualBoundingBoxDescent,
+          };
+          for (let around = element; around && fixture.contains(around); around = around.parentElement) {
+            const s = getComputedStyle(around);
+            const widths = ['Top', 'Right', 'Bottom', 'Left'].map((side) => parseFloat(s['border' + side + 'Width']));
+            const painted = widths.some((w) => w > 0) || s.backgroundColor !== 'rgba(0, 0, 0, 0)';
+            if (!painted) continue;
+            const r = around.getBoundingClientRect();
+            const inner = { left: r.left + widths[3] + 1, top: r.top + widths[0] + 1, right: r.right - widths[1] - 1, bottom: r.bottom - widths[2] - 1 };
+            const radius = (corner, x, y) => {
+              const [h, v = h] = s['border' + corner + 'Radius'].split(' ').map(parseFloat);
+              return [Math.max(0, h - widths[x]), Math.max(0, v - widths[y])];
+            };
+            const past = inkPastBorder(ink, inner, {
+              topLeft: radius('TopLeft', 3, 0),
+              topRight: radius('TopRight', 1, 0),
+              bottomRight: radius('BottomRight', 1, 2),
+              bottomLeft: radius('BottomLeft', 3, 2),
+            });
+            if (past > 0) out.push(fixture.dataset.case + ' "' + text + '" in ' + (around.className || around.tagName) + ' by ' + past.toFixed(2) + 'px');
+          }
+        }
+      }
+      return out;
+    })()`)) as string[];
+    for (const result of results) problems.push(`glyphs ${mode}: ink past the border: ${result}`);
+    await page.close();
+  }
+}
+
+// Heatmap and Masonry under a strict CSP (no inline style): they render from their classes and
+// data attributes alone. The squares stay square, at size-square on a wide screen, smaller on a
+// phone, and never wider than the screen.
+for (const [width, name] of [
+  [1440, 'wide'],
+  [390, 'phone'],
+] as const) {
+  const page = await browser.newPage({ viewport: { width, height: 900 }, reducedMotion: 'reduce' });
+  watch(page, `csp ${name}`);
+  page.on('console', (message) => {
+    if (message.text().includes('Content Security Policy'))
+      problems.push(`csp ${name}: ${message.text()}`);
+  });
+  await page.goto(
+    `${origin}/fixture?ids=heatmap,heatmap-count,masonry-min,masonry-narrow&mode=light`,
+  );
+  const result = (await page.evaluate(`(() => {
+    const styled = document.querySelectorAll('.fixture [style]').length;
+    const squares = [...document.querySelectorAll('.feitio-heatmap td[data-tone]')].map((td) => {
+      const s = getComputedStyle(td, '::before');
+      return [parseFloat(s.width), parseFloat(s.height)];
+    });
+    const sideways = document.documentElement.scrollWidth > innerWidth;
+    const columns = getComputedStyle(document.querySelector('.feitio-masonry[data-min="wide"]')).columnWidth;
+    return { styled, squares, sideways, columns };
+  })()`)) as { styled: number; squares: number[][]; sideways: boolean; columns: string };
+  check(result.styled === 0, `csp ${name}: ${result.styled} element(s) with a style attribute`);
+  check(result.squares.length > 0, `csp ${name}: the Heatmap drew no squares`);
+  for (const [w, h] of result.squares) {
+    check(
+      Math.abs((w ?? 0) - (h ?? 0)) < 0.5 && (w ?? 0) > 4,
+      `csp ${name}: a square is ${w}×${h}`,
+    );
+    if (name === 'wide')
+      check(Math.abs((w ?? 0) - 16) < 0.5, `csp ${name}: a square is ${w}px, not 16`);
+  }
+  check(!result.sideways, `csp ${name}: sideways scroll`);
+  check(
+    result.columns === '320px',
+    `csp ${name}: data-min="wide" gives columns of ${result.columns}`,
+  );
+  await page.close();
+}
+
+// Heatmap: a named table; every square says its title and its level; the legend has the words.
+{
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  await page.goto(`${origin}/en/components/heatmap/`);
+  const weeks = page.locator('#ex-hm-weeks');
+  check(
+    (await weeks.getByRole('table', { name: 'Last 13 weeks, one square a day' }).count()) === 1,
+    'heatmap: the weeks table has no accessible name',
+  );
+  check(
+    (await weeks.locator('td[data-tone]').count()) === 91,
+    'heatmap: 13 weeks by 7 days is not 91 squares',
+  );
+  check(
+    (await weeks.getByRole('cell', { name: 'Nov 22, 2026, Down' }).count()) === 1,
+    'heatmap: the last square does not say its title and level',
+  );
+  check(
+    (await weeks.locator('thead th[scope="col"]').allTextContents()).join(' ') === 'Sep Oct Nov',
+    'heatmap: the month labels are not Sep Oct Nov',
+  );
+  check(
+    (await weeks.locator('tbody th[scope="row"]').count()) === 4,
+    'heatmap: not every other weekday is labelled',
+  );
+  check(
+    (await page.locator('#ex-hm-hours thead th[scope="col"]').allTextContents()).join(' ') ===
+      '00h 06h 12h 18h',
+    'heatmap: the hours are not labelled every 6 hours',
+  );
+  check(
+    (await weeks.locator('.legend li').allTextContents()).join('|') ===
+      'All answered|Some missed|Down|No data',
+    'heatmap: the legend does not give every level its words',
+  );
+  check(
+    (await page.locator('.feitio-heatmap[style], .feitio-heatmap [style]').count()) === 0,
+    'heatmap: an inline style in the rendered HTML',
+  );
+  await page.close();
+}
+
+// Masonry: columns on a wide screen, one on a phone; no block split between columns; no inline style.
+for (const [width, name] of [
+  [1440, 'wide'],
+  [390, 'phone'],
+] as const) {
+  const page = await browser.newPage({ viewport: { width, height: 900 } });
+  await page.goto(`${origin}/en/components/masonry/`);
+  const layout = (await page.evaluate(`(() => {
+    const masonry = document.querySelector('.feitio-example .feitio-masonry');
+    const children = [...masonry.children];
+    return {
+      columns: new Set(children.map((c) => Math.round(c.getBoundingClientRect().left))).size,
+      split: children.filter((c) => c.getClientRects().length > 1).length,
+      styled: document.querySelectorAll('.feitio-masonry[style], .feitio-masonry [style]').length,
+    };
+  })()`)) as { columns: number; split: number; styled: number };
+  check(
+    name === 'wide' ? layout.columns > 1 : layout.columns === 1,
+    `masonry ${name}: ${layout.columns} column(s)`,
+  );
+  check(layout.split === 0, `masonry ${name}: ${layout.split} block(s) split between columns`);
+  check(layout.styled === 0, `masonry ${name}: an inline style in the rendered HTML`);
   await page.close();
 }
 

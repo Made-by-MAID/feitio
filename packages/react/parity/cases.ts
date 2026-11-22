@@ -24,6 +24,49 @@ function pageLabel(page: number): string {
   return `Page ${page}`;
 }
 
+/**
+ * Words that end in letters reaching past their width (the f of "Off"), in every bordered component
+ * that wraps a short word. The docs test draws these renders and checks that no ink crosses a border.
+ */
+export const GLYPH_WORDS = ['Off', 'f', 'ff', 'y', 'j', '7'];
+
+function glyphCases(word: string, n: number): ParityCase[] {
+  return [
+    { id: `glyph-${n}-tag`, component: 'Tag', props: {}, slots: { default: word } },
+    {
+      id: `glyph-${n}-tag-ok`,
+      component: 'Tag',
+      props: { status: 'ok' },
+      slots: { default: word },
+    },
+    {
+      id: `glyph-${n}-tag-small`,
+      component: 'Tag',
+      props: { size: 'small' },
+      slots: { default: word },
+    },
+    { id: `glyph-${n}-button`, component: 'Button', props: {}, slots: { default: word } },
+    {
+      id: `glyph-${n}-button-small`,
+      component: 'Button',
+      props: { size: 'small' },
+      slots: { default: word },
+    },
+    {
+      id: `glyph-${n}-segmented`,
+      component: 'SegmentedControl',
+      props: { label: `Choose ${n}`, options: [word, `${word} ${word}`] },
+    },
+    { id: `glyph-${n}-kbd`, component: 'Kbd', props: {}, slots: { default: word } },
+    {
+      id: `glyph-${n}-kanban-card`,
+      component: 'KanbanCard',
+      props: { id: `g${n}`, name: `Card ${n}`, to: ['done'], moveLabel: word },
+      slots: { default: word },
+    },
+  ];
+}
+
 const nav = [
   {
     title: 'Casa',
@@ -342,6 +385,56 @@ export const cases: ParityCase[] = [
   { id: 'grid', component: 'Grid', props: {}, slots: { default: 'peças' } },
   { id: 'grid-min', component: 'Grid', props: { gap: 2, min: '9rem', as: 'ul' } },
   {
+    id: 'heatmap',
+    component: 'Heatmap',
+    props: {
+      caption: 'Últimas 3 semanas',
+      rows: ['Seg', '', 'Qua'],
+      columns: ['', 'Nov', '', 'Dez'],
+      cells: [
+        [
+          { level: 'up', title: '2026-11-02' },
+          { level: 'down', title: '2026-11-09' },
+          { level: 'gone', title: '2026-11-16' },
+          { level: 'up', title: '2026-11-23' },
+        ],
+        [{ level: 'some', title: '2026-11-03' }],
+        [],
+      ],
+      levels: [
+        { id: 'up', label: 'No ar', tone: 'ok' },
+        { id: 'some', label: 'Algumas falhas', tone: 'warn' },
+        { id: 'down', label: 'Fora do ar', tone: 'error' },
+      ],
+    },
+  },
+  {
+    id: 'heatmap-count',
+    component: 'Heatmap',
+    props: {
+      id: 'hm2',
+      caption: 'Notas',
+      rows: ['00h', '06h'],
+      columns: ['Seg', 'Ter'],
+      cells: [
+        [
+          { level: '1', title: 'a' },
+          { level: '2', title: 'b' },
+        ],
+        [
+          { level: '3', title: 'c' },
+          { level: '0', title: 'd' },
+        ],
+      ],
+      levels: [
+        { id: '0', label: 'Nenhuma', tone: 'empty' },
+        { id: '1', label: 'Poucas', tone: 'low' },
+        { id: '2', label: 'Algumas', tone: 'mid' },
+        { id: '3', label: 'Muitas', tone: 'high' },
+      ],
+    },
+  },
+  {
     id: 'header',
     component: 'Header',
     props: {
@@ -385,6 +478,10 @@ export const cases: ParityCase[] = [
   { id: 'inline', component: 'Inline', props: {}, slots: { default: 'x' } },
   { id: 'inline-props', component: 'Inline', props: { gap: 1, justify: 'between', as: 'ul' } },
   { id: 'kbd', component: 'Kbd', props: {}, slots: { default: 'Esc' } },
+  { id: 'masonry', component: 'Masonry', props: {}, slots: { default: 'blocos' } },
+  { id: 'masonry-min', component: 'Masonry', props: { gap: 3, min: 'wide', as: 'ul' } },
+  { id: 'masonry-narrow', component: 'Masonry', props: { min: 'narrow' } },
+  { id: 'masonry-regular', component: 'Masonry', props: { min: 'regular' } },
   {
     id: 'label',
     component: 'Label',
@@ -675,4 +772,5 @@ export const cases: ParityCase[] = [
     props: {},
     slots: { default: 'Só ouvido' },
   },
+  ...GLYPH_WORDS.flatMap(glyphCases),
 ];

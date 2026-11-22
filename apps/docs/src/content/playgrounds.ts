@@ -22,6 +22,7 @@ import Footer from '@feitio/astro/Footer.astro';
 import Grid from '@feitio/astro/Grid.astro';
 import Header from '@feitio/astro/Header.astro';
 import Heading from '@feitio/astro/Heading.astro';
+import Heatmap from '@feitio/astro/Heatmap.astro';
 import Icon from '@feitio/astro/Icon.astro';
 import Inline from '@feitio/astro/Inline.astro';
 import Kanban from '@feitio/astro/Kanban.astro';
@@ -29,6 +30,7 @@ import KanbanCard from '@feitio/astro/KanbanCard.astro';
 import Kbd from '@feitio/astro/Kbd.astro';
 import Link from '@feitio/astro/Link.astro';
 import LinkCard from '@feitio/astro/LinkCard.astro';
+import Masonry from '@feitio/astro/Masonry.astro';
 import Nav from '@feitio/astro/Nav.astro';
 import Notice from '@feitio/astro/Notice.astro';
 import Pagination from '@feitio/astro/Pagination.astro';
@@ -55,6 +57,7 @@ import type { Control } from '../components/Playground.astro';
 import type { Locale } from '../i18n/ui.ts';
 import { renderHtml } from '../lib/render.ts';
 import { w } from './components/types.ts';
+import { areaBlocks, countSetting, hoursSetting, orderBoxes, weeksSetting } from './examples.ts';
 
 /** A playground: its controls and the HTML of every combination, rendered by the component. */
 export type PlaygroundSetup = {
@@ -1046,6 +1049,93 @@ export async function playgroundFor(
       combos: await combos(
         [GAP.options.map((o) => o.value), ['6rem', '9rem', '15rem'], ['5', '8']],
         ([g, m, n]) => renderHtml(Grid, { gap: Number(g), min: m }, box(Number(n))),
+      ),
+    };
+  }
+
+  if (slug === 'masonry') {
+    return {
+      placeholder: '',
+      text: '',
+      controls: [
+        GAP,
+        {
+          name: 'min',
+          label: words(
+            'Coluna mínima',
+            'Narrowest column',
+            'Columna mínima',
+            'Colonne minimale',
+            'Schmalste Spalte',
+          ),
+          options: [
+            { value: 'regular', label: words('Normal', 'Regular', 'Normal', 'Normale', 'Normal') },
+            {
+              value: 'narrow',
+              label: words('Estreita', 'Narrow', 'Estrecha', 'Étroite', 'Schmal'),
+            },
+            { value: 'wide', label: words('Larga', 'Wide', 'Ancha', 'Large', 'Breit') },
+          ],
+        },
+        {
+          name: 'content',
+          label: words('Conteúdo', 'Content', 'Contenido', 'Contenu', 'Inhalt'),
+          options: [
+            { value: 'blocks', label: words('Blocos', 'Blocks', 'Bloques', 'Blocs', 'Blöcke') },
+            { value: 'order', label: words('Ordem', 'Order', 'Orden', 'Ordre', 'Reihenfolge') },
+          ],
+        },
+      ],
+      combos: await combos(
+        [GAP.options.map((o) => o.value), ['regular', 'narrow', 'wide'], ['blocks', 'order']],
+        async ([g, m, c]) =>
+          renderHtml(
+            Masonry,
+            { gap: Number(g), min: m },
+            c === 'order' ? orderBoxes(8) : await areaBlocks(lang),
+          ),
+      ),
+    };
+  }
+  if (slug === 'heatmap') {
+    const settings = { weeks: weeksSetting, hours: hoursSetting, count: countSetting };
+    return {
+      placeholder: '',
+      text: '',
+      controls: [
+        {
+          name: 'setting',
+          label: words('Grade', 'Grid', 'Cuadrícula', 'Grille', 'Raster'),
+          options: [
+            {
+              value: 'weeks',
+              label: words(
+                'Semanas × dias',
+                'Weeks × days',
+                'Semanas × días',
+                'Semaines × jours',
+                'Wochen × Tage',
+              ),
+            },
+            {
+              value: 'hours',
+              label: words(
+                'Dias × horas',
+                'Days × hours',
+                'Días × horas',
+                'Jours × heures',
+                'Tage × Stunden',
+              ),
+            },
+            {
+              value: 'count',
+              label: words('Contagem', 'Count', 'Recuento', 'Comptage', 'Anzahl'),
+            },
+          ],
+        },
+      ],
+      combos: await combos([['weeks', 'hours', 'count']], ([k]) =>
+        renderHtml(Heatmap, { id: 'pg-hm', ...settings[k as keyof typeof settings](lang) }),
       ),
     };
   }

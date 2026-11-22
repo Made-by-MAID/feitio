@@ -24,6 +24,7 @@ test('the components read no Feitio variable that the tokens or the base do not 
     '--notice-p',
     '--feitio-gap',
     '--feitio-grid-min',
+    '--feitio-masonry-min',
     '--feitio-kanban-col',
     '--feitio-kanban-col-empty',
     '--feitio-kanban-tab',

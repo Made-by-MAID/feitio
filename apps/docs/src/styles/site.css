@@ -1117,6 +1117,15 @@ main[tabindex="-1"]:focus {
   border: var(--feitio-border-width) solid var(--feitio-color-text);
   border-radius: var(--feitio-radius);
 }
+.lay-box[data-height="1"] {
+  min-block-size: var(--feitio-space-5);
+}
+.lay-box[data-height="2"] {
+  min-block-size: var(--feitio-space-6);
+}
+.lay-box[data-height="3"] {
+  min-block-size: var(--feitio-space-7);
+}
 .lay-box[data-wide] {
   min-inline-size: 7rem;
 }
@@ -1126,6 +1135,12 @@ main[tabindex="-1"]:focus {
   border-color: var(--feitio-color-text-soft);
   color: var(--feitio-color-text-soft);
   font-weight: var(--feitio-font-weight-regular);
+}
+/* Masonry and Heatmap take the example's whole width: their columns come from it. */
+.live > .feitio-masonry,
+.live > .feitio-heatmap {
+  flex: 1 1 100%;
+  min-inline-size: 0;
 }
 .playground .live:has(> .feitio-grid, > .feitio-stack, > .feitio-inline) {
   inline-size: 100%;
