@@ -1,11 +1,18 @@
 ---
-/** Grid: columns that fit the width, each at least `min` wide, never past the screen. A missing item leaves its cell empty. */
+/**
+ * Grid: columns that fit the width, each at least `min` wide, never past the screen. A missing item
+ * leaves its cell empty. min is a step (narrow 10rem, regular 15rem, wide 20rem), rendered as
+ * data-min with no inline style, so it works under a strict CSP. Any other length still works, as
+ * an inline custom property, but a page with `style-src 'self'` blocks it.
+ */
 interface Props {
   gap?: 1 | 2 | 3 | 4 | 5 | 6 | 7;
-  /** The narrowest a column may get, like "9rem". */
-  min?: string;
+  /** The narrowest a column may get: "narrow", "regular" (the default) or "wide"; or a length, like "9rem" (not under a strict CSP). */
+  min?: 'narrow' | 'regular' | 'wide' | (string & {});
   as?: 'div' | 'ul';
 }
 const { gap = 4, min, as: Tag = 'div' } = Astro.props;
+const step = min === 'narrow' || min === 'wide' ? min : undefined;
+const length = min && min !== 'regular' && !step ? min : undefined;
 ---
-<Tag class="feitio-grid" data-gap={gap} style={min ? `--feitio-grid-min: ${min}` : undefined}><slot /></Tag>
+<Tag class="feitio-grid" data-gap={gap} data-min={step} style={length ? `--feitio-grid-min: ${length}` : undefined}><slot /></Tag>

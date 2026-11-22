@@ -230,6 +230,11 @@ export async function liveExamples(slug: string, lang: Locale): Promise<Record<s
     return {
       'masonry-areas': await renderHtml(Masonry, { gap: 3 }, await areaBlocks(lang)),
       'masonry-order': await renderHtml(Masonry, { gap: 3, min: 'narrow' }, orderBoxes(8)),
+      'masonry-max': await renderHtml(
+        Masonry,
+        { gap: 3, min: 'narrow', max: 2 },
+        await areaBlocks(lang),
+      ),
       'masonry-list': await renderHtml(Masonry, { gap: 3, as: 'ul' }, await areaBlocks(lang, 'li')),
     };
   if (slug === 'heatmap')

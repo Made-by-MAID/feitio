@@ -263,7 +263,7 @@ export async function playgroundFor(
         const b = words('Abaixo', 'Below', 'Abajo', 'En dessous', 'Unten');
         return o === 'vertical'
           ? `<div class="feitio-inline" data-gap="3"><span>${a}</span>${hr}<span>${b}</span></div>`
-          : `<div class="feitio-stack" data-gap="3" style="inline-size: min(100%, 24rem)"><span>${a}</span>${hr}<span>${b}</span></div>`;
+          : `<div class="feitio-stack demo-pg-1" data-gap="3"><span>${a}</span>${hr}<span>${b}</span></div>`;
       }),
     };
   }
@@ -944,7 +944,7 @@ export async function playgroundFor(
           ['', 'on'],
         ],
         async ([d, a]) =>
-          `<div class="feitio-stack" data-gap="3" style="inline-size: min(100%, 26rem)" ${a ? 'data-demo-async' : ''}>${await renderHtml(FilterField, { id: 'pg-filter', list: 'pg-filter-list', label: words('Filtrar', 'Filter', 'Filtrar', 'Filtrer', 'Filtern'), placeholder: words('plantas, backup…', 'plants, backup…', 'plantas, copia…', 'plantes, sauvegarde…', 'Pflanzen, Sicherung…'), debounce: d ? 600 : undefined, async: Boolean(a), busyLabel: words('Buscando…', 'Searching…', 'Buscando…', 'Recherche…', 'Suche…') })}${list}</div>`,
+          `<div class="feitio-stack demo-filterfield-1" data-gap="3" ${a ? 'data-demo-async' : ''}>${await renderHtml(FilterField, { id: 'pg-filter', list: 'pg-filter-list', label: words('Filtrar', 'Filter', 'Filtrar', 'Filtrer', 'Filtern'), placeholder: words('plantas, backup…', 'plants, backup…', 'plantas, copia…', 'plantes, sauvegarde…', 'Pflanzen, Sicherung…'), debounce: d ? 600 : undefined, async: Boolean(a), busyLabel: words('Buscando…', 'Searching…', 'Buscando…', 'Recherche…', 'Suche…') })}${list}</div>`,
       ),
     };
   }
@@ -1038,7 +1038,14 @@ export async function playgroundFor(
             'Colonne minimale',
             'Schmalste Spalte',
           ),
-          options: ['6rem', '9rem', '15rem'].map((v) => ({ value: v, label: v })),
+          options: [
+            {
+              value: 'narrow',
+              label: words('Estreita', 'Narrow', 'Estrecha', 'Étroite', 'Schmal'),
+            },
+            { value: 'regular', label: words('Normal', 'Regular', 'Normal', 'Normale', 'Normal') },
+            { value: 'wide', label: words('Larga', 'Wide', 'Ancha', 'Large', 'Breit') },
+          ],
         },
         {
           name: 'count',
@@ -1047,7 +1054,7 @@ export async function playgroundFor(
         },
       ],
       combos: await combos(
-        [GAP.options.map((o) => o.value), ['6rem', '9rem', '15rem'], ['5', '8']],
+        [GAP.options.map((o) => o.value), ['narrow', 'regular', 'wide'], ['5', '8']],
         ([g, m, n]) => renderHtml(Grid, { gap: Number(g), min: m }, box(Number(n))),
       ),
     };
@@ -1078,6 +1085,24 @@ export async function playgroundFor(
           ],
         },
         {
+          name: 'max',
+          label: words(
+            'Máximo de colunas',
+            'Most columns',
+            'Máximo de columnas',
+            'Colonnes au plus',
+            'Höchstens Spalten',
+          ),
+          options: [
+            {
+              value: '',
+              label: words('Sem limite', 'No cap', 'Sin límite', 'Sans limite', 'Ohne Grenze'),
+            },
+            { value: '2', label: '2' },
+            { value: '3', label: '3' },
+          ],
+        },
+        {
           name: 'content',
           label: words('Conteúdo', 'Content', 'Contenido', 'Contenu', 'Inhalt'),
           options: [
@@ -1087,11 +1112,16 @@ export async function playgroundFor(
         },
       ],
       combos: await combos(
-        [GAP.options.map((o) => o.value), ['regular', 'narrow', 'wide'], ['blocks', 'order']],
-        async ([g, m, c]) =>
+        [
+          GAP.options.map((o) => o.value),
+          ['regular', 'narrow', 'wide'],
+          ['', '2', '3'],
+          ['blocks', 'order'],
+        ],
+        async ([g, m, x, c]) =>
           renderHtml(
             Masonry,
-            { gap: Number(g), min: m },
+            { gap: Number(g), min: m, max: x ? Number(x) : undefined },
             c === 'order' ? orderBoxes(8) : await areaBlocks(lang),
           ),
       ),
@@ -2006,7 +2036,7 @@ export async function playgroundFor(
       combos: await combos(
         [['wide', 'narrow']],
         async ([wd]) =>
-          `<div class="header-sample" style="inline-size: ${wd === 'narrow' ? 'min(100%, 22rem)' : '100%'}">${await renderHtml(Header, { brand: 'Feitio', brandHref: '#playground', areas: areas.map((t, i) => ({ text: t, href: '#playground', current: i === 2 })), label: words('Áreas', 'Areas', 'Áreas', 'Zones', 'Bereiche'), menu: { label: words('Menu', 'Menu', 'Menú', 'Menu', 'Menü'), target: 'pg-header-menu' }, sprite }, `${search}${lang}`)}</div>`,
+          `<div class="header-sample ${wd === 'narrow' ? 'demo-pg-5' : 'demo-fill'}">${await renderHtml(Header, { brand: 'Feitio', brandHref: '#playground', areas: areas.map((t, i) => ({ text: t, href: '#playground', current: i === 2 })), label: words('Áreas', 'Areas', 'Áreas', 'Zones', 'Bereiche'), menu: { label: words('Menu', 'Menu', 'Menú', 'Menu', 'Menü'), target: 'pg-header-menu' }, sprite }, `${search}${lang}`)}</div>`,
       ),
     };
   }
@@ -2053,7 +2083,7 @@ export async function playgroundFor(
       combos: await combos(
         [['yes', '']],
         async ([u]) =>
-          `<div class="feitio-app-frame" style="block-size: 22rem; inline-size: min(100%, 24rem); overflow-y: auto; border: var(--feitio-border-width) solid var(--feitio-color-line)">${await renderHtml(AppShell, { id: 'pg-app', brand: words('Produto', 'Product', 'Producto', 'Produit', 'Produkt'), nav: NAVG(true, true), user: u ? 'Ana' : undefined, signOut: u ? { text: words('Sair', 'Sign out', 'Salir', 'Se déconnecter', 'Abmelden'), href: '#playground' } : undefined, closeLabel: words('Fechar', 'Close', 'Cerrar', 'Fermer', 'Schließen'), topLabel: words('Topo', 'Top', 'Arriba', 'Haut', 'Nach oben'), sprite }, `<div style="padding: var(--feitio-space-4)"><h3>${words('Agendamentos', 'Schedules', 'Citas', 'Rendez-vous', 'Termine')}</h3>${LONGTEXT}</div>`)}</div>`,
+          `<div class="feitio-app-frame demo-pg-2">${await renderHtml(AppShell, { id: 'pg-app', brand: words('Produto', 'Product', 'Producto', 'Produit', 'Produkt'), nav: NAVG(true, true), user: u ? 'Ana' : undefined, signOut: u ? { text: words('Sair', 'Sign out', 'Salir', 'Se déconnecter', 'Abmelden'), href: '#playground' } : undefined, closeLabel: words('Fechar', 'Close', 'Cerrar', 'Fermer', 'Schließen'), topLabel: words('Topo', 'Top', 'Arriba', 'Haut', 'Nach oben'), sprite }, `<div class="demo-pg-3"><h3>${words('Agendamentos', 'Schedules', 'Citas', 'Rendez-vous', 'Termine')}</h3>${LONGTEXT}</div>`)}</div>`,
       ),
     };
   }
@@ -2372,7 +2402,7 @@ export async function playgroundFor(
       combos: await combos(
         [names],
         async ([n]) =>
-          `<span class="feitio-inline" data-gap="1" style="font-size: var(--feitio-font-size-h3)">${await renderHtml(Icon, { name: n, sprite })}<span>${n}</span></span>`,
+          `<span class="feitio-inline demo-pg-4" data-gap="1">${await renderHtml(Icon, { name: n, sprite })}<span>${n}</span></span>`,
       ),
     };
   }
@@ -2410,7 +2440,7 @@ export async function playgroundFor(
       combos: await combos(
         [['div', 'section', 'article']],
         async ([a]) =>
-          `<div style="inline-size: min(100%, 26rem)">${await renderHtml(Block, { as: a }, `<strong>${PH}</strong>`)}</div>`,
+          `<div class="demo-filterfield-1">${await renderHtml(Block, { as: a }, `<strong>${PH}</strong>`)}</div>`,
       ),
     };
   }
@@ -2426,7 +2456,7 @@ export async function playgroundFor(
       ),
       controls: [],
       combos: {
-        '': `<div style="inline-size: min(100%, 22rem)">${await renderHtml(LinkCard, { href: '#playground', title: words('Design', 'Design', 'Diseño', 'Design', 'Design'), sprite }, PH)}</div>`,
+        '': `<div class="demo-pg-5">${await renderHtml(LinkCard, { href: '#playground', title: words('Design', 'Design', 'Diseño', 'Design', 'Design'), sprite }, PH)}</div>`,
       },
     };
   }
@@ -2456,7 +2486,7 @@ export async function playgroundFor(
       combos: await combos(
         [['', 'reader']],
         async ([v]) =>
-          `<label class="feitio-stack" data-gap="2" style="inline-size: min(100%, 20rem)">${v ? `<span class="pg-revealed">${PH}</span>` : await renderHtml(VisuallyHidden, {}, PH)}<input class="feitio-input" type="search" placeholder="…"></label>`,
+          `<label class="feitio-stack demo-pg-6" data-gap="2">${v ? `<span class="pg-revealed">${PH}</span>` : await renderHtml(VisuallyHidden, {}, PH)}<input class="feitio-input" type="search" placeholder="…"></label>`,
       ),
     };
   }
@@ -2474,7 +2504,7 @@ export async function playgroundFor(
       combos: {
         '': (await renderHtml(SkipLink, { href: '#playground' }, PH)).replace(
           'class="feitio-skip-link"',
-          'class="feitio-skip-link" style="position: static; translate: none"',
+          'class="feitio-skip-link demo-skiplink-1"',
         ),
       },
     };

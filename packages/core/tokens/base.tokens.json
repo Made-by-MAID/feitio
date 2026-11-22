@@ -58,11 +58,11 @@
     },
     "column-narrow": {
       "$value": { "value": 10, "unit": "rem" },
-      "$description": "A narrow column of a Masonry: small blocks, more columns."
+      "$description": "A narrow column of a Grid or a Masonry: small pieces, more columns."
     },
     "column-wide": {
       "$value": { "value": 20, "unit": "rem" },
-      "$description": "A wide column of a Masonry: long blocks, fewer columns."
+      "$description": "A wide column of a Grid or a Masonry: long pieces, fewer columns."
     }
   },
   "inset": {

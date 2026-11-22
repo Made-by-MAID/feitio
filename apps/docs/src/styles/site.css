@@ -1232,3 +1232,184 @@ main[tabindex="-1"]:focus {
   margin-inline: auto;
   padding-block: var(--feitio-space-7);
 }
+
+/* Demo layout on the docs pages, as classes: no page carries an inline style, so every page
+   runs under a strict CSP (style-src 'self'), like the sites built with Feitio. Each class is
+   repeated so it weighs about what the style attribute it replaces did. */
+:root .demo-button-1.demo-button-1.demo-button-1 {
+  justify-self: start;
+  display: flex;
+}
+:root .demo-button-2.demo-button-2.demo-button-2 {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0.6rem;
+  inline-size: 1px;
+}
+:root .demo-fill.demo-fill.demo-fill {
+  inline-size: 100%;
+}
+:root .demo-linkcard-1.demo-linkcard-1.demo-linkcard-1 {
+  max-inline-size: 16rem;
+}
+:root .demo-heading-1.demo-heading-1.demo-heading-1 {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--feitio-color-accent-strong);
+  font-weight: 700;
+}
+:root .demo-heading-2.demo-heading-2.demo-heading-2 {
+  color: var(--feitio-color-accent);
+  font-style: italic;
+}
+:root .demo-icon-1.demo-icon-1.demo-icon-1 {
+  color: var(--feitio-color-accent);
+}
+:root .demo-block.demo-block.demo-block {
+  display: block;
+}
+:root .demo-field-1.demo-field-1.demo-field-1 {
+  justify-items: start;
+}
+:root .demo-textarea-1.demo-textarea-1.demo-textarea-1 {
+  outline: var(--feitio-focus-width) solid var(--feitio-color-accent);
+  outline-offset: var(--feitio-focus-offset);
+}
+:root .demo-checkbox-1.demo-checkbox-1.demo-checkbox-1 {
+  --x: 1;
+}
+:root .demo-checkbox-2.demo-checkbox-2.demo-checkbox-2 {
+  accent-color: var(--feitio-color-accent);
+}
+:root .demo-radios-1.demo-radios-1.demo-radios-1 {
+  display: flex;
+  gap: 2px;
+}
+:root .demo-fieldset-1.demo-fieldset-1.demo-fieldset-1 {
+  inline-size: fit-content;
+  float: none;
+}
+:root .demo-filterfield-1.demo-filterfield-1.demo-filterfield-1 {
+  inline-size: min(100%, 26rem);
+}
+:root .demo-fit.demo-fit.demo-fit {
+  inline-size: fit-content;
+}
+:root .demo-notice-1.demo-notice-1.demo-notice-1 {
+  min-block-size: 4.5rem;
+}
+:root .demo-notice-2.demo-notice-2.demo-notice-2 {
+  justify-self: center;
+  align-self: center;
+}
+:root .demo-notice-3.demo-notice-3.demo-notice-3 {
+  --notice-p: 0.35;
+}
+:root .demo-tag-1.demo-tag-1.demo-tag-1 {
+  padding: 0.1rem 0.6rem;
+  border-radius: 1rem;
+  background: var(--feitio-color-accent);
+  color: var(--feitio-color-on-accent);
+  font: 700 0.75rem var(--feitio-font-ui);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+:root .demo-emptystate-1.demo-emptystate-1.demo-emptystate-1 {
+  margin: 0;
+  color: var(--feitio-color-text-soft);
+}
+:root .demo-statusoverlay-1.demo-statusoverlay-1.demo-statusoverlay-1 {
+  min-block-size: 9rem;
+}
+:root .demo-table-1.demo-table-1.demo-table-1 {
+  text-align: center;
+}
+:root .demo-table-2.demo-table-2.demo-table-2 {
+  background: color-mix(in oklch, var(--feitio-color-text) 9%, transparent);
+}
+:root .demo-pagination-1.demo-pagination-1.demo-pagination-1 {
+  flex-direction: column;
+  align-items: start;
+}
+:root .demo-appshell-1.demo-appshell-1.demo-appshell-1 {
+  max-inline-size: 22rem;
+  block-size: 28rem;
+  overflow-y: auto;
+  border: var(--feitio-border-width) solid var(--feitio-color-line);
+}
+:root .demo-appshell-2.demo-appshell-2.demo-appshell-2 {
+  inline-size: 66rem;
+  zoom: 0.5;
+}
+:root .demo-appshell-3.demo-appshell-3.demo-appshell-3 {
+  max-inline-size: 20rem;
+}
+:root .demo-nav-1.demo-nav-1.demo-nav-1 {
+  max-inline-size: 16rem;
+  inline-size: 100%;
+}
+:root .demo-nav-2.demo-nav-2.demo-nav-2 {
+  max-inline-size: 14rem;
+}
+:root .demo-nav-3.demo-nav-3.demo-nav-3 {
+  border-inline-start: 3px solid var(--feitio-color-accent);
+  border-radius: 0;
+  color: var(--feitio-color-accent-strong);
+}
+:root .demo-anchor-1.demo-anchor-1.demo-anchor-1 {
+  border-inline-start: 3px solid var(--feitio-color-accent);
+  padding-inline-start: var(--feitio-space-2);
+  color: var(--feitio-color-accent-strong);
+}
+:root .demo-anchor-2.demo-anchor-2.demo-anchor-2 {
+  padding-inline-start: calc(var(--feitio-space-2) + 3px);
+}
+:root .demo-backtotop-1.demo-backtotop-1.demo-backtotop-1 {
+  box-shadow: var(--feitio-shadow-lift);
+  background: var(--feitio-color-surface-top);
+}
+:root .demo-backtotop-2.demo-backtotop-2.demo-backtotop-2 {
+  display: inline-flex;
+  rotate: 180deg;
+}
+:root .demo-search-1.demo-search-1.demo-search-1 {
+  display: flex;
+  align-items: center;
+}
+:root .demo-dialog-1.demo-dialog-1.demo-dialog-1 {
+  flex-direction: row;
+}
+:root .demo-dialog-2.demo-dialog-2.demo-dialog-2 {
+  box-shadow: none;
+}
+:root .demo-flush.demo-flush.demo-flush {
+  margin: 0;
+}
+:root .demo-codeblock-1.demo-codeblock-1.demo-codeblock-1 {
+  max-inline-size: 18rem;
+}
+:root .demo-pg-1.demo-pg-1.demo-pg-1 {
+  inline-size: min(100%, 24rem);
+}
+:root .demo-pg-2.demo-pg-2.demo-pg-2 {
+  block-size: 22rem;
+  inline-size: min(100%, 24rem);
+  overflow-y: auto;
+  border: var(--feitio-border-width) solid var(--feitio-color-line);
+}
+:root .demo-pg-3.demo-pg-3.demo-pg-3 {
+  padding: var(--feitio-space-4);
+}
+:root .demo-pg-4.demo-pg-4.demo-pg-4 {
+  font-size: var(--feitio-font-size-h3);
+}
+:root .demo-pg-5.demo-pg-5.demo-pg-5 {
+  inline-size: min(100%, 22rem);
+}
+:root .demo-pg-6.demo-pg-6.demo-pg-6 {
+  inline-size: min(100%, 20rem);
+}
+:root .demo-skiplink-1.demo-skiplink-1.demo-skiplink-1 {
+  position: static;
+  translate: none;
+}

@@ -27,6 +27,13 @@
   .feitio-inline[data-justify="end"] {
     justify-content: flex-end;
   }
+  /* Grid's narrowest column: a step (data-min), or a length in --feitio-grid-min (not under a strict CSP). */
+  .feitio-grid[data-min="narrow"] {
+    --feitio-grid-min: var(--feitio-measure-column-narrow);
+  }
+  .feitio-grid[data-min="wide"] {
+    --feitio-grid-min: var(--feitio-measure-column-wide);
+  }
   .feitio-grid {
     display: grid;
     grid-template-columns: repeat(
@@ -38,10 +45,13 @@
      between two columns, none stretched. Today in CSS columns, so the reading order goes down a
      column, then the next; where the browser has native masonry (grid-lanes), the same markup is
      laid out by rows instead. The space under a block is the gap between columns. The narrowest
-     column is a step (data-min), never an inline style, so a strict CSP lets it through. */
+     column is a step (data-min), never an inline style, so a strict CSP lets it through. data-max
+     caps the columns (2 to 6): on a very wide screen, a few blocks stay together instead of leaving
+     the rest of the width empty. The columns shorthand takes the width and a count, and with both
+     the count is the most columns. */
   .feitio-masonry {
     --feitio-masonry-min: var(--feitio-measure-column);
-    columns: var(--feitio-masonry-min);
+    columns: var(--feitio-masonry-min) var(--feitio-masonry-max, auto);
     column-gap: var(--feitio-gap, var(--feitio-space-4));
     padding: 0;
     list-style: none;
@@ -60,12 +70,41 @@
   .feitio-masonry[data-min="wide"] {
     --feitio-masonry-min: var(--feitio-measure-column-wide);
   }
+  .feitio-masonry[data-max="2"] {
+    --feitio-masonry-max: 2;
+  }
+  .feitio-masonry[data-max="3"] {
+    --feitio-masonry-max: 3;
+  }
+  .feitio-masonry[data-max="4"] {
+    --feitio-masonry-max: 4;
+  }
+  .feitio-masonry[data-max="5"] {
+    --feitio-masonry-max: 5;
+  }
+  .feitio-masonry[data-max="6"] {
+    --feitio-masonry-max: 6;
+  }
   @supports (display: grid-lanes) {
     .feitio-masonry {
       display: grid-lanes;
       grid-template-columns: repeat(auto-fill, minmax(min(var(--feitio-masonry-min), 100%), 1fr));
       gap: var(--feitio-gap, var(--feitio-space-4));
       columns: auto;
+    }
+    /* With a cap, a track is never narrower than its share of the width at that many columns. */
+    .feitio-masonry[data-max] {
+      grid-template-columns: repeat(
+          auto-fill,
+          minmax(
+            max(
+              min(var(--feitio-masonry-min), 100%),
+              (100% - (var(--feitio-masonry-max) - 1) * var(--feitio-gap, var(--feitio-space-4))) /
+              var(--feitio-masonry-max)
+            ),
+            1fr
+          )
+        );
     }
     .feitio-masonry > * {
       margin: 0;
@@ -1062,6 +1101,10 @@
 
   /* Data: Table (cards on a phone), SummaryList, TaskList and Pagination. */
   /* Table: linhas finas, cabeçalho com o traço de tinta, números à direita. */
+  /* The frame around a Table takes the whole width (a class, not an inline style, for a strict CSP). */
+  .feitio-table-frame {
+    inline-size: 100%;
+  }
   .feitio-table-scroll {
     overflow-x: auto;
     container-type: inline-size;
@@ -2064,6 +2107,7 @@
   .feitio-code pre[hidden] {
     display: none;
   }
+  /* Swatch: the role is a data attribute (no inline style, for a strict CSP). */
   .feitio-swatch {
     display: inline-block;
     inline-size: 1em;
@@ -2072,6 +2116,54 @@
     background: var(--swatch);
     border: var(--feitio-border-width) solid var(--feitio-color-text);
     border-radius: 3px;
+  }
+  .feitio-swatch[data-role="surface"] {
+    --swatch: var(--feitio-color-surface);
+  }
+  .feitio-swatch[data-role="surface-raised"] {
+    --swatch: var(--feitio-color-surface-raised);
+  }
+  .feitio-swatch[data-role="surface-top"] {
+    --swatch: var(--feitio-color-surface-top);
+  }
+  .feitio-swatch[data-role="text"] {
+    --swatch: var(--feitio-color-text);
+  }
+  .feitio-swatch[data-role="text-soft"] {
+    --swatch: var(--feitio-color-text-soft);
+  }
+  .feitio-swatch[data-role="accent"] {
+    --swatch: var(--feitio-color-accent);
+  }
+  .feitio-swatch[data-role="accent-strong"] {
+    --swatch: var(--feitio-color-accent-strong);
+  }
+  .feitio-swatch[data-role="on-accent"] {
+    --swatch: var(--feitio-color-on-accent);
+  }
+  .feitio-swatch[data-role="line"] {
+    --swatch: var(--feitio-color-line);
+  }
+  .feitio-swatch[data-role="shadow"] {
+    --swatch: var(--feitio-color-shadow);
+  }
+  .feitio-swatch[data-role="ok"] {
+    --swatch: var(--feitio-color-ok);
+  }
+  .feitio-swatch[data-role="ok-surface"] {
+    --swatch: var(--feitio-color-ok-surface);
+  }
+  .feitio-swatch[data-role="warn"] {
+    --swatch: var(--feitio-color-warn);
+  }
+  .feitio-swatch[data-role="warn-surface"] {
+    --swatch: var(--feitio-color-warn-surface);
+  }
+  .feitio-swatch[data-role="error"] {
+    --swatch: var(--feitio-color-error);
+  }
+  .feitio-swatch[data-role="error-surface"] {
+    --swatch: var(--feitio-color-error-surface);
   }
   @starting-style {
     .feitio-dialog[open] {

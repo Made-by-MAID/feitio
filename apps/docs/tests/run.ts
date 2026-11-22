@@ -9,6 +9,7 @@ import { mkdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { parseHTML } from 'linkedom';
 import { chromium, type Page } from 'playwright';
+import { INLINE_STYLE_ALLOWED } from '../../../packages/react/parity/cases.ts';
 import { inkPastBorder } from './calculations/ink-past-border.ts';
 
 type AxeResults = { violations: { id: string; help: string; nodes: { target: string[] }[] }[] };
@@ -672,6 +673,64 @@ for (const [width, name] of [
   check(
     result.columns === '320px',
     `csp ${name}: data-min="wide" gives columns of ${result.columns}`,
+  );
+  await page.close();
+}
+
+// No inline style anywhere a component renders (consumers serve `style-src 'self'`): not in any
+// component's HTML (every parity case, Astro side, which React matches), and nowhere on any
+// component page in any language, playground combinations included. The one exception is the
+// legacy Grid length, in its parity case only.
+{
+  const allowed = new Set(INLINE_STYLE_ALLOWED);
+  for (const [id, html] of Object.entries(parity))
+    if (!allowed.has(id) && /\sstyle=/.test(html))
+      problems.push(`inline style: the ${id} case renders a style attribute`);
+  for (const lang of LOCALES)
+    for (const draft of drafts) {
+      const html = await readFile(join(dist, lang, 'components', draft.slug, 'index.html'), 'utf8');
+      const { document } = parseHTML(html);
+      for (const element of document.querySelectorAll('[style]'))
+        problems.push(
+          `inline style: ${lang}/${draft.slug}: <${element.tagName.toLowerCase()} class="${element.getAttribute('class') ?? ''}" style="${element.getAttribute('style')}">`,
+        );
+      const combos = [...document.querySelectorAll('[data-combos]')].map(
+        (n) => n.textContent ?? '',
+      );
+      if (combos.some((json) => /\sstyle=/.test(json)))
+        problems.push(`inline style: ${lang}/${draft.slug}: a playground combination`);
+    }
+}
+
+// Masonry's max: on a 2560px screen, six narrow blocks would make more than three columns; with
+// data-max="3" they make at most three, from the class alone (the page forbids inline styles).
+{
+  const page = await browser.newPage({
+    viewport: { width: 2560, height: 1200 },
+    reducedMotion: 'reduce',
+  });
+  watch(page, 'masonry max');
+  await page.goto(`${origin}/fixture?ids=masonry-max,masonry-uncapped&mode=light`);
+  // Each Masonry gets six Blocks of different heights, built in the page (no style attribute).
+  await page.evaluate(`(() => {
+    for (const masonry of document.querySelectorAll('.feitio-masonry')) {
+      masonry.replaceChildren(...[3, 1, 4, 2, 5, 1].map((lines) => {
+        const block = document.createElement('div');
+        block.className = 'feitio-block';
+        for (let i = 0; i < lines; i += 1) block.append(document.createElement('p'), 'Line');
+        return block;
+      }));
+    }
+  })()`);
+  const columns =
+    (await page.evaluate(`(() => [...document.querySelectorAll('.feitio-masonry')].map(
+    (m) => new Set([...m.children].map((c) => Math.round(c.getBoundingClientRect().left))).size,
+  ))()`)) as number[];
+  const [capped = 0, uncapped = 0] = columns;
+  check(capped > 1 && capped <= 3, `masonry max: data-max="3" makes ${capped} column(s) at 2560px`);
+  check(
+    uncapped > 3,
+    `masonry max: without data-max, ${uncapped} column(s) at 2560px (expected more than 3)`,
   );
   await page.close();
 }

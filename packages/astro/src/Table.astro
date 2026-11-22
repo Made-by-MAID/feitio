@@ -15,7 +15,7 @@ interface Props {
 const { id, caption, columns, rows, compact } = Astro.props;
 const cap = `${id}-cap`;
 ---
-<div data-density={compact ? 'compact' : undefined} style="inline-size: 100%">
+<div class="feitio-table-frame" data-density={compact ? 'compact' : undefined}>
   <div class="feitio-table-scroll" tabindex="0" role="region" aria-labelledby={caption ? cap : undefined} aria-label={caption ? undefined : columns[0]?.label}>
     <table class="feitio-table">
       {caption && <caption id={cap}>{caption}</caption>}
