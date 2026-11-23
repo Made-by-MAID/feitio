@@ -1080,6 +1080,46 @@ for (const lang of ['pt', 'en', 'es', 'fr', 'de']) {
   await page.close();
 }
 
+// A sticky Anchor in a detail Page's summary (MAID's Settings): one scroll at most, never two nested, and no
+// scrollbar on the summary while it fits: the summary's own scroll and the Anchor's negative margin once gave it
+// bars both ways.
+{
+  const page = await browser.newPage({
+    viewport: { width: 1440, height: 900 },
+    reducedMotion: 'reduce',
+  });
+  watch(page, 'detail anchor');
+  await page.goto(`${origin}/fixture?ids=page-detail,anchor-sticky&mode=light`);
+  await page.evaluate(`(() => {
+    const aside = document.querySelector('.feitio-page-detail > .aside');
+    aside.replaceChildren(document.querySelector('.feitio-anchor[data-sticky]'));
+    document.querySelector('.feitio-page').style.inlineSize = '72rem';
+  })()`);
+  await page.waitForTimeout(200);
+  const box = (await page.evaluate(`(() => {
+    const aside = document.querySelector('.feitio-page-detail > .aside');
+    const anchor = aside.querySelector('.feitio-anchor');
+    const scrolls = (el) => el.scrollWidth > el.clientWidth + 1 || el.scrollHeight > el.clientHeight + 1;
+    return {
+      beside: aside.getBoundingClientRect().left > document.querySelector('.feitio-page-detail > .main').getBoundingClientRect().right,
+      aside: scrolls(aside),
+      anchor: scrolls(anchor),
+      position: getComputedStyle(anchor).position,
+    };
+  })()`)) as { beside: boolean; aside: boolean; anchor: boolean; position: string };
+  check(
+    box.beside,
+    'detail anchor: the summary is not beside the content, so the case was not tried',
+  );
+  check(!box.aside, 'detail anchor: the summary holding a sticky Anchor scrolls while it fits');
+  check(!box.anchor, 'detail anchor: the Anchor in the summary scrolls while it fits');
+  check(
+    box.position !== 'sticky',
+    'detail anchor: the Anchor is sticky inside a summary that is already sticky',
+  );
+  await page.close();
+}
+
 // A sticky Anchor that fits hands the wheel to the page (#35): over it, on a long page, the window scrolls.
 {
   const page = await browser.newPage({
