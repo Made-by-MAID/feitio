@@ -42,6 +42,12 @@ export function Page({
   children,
 }: PageProps): ReactElement {
   const Title = Tag === 'main' ? 'h1' : (`h${level}` as const);
+  // No summary: null, undefined, false, 0 or blank text (as with `count && <Summary />`).
+  const hasAside =
+    aside != null &&
+    aside !== false &&
+    aside !== 0 &&
+    !(typeof aside === 'string' && aside.trim() === '');
   return (
     <Tag
       className="feitio-page"
@@ -57,13 +63,11 @@ export function Page({
       </header>
       {layout === 'detail' ? (
         <div className="feitio-page-detail">
-          {aside != null &&
-            aside !== false &&
-            !(typeof aside === 'string' && aside.trim() === '') && (
-              <aside className="aside" aria-label={asideLabel}>
-                {aside}
-              </aside>
-            )}
+          {hasAside && (
+            <aside className="aside" aria-label={asideLabel}>
+              {aside}
+            </aside>
+          )}
           <div className="main">{children}</div>
         </div>
       ) : (
