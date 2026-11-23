@@ -86,6 +86,8 @@ const field = dlg?.querySelector('input');
 const list = dlg?.querySelector('.results');
 const empty = dlg?.querySelector('.empty');
 const hereLabel = dlg?.dataset.hereLabel || '';
+// This page's own sections come first in the results.
+const headings = [...document.querySelectorAll('.site-main h2[id], .site-main h3[id]')];
 let pagefind;
 async function loadPagefind() {
   if (pagefind !== undefined) return pagefind;

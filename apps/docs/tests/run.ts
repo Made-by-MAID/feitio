@@ -859,6 +859,96 @@ for (const [width, name] of [
   await still.close();
 }
 
+// A page arrives still and then moves (settle()): marked while it loads, so nothing transitions as its fonts,
+// theme and container queries settle; the mark gone once it has painted, so its transitions are back.
+{
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  watch(page, 'arrival');
+  await page.goto(`${origin}/en/components/tag/`);
+  await page.waitForTimeout(400);
+  const after = (await page.evaluate(`({
+    marked: document.documentElement.hasAttribute('data-feitio-arriving'),
+    moves: getComputedStyle(document.querySelector('.site-main h1')).transitionDuration !== '0s',
+  })`)) as { marked: boolean; moves: boolean };
+  check(!after.marked, 'arrival: the page is still marked as arriving after it loaded');
+  check(after.moves, 'arrival: the page has no transitions after it settled');
+  const html = await (await fetch(`${origin}/en/components/tag/`)).text();
+  check(
+    /<html[^>]*data-feitio-arriving/.test(html),
+    'arrival: the page is not marked as arriving when it is served',
+  );
+  await page.close();
+}
+
+// Every component of the navigation has its card on the Components page, in every language: the cards are written
+// apart from the navigation, and five once went missing.
+for (const lang of ['pt', 'en', 'es', 'fr', 'de']) {
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  watch(page, `component cards ${lang}`);
+  await page.goto(`${origin}/${lang}/components/`);
+  const missing = (await page.evaluate(`(() => {
+    const slug = (href) => (href.match(/\\/components\\/([a-z-]+)\\//) || [])[1];
+    const cards = new Set([...document.querySelectorAll('.comp-card')].map((a) => slug(a.getAttribute('href'))));
+    const nav = [...document.querySelectorAll('a[href*="/components/"]')]
+      .filter((a) => !a.closest('.comp-card'))
+      .map((a) => slug(a.getAttribute('href')))
+      .filter((s) => s && s !== 'docpage');
+    return [...new Set(nav)].filter((s) => !cards.has(s));
+  })()`)) as string[];
+  check(
+    missing.length === 0,
+    `component cards ${lang}: no card on the Components page for ${missing.join(', ')}`,
+  );
+  const counted = (await page.evaluate(`(() => {
+    const cards = document.querySelectorAll('.comp-card').length;
+    const said = (document.querySelector('.site-main p')?.textContent.match(/\\d+/) || [])[0];
+    return { cards, said: Number(said) };
+  })()`)) as { cards: number; said: number };
+  check(
+    counted.said === counted.cards,
+    `component cards ${lang}: the page says ${counted.said} components and shows ${counted.cards}`,
+  );
+  await page.close();
+}
+
+// A filterable item clips to slide shut, with room for what its card casts: the lifted card's shadow on hover
+// once lost its bottom-right corner to the clip.
+{
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  watch(page, 'card shadow');
+  await page.goto(`${origin}/en/components/`);
+  const room = (await page.evaluate(
+    `parseFloat(getComputedStyle(document.querySelector('[data-search]')).overflowClipMargin) || 0`,
+  )) as number;
+  check(
+    room >= 8,
+    `card shadow: a filterable item clips with ${room}px of room, too little for a lifted card's shadow`,
+  );
+  await page.close();
+}
+
+// The site's search: "/" opens it, and a word finds this page's sections and other pages (Pagefind), with no
+// error on the page (a missing variable once left it empty).
+{
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  watch(page, 'search');
+  await page.goto(`${origin}/en/components/tag/`);
+  await page.mouse.click(700, 500);
+  await page.keyboard.press('/');
+  await page.waitForTimeout(300);
+  check(
+    (await page.evaluate('document.getElementById("busca")?.open === true')) as boolean,
+    'search: "/" did not open it',
+  );
+  await page.keyboard.type('button');
+  await page.waitForTimeout(1500);
+  const found = (await page.evaluate(
+    'document.querySelectorAll("#busca .results li").length',
+  )) as number;
+  check(found > 0, 'search: "button" found nothing');
+  await page.close();
+}
+
 // AppShell on a wide screen: the navigation column stays put while a long page scrolls.
 {
   const page = await browser.newPage({
@@ -892,6 +982,71 @@ for (const [width, name] of [
     nav.top >= 0 && nav.bottom <= 900,
     `app shell: after scrolling 2000px the nav's first link is at ${nav.top}px, out of view`,
   );
+  await page.close();
+}
+
+// AppShell on a wide screen with a short page (#34): it fills the window and no more, so nothing scrolls and its
+// ScrollFade stays hidden; the navigation column's line reaches the window's bottom.
+{
+  const page = await browser.newPage({
+    viewport: { width: 1440, height: 900 },
+    reducedMotion: 'reduce',
+  });
+  watch(page, 'app shell short');
+  await page.goto(`${origin}/fixture?ids=app-shell&mode=light`);
+  await page.evaluate(`(() => {
+    const app = document.querySelector('.feitio-app');
+    const frame = document.createElement('div');
+    frame.className = 'feitio-app-frame';
+    app.before(frame);
+    frame.append(app);
+    // The fixture's own spacing is not the shell's: the shell alone fills the window.
+    document.body.style.padding = '0';
+    document.querySelector('.fixture').style.margin = '0';
+  })()`);
+  await page.waitForTimeout(200);
+  const short = (await page.evaluate(`(() => {
+    const nav = document.querySelector('.feitio-app-nav').getBoundingClientRect();
+    const fade = document.querySelector('.feitio-scroll-fade');
+    return {
+      height: document.documentElement.scrollHeight,
+      window: document.documentElement.clientHeight,
+      navBottom: nav.bottom,
+      fade: fade ? fade.hasAttribute('data-visible') : false,
+    };
+  })()`)) as { height: number; window: number; navBottom: number; fade: boolean };
+  check(
+    short.height <= short.window,
+    `app shell: a short page is ${short.height}px tall in a ${short.window}px window, so it scrolls`,
+  );
+  check(!short.fade, 'app shell: a short page shows its ScrollFade');
+  check(
+    Math.abs(short.navBottom - short.window) < 2,
+    `app shell: the navigation column ends at ${short.navBottom}px, not at the window's bottom (${short.window}px)`,
+  );
+  await page.close();
+}
+
+// A sticky Anchor that fits hands the wheel to the page (#35): over it, on a long page, the window scrolls.
+{
+  const page = await browser.newPage({
+    viewport: { width: 1440, height: 900 },
+    reducedMotion: 'reduce',
+  });
+  watch(page, 'anchor wheel');
+  await page.goto(`${origin}/fixture?ids=anchor-sticky&mode=light`);
+  await page.evaluate(`(() => {
+    for (let i = 0; i < 200; i += 1) {
+      const p = document.createElement('p');
+      p.textContent = 'A long page, line ' + (i + 1);
+      document.body.append(p);
+    }
+  })()`);
+  await page.locator('.feitio-anchor[data-sticky]').hover();
+  await page.mouse.wheel(0, 600);
+  await page.waitForTimeout(400);
+  const scrolled = (await page.evaluate('window.scrollY')) as number;
+  check(scrolled > 0, 'anchor: the wheel over a sticky Anchor that fits did not scroll the page');
   await page.close();
 }
 

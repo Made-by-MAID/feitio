@@ -193,6 +193,19 @@
   }
 
   /*
+   * A page arriving: its fonts, theme and container queries resolve just after the first paint, and each of
+   * those changes would transition, so the page seemed to arrange itself. A root marked data-feitio-arriving
+   * moves nothing until settle() (@feitio/vanilla) takes the mark away, once the page has loaded and painted.
+   */
+  [data-feitio-arriving],
+  [data-feitio-arriving] *,
+  [data-feitio-arriving] *::before,
+  [data-feitio-arriving] *::after {
+    /* biome-ignore lint/complexity/noImportantStyles: an arriving page must beat the transition every element gets. */
+    transition: none !important;
+  }
+
+  /*
    * Where things move every instant (dragging, drawing, resizing, scrolling a huge list), a piece
    * cannot wait for a transition: it would lag behind the finger. data-motion="direct" turns motion
    * off in that area only.
