@@ -983,8 +983,11 @@
     display: grid;
     align-content: start;
     gap: var(--feitio-space-2);
-    flex: 1 1 0;
     inline-size: 100%;
+  }
+  /* Beside a circle, the lines take the rest of the row. */
+  .feitio-inline > .feitio-skeleton {
+    flex: 1 1 0;
   }
   /* In an Inline (beside a circle) nothing gives the lines a width, and Inline resets its children's minimum
      to 0, so this one weighs more; anywhere else a Skeleton is as wide as its box. A plain length: min()
@@ -1731,7 +1734,7 @@
     display: grid;
     gap: var(--feitio-space-2);
   }
-  .feitio-page-header :is(h1, h2) {
+  .feitio-page-header :is(h1, h2, h3, h4) {
     margin: 0;
   }
   .feitio-page-header .lede {
@@ -1754,8 +1757,8 @@
   .feitio-page-detail > .aside {
     min-inline-size: 0;
   }
-  /* The summary comes first in the markup, so it is read and tabbed where it is seen: under the title on a
-     phone, beside the content when there is room. */
+  /* The summary comes first in the markup: read and tabbed where it is seen on a phone (under the title),
+     and first on a wide screen too, where it stands beside the content: a summary before the details. */
   .feitio-page-detail > .aside {
     overflow-wrap: anywhere;
   }

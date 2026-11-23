@@ -16,8 +16,8 @@ export interface PageProps {
   sprite?: string;
   /** main by default; div where the page already has its main (an example in the docs), its title then an h2. */
   as?: 'main' | 'div';
-  /** As a div, the title's level under the headings around it (2 by default). */
-  level?: 2 | 3 | 4 | 5 | 6;
+  /** As a div, the title's level under the headings around it (2 to 4, 2 by default). */
+  level?: 2 | 3 | 4;
   /**
    * The detail's summary, beside the content; only the detail has one, other layouts drop it. No summary is
    * null or undefined: a component that renders nothing still makes the column.
