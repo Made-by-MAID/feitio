@@ -1,0 +1,46 @@
+---
+/**
+ * Page: a page's frame inside an AppShell, its header (the way back when deep, the title, the sentence
+ * under it) and its content in one of four layouts. dashboard: the top of an app, the whole width, no way
+ * back. sections: parts one under the other, in the middle of a wide screen. detail: the thing in a reading
+ * column and its summary beside it (above it on a phone), or the whole width with width="full" for long
+ * lines. board: one wide piece (a Kanban, a big table). A screen that fits none is a new layout.
+ */
+import Breadcrumbs from './Breadcrumbs.astro';
+
+interface Props {
+  layout?: 'dashboard' | 'sections' | 'detail' | 'board';
+  /** detail only: full for long lines (a table of settings). */
+  width?: 'reading' | 'full';
+  title: string;
+  lede?: string;
+  /** The places above this page, the page itself being the current one. */
+  trail?: { text: string; href: string }[];
+  /** The name of the way back, for a screen reader (Breadcrumbs' own by default). */
+  trailLabel?: string;
+  /** The name of the detail's summary, for a screen reader. The aside slot is the detail's only: other layouts drop it. */
+  asideLabel?: string;
+  sprite?: string;
+  /** main by default; div where the page already has its main (an example in the docs), its title then an h2. */
+  as?: 'main' | 'div';
+  /** As a div, the title's level under the headings around it (2 to 4, 2 by default). */
+  level?: 2 | 3 | 4;
+}
+const {
+  layout = 'sections',
+  width,
+  title,
+  lede,
+  trail = [],
+  trailLabel,
+  asideLabel = 'Resumo',
+  sprite,
+  as: Tag = 'main',
+  level = 2,
+} = Astro.props;
+const Title = Tag === 'main' ? 'h1' : `h${level}`;
+// Rendered first: a slot passed but empty (a summary that is not there) makes no landmark, as in React.
+const aside =
+  layout === 'detail' && Astro.slots.has('aside') ? (await Astro.slots.render('aside')).trim() : '';
+---
+<Tag class="feitio-page" data-layout={layout} data-width={layout === 'detail' && width === 'full' ? 'full' : undefined}><header class="feitio-page-header">{trail.length > 0 && <Breadcrumbs items={trail} current={title} label={trailLabel} sprite={sprite} />}<Title>{title}</Title>{lede && <p class="lede">{lede}</p>}</header>{layout === 'detail' ? <div class="feitio-page-detail">{aside && <aside class="aside" aria-label={asideLabel} set:html={aside} />}<div class="main"><slot /></div></div> : <slot />}</Tag>

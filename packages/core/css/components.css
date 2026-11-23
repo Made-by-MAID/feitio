@@ -934,8 +934,17 @@
     animation: feitio-filter-spin 1.1s linear infinite;
   }
   /* The items the filter hides close their space and the ones it brings back open it: a slide, never a jump. */
-  [data-search] {
+  /* An item clips to slide: while closing (whoever hides it) and once its list has filtered, so one opening
+     does not spill over the next. Before any filter nothing clips; after one, room for a lifted card's
+     shadow under the pointer or the focus (Safari has no overflow-clip-margin: there it is cut). */
+  [data-filtering] [data-search],
+  [data-search][hidden] {
     overflow: clip;
+  }
+  [data-filtering] [data-search]:not([hidden]):is(:hover, :focus-within) {
+    overflow-clip-margin: var(--feitio-space-2);
+  }
+  [data-search] {
     transition-property: opacity, block-size, padding-block, display;
     transition-behavior: allow-discrete;
   }
@@ -964,6 +973,82 @@
   .feitio-segmented a[aria-current="true"] {
     color: var(--feitio-color-surface);
     background: var(--feitio-color-text);
+  }
+
+  /* Skeleton: the shape of what is coming, while it loads. Soft bones of ink on the paper, lit by a slow
+       wave; still when less motion is asked (the base CSS turns animations off). */
+  /* Lines and blocks take the width they are given, beside a circle too (they have none of their own);
+       a circle keeps its size. */
+  .feitio-skeleton {
+    display: grid;
+    align-content: start;
+    gap: var(--feitio-space-2);
+    inline-size: 100%;
+  }
+  /* Beside a circle, the lines take the rest of the row. */
+  .feitio-inline > .feitio-skeleton {
+    flex: 1 1 0;
+  }
+  /* In an Inline (beside a circle) nothing gives the lines a width, and Inline resets its children's minimum
+     to 0, so this one weighs more; anywhere else a Skeleton is as wide as its box. A plain length: min()
+     with 100% shrinks the lines and drops them below the circle. An Inline narrower than this wraps them
+     under it; --feitio-skeleton-min sets another minimum. */
+  .feitio-inline > .feitio-skeleton:not([data-shape="circle"]) {
+    min-inline-size: var(--feitio-skeleton-min, calc(var(--feitio-space-7) * 2));
+  }
+  .feitio-skeleton .bone {
+    display: block;
+    inline-size: 100%;
+    block-size: calc(var(--feitio-font-size-body) * 0.8);
+    border-radius: var(--feitio-radius);
+    background-color: color-mix(in oklch, var(--feitio-color-text) 9%, var(--feitio-color-surface));
+    background-image: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in oklch, var(--feitio-color-surface-top) 70%, transparent),
+      transparent
+    );
+    background-repeat: no-repeat;
+    background-size: 40% 100%;
+    animation: feitio-skeleton-wave calc(var(--feitio-duration-change) * 5)
+      var(--feitio-easing-change) infinite;
+  }
+  .feitio-skeleton[data-shape="text"][data-size="small"] .bone {
+    block-size: calc(var(--feitio-font-size-small) * 0.8);
+  }
+  .feitio-skeleton[data-shape="text"][data-size="large"] .bone {
+    block-size: calc(var(--feitio-font-size-h3) * 0.8);
+  }
+  /* A paragraph ends short. */
+  .feitio-skeleton[data-shape="text"] .bone + .bone:last-child {
+    inline-size: 62%;
+  }
+  .feitio-skeleton[data-shape="block"] .bone {
+    block-size: calc(var(--feitio-space-7) * 2);
+  }
+  .feitio-skeleton[data-shape="block"][data-size="small"] .bone {
+    block-size: var(--feitio-space-7);
+  }
+  .feitio-skeleton[data-shape="block"][data-size="large"] .bone {
+    block-size: calc(var(--feitio-space-7) * 3);
+  }
+  .feitio-skeleton[data-shape="circle"] {
+    flex: none;
+    inline-size: auto;
+    justify-content: start;
+  }
+  .feitio-skeleton[data-shape="circle"] .bone {
+    inline-size: var(--feitio-space-6);
+    block-size: var(--feitio-space-6);
+    border-radius: 50%;
+  }
+  .feitio-skeleton[data-shape="circle"][data-size="small"] .bone {
+    inline-size: var(--feitio-space-5);
+    block-size: var(--feitio-space-5);
+  }
+  .feitio-skeleton[data-shape="circle"][data-size="large"] .bone {
+    inline-size: var(--feitio-space-7);
+    block-size: var(--feitio-space-7);
   }
 
   /* ErrorSummary, EmptyState and StatusOverlay (the feedback in the container itself: loading, done, error). */
@@ -1578,6 +1663,11 @@
     .feitio-app {
       grid-template-columns: minmax(12rem, 15rem) minmax(0, 1fr);
       grid-template-areas: "header header" "nav main";
+      grid-template-rows: auto 1fr;
+      /* At least the window, header then the rest: a short page never scrolls and the navigation's line
+         reaches the bottom (#34), wherever the shell sits (a React root, a layout's wrapper). Under a
+         banner, or as an example inside a page, set --feitio-app-min (the window less the banner, auto). */
+      min-block-size: var(--feitio-app-min, 100dvh);
     }
     .feitio-app-header {
       position: static;
@@ -1588,26 +1678,32 @@
       display: none;
     }
     /* The navigation column stays put: sticky at the top of the viewport (it starts below the header,
-       which scrolls away), as tall as the viewport, with its own scroll when it is longer. */
+       which scrolls away). It fills the row below the header, at most the window's height, with its own
+       scroll when its links are longer, and never sizes that row itself (block-size 0, at least the row):
+       a short page never scrolls, however many links (#34). On a long page, before the header has
+       scrolled away, the column's foot is still the header's height below the window. */
     .feitio-app-nav[popover] {
       grid-area: nav;
       display: grid;
       grid-template-rows: minmax(0, 1fr) auto;
       position: sticky;
       inset: 0 auto auto;
-      align-self: start;
+      align-self: stretch;
       inline-size: auto;
-      block-size: 100dvh;
+      block-size: 0;
+      /* A min beats a max: capped here, or a long page's row would make the column as long. */
+      min-block-size: min(100%, 100dvh);
+      max-block-size: 100dvh;
       overflow: hidden;
       translate: none;
       border-inline-start: 0;
       border-inline-end: var(--feitio-border-width) solid var(--feitio-color-line);
       transition: none;
     }
+    /* No overscroll containment here: with links that fit, the wheel over the column scrolls the page (#35). */
     .feitio-app-nav .drawer-body {
       padding: var(--feitio-space-4) var(--feitio-space-3);
       overflow-y: auto;
-      overscroll-behavior: contain;
     }
     .feitio-app-nav .drawer-footer {
       padding-inline: var(--feitio-space-3);
@@ -1621,6 +1717,87 @@
       max-inline-size: 72rem;
       margin-inline: auto;
     }
+  }
+
+  /* Page: a page's frame inside an AppShell, its header and its content in a layout. The main column's
+       measure (72rem on a wide screen) is the AppShell's default; each layout sets its own. */
+  .feitio-page {
+    container-type: inline-size;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--feitio-space-5);
+    align-content: start;
+    inline-size: 100%;
+    min-inline-size: 0;
+  }
+  .feitio-page-header {
+    display: grid;
+    gap: var(--feitio-space-2);
+  }
+  .feitio-page-header :is(h1, h2, h3, h4) {
+    margin: 0;
+  }
+  .feitio-page-header .lede {
+    margin: 0;
+    max-inline-size: var(--feitio-measure-reading);
+    color: var(--feitio-color-text-soft);
+    font: var(--feitio-font-size-small) var(--feitio-font-ui);
+  }
+  /* A page's switch (a filter) is as wide as its options. */
+  .feitio-page > .feitio-segmented {
+    justify-self: start;
+  }
+  .feitio-page-detail {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--feitio-space-5);
+    align-items: start;
+  }
+  .feitio-page-detail > .main,
+  .feitio-page-detail > .aside {
+    min-inline-size: 0;
+  }
+  /* The summary comes first in the markup: read and tabbed where it is seen on a phone (under the title),
+     and first on a wide screen too, where it stands beside the content: a summary before the details. */
+  .feitio-page-detail > .aside {
+    overflow-wrap: anywhere;
+  }
+  @container (min-width: 56rem) {
+    .feitio-page-detail:has(> .aside) {
+      grid-template-columns: minmax(0, 1fr) 18rem;
+      gap: var(--feitio-space-6);
+    }
+    .feitio-page-detail > .main {
+      grid-area: 1 / 1;
+    }
+    /* Sticky beside the content, with its own scroll when it is taller than the window. */
+    .feitio-page-detail > .aside {
+      grid-area: 1 / 2;
+      position: sticky;
+      inset-block-start: var(--feitio-space-5);
+      max-block-size: calc(100dvh - var(--feitio-space-5) * 2);
+      overflow-y: auto;
+    }
+  }
+  /* Inside an AppShell's main column: dashboard, sections and a full detail as wide as a big screen allows,
+       in the middle; a detail at a reading width plus its summary; a board the whole width. */
+  .feitio-app-main
+    > .feitio-page:is([data-layout="dashboard"], [data-layout="sections"], [data-width="full"]) {
+    max-inline-size: 110rem;
+    margin-inline: auto;
+  }
+  .feitio-app-main > .feitio-page[data-layout="detail"]:not([data-width="full"]) {
+    max-inline-size: var(--feitio-measure-reading);
+    margin-inline: auto;
+  }
+  .feitio-app-main
+    > .feitio-page[data-layout="detail"]:not([data-width="full"]):has(
+      .feitio-page-detail > .aside
+    ) {
+    max-inline-size: calc(var(--feitio-measure-reading) + 18rem + var(--feitio-space-6));
+  }
+  .feitio-app-main > .feitio-page[data-layout="board"] {
+    max-inline-size: none;
   }
 
   /* ScrollFade: a borda de baixo de uma caixa que rola some no papel enquanto houver conteúdo.
@@ -1867,8 +2044,9 @@
     inset-block-start: var(--feitio-space-4);
     align-self: start;
     max-block-size: calc(100dvh - var(--feitio-space-4) * 2);
+    /* Scrolls on its own only when taller than the window; the wheel over it moves the page otherwise, and
+       at its ends (#35): containment kept a short list from ever handing the scroll on. */
     overflow-y: auto;
-    overscroll-behavior: contain;
     padding: var(--feitio-space-2);
     margin: calc(var(--feitio-space-2) * -1);
   }
@@ -2776,6 +2954,16 @@
     padding-block: 0;
     margin-block: 0;
     border-width: 0;
+  }
+}
+
+@keyframes feitio-skeleton-wave {
+  /* With a 40% wide light, -70% and 170% put it wholly outside the bone at both ends: no jump on the loop. */
+  from {
+    background-position: -70% 0;
+  }
+  to {
+    background-position: 170% 0;
   }
 }
 

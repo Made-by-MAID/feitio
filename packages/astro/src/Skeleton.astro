@@ -1,0 +1,24 @@
+---
+/**
+ * Skeleton: the shape of what is coming, while it loads. Lines of text (the last one shorter), a block
+ * (a picture, a card) or a circle (an avatar), softly lit. The words for a screen reader say it loads;
+ * the shapes go along. With less motion asked, it stays still.
+ */
+interface Props {
+  shape?: 'text' | 'block' | 'circle';
+  /** Lines of a text skeleton, 1 to 20 (a number or its text). */
+  lines?: number | string;
+  /** The block's height, or the circle's size. */
+  size?: 'small' | 'medium' | 'large';
+  /** What a screen reader hears. Empty for the other skeletons of one loading area: one status says it. */
+  label?: string;
+}
+const { shape = 'text', lines = 3, size, label = 'Carregando…' } = Astro.props;
+// Empty or missing is the default; past the ends, the ends; not a number, the default.
+const count =
+  lines == null || String(lines).trim() === ''
+    ? 3
+    : Math.min(Math.max(1, Math.floor(Number(lines))), 20);
+const bones = shape === 'text' ? (Number.isNaN(count) ? 3 : count) : 1;
+---
+<div class="feitio-skeleton" data-shape={shape} data-size={size} role={label ? 'status' : undefined} aria-hidden={label ? undefined : 'true'}>{label && <span class="feitio-visually-hidden">{label}</span>}{Array.from({ length: bones }, () => <span class="bone" aria-hidden="true"></span>)}</div>

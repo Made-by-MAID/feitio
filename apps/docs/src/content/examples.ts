@@ -1,7 +1,10 @@
 import Anchor from '@feitio/astro/Anchor.astro';
 import Block from '@feitio/astro/Block.astro';
 import Heatmap from '@feitio/astro/Heatmap.astro';
+import Inline from '@feitio/astro/Inline.astro';
 import Masonry from '@feitio/astro/Masonry.astro';
+import Page from '@feitio/astro/Page.astro';
+import Skeleton from '@feitio/astro/Skeleton.astro';
 import Stack from '@feitio/astro/Stack.astro';
 import type { Locale } from '../i18n/ui.ts';
 import { renderHtml } from '../lib/render.ts';
@@ -310,6 +313,83 @@ export async function liveExamples(
       ),
       'masonry-list': await renderHtml(Masonry, { gap: 3, as: 'ul' }, await areaBlocks(lang, 'li')),
     };
+  if (slug === 'page') {
+    const back = [{ text: w('Início', 'Home', 'Inicio', 'Accueil', 'Start')[lang], href: '#' }];
+    const part = (text: string) => renderHtml(Block, {}, `<p>${text}</p>`);
+    const parts = async () => renderHtml(Stack, { gap: 3 }, (await part('1')) + (await part('2')));
+    return {
+      'page-sections': await renderHtml(
+        Page,
+        {
+          title: w('Configurações', 'Settings', 'Ajustes', 'Réglages', 'Einstellungen')[lang],
+          lede: w(
+            'De onde vem cada valor',
+            'Where each value comes from',
+            'De dónde viene cada valor',
+            "D'où vient chaque valeur",
+            'Woher jeder Wert kommt',
+          )[lang],
+          trail: back,
+          trailLabel: w(
+            'Caminho do exemplo de seções',
+            'Path of the sections example',
+            'Ruta del ejemplo de secciones',
+            "Chemin de l'exemple de sections",
+            'Pfad des Abschnittsbeispiels',
+          )[lang],
+          sprite,
+          as: 'div',
+          level: 3,
+        },
+        await parts(),
+      ),
+      'page-detail': await renderHtml(
+        Page,
+        {
+          layout: 'detail',
+          as: 'div',
+          level: 3,
+          asideLabel: w('Resumo', 'Summary', 'Resumen', 'Résumé', 'Übersicht')[lang],
+          title: w('Saúde', 'Health', 'Salud', 'Santé', 'Zustand')[lang],
+          trail: back,
+          trailLabel: w(
+            'Caminho do exemplo de detalhe',
+            'Path of the detail example',
+            'Ruta del ejemplo de detalle',
+            "Chemin de l'exemple de détail",
+            'Pfad des Detailbeispiels',
+          )[lang],
+          sprite,
+        },
+        {
+          default: await parts(),
+          aside: await part(w('Resumo', 'Summary', 'Resumen', 'Résumé', 'Übersicht')[lang]),
+        },
+      ),
+    };
+  }
+  if (slug === 'skeleton') {
+    const label = w('Carregando…', 'Loading…', 'Cargando…', 'Chargement…', 'Lädt…')[lang];
+    return {
+      'skeleton-text': await renderHtml(Skeleton, { label }),
+      'skeleton-card': await renderHtml(
+        Block,
+        {},
+        await renderHtml(
+          Stack,
+          { gap: 3 },
+          (await renderHtml(Skeleton, { shape: 'block', label })) +
+            (await renderHtml(Skeleton, { lines: 2, label: '' })),
+        ),
+      ),
+      'skeleton-avatar': await renderHtml(
+        Inline,
+        { gap: 3 },
+        (await renderHtml(Skeleton, { shape: 'circle', label })) +
+          (await renderHtml(Skeleton, { lines: 2, label: '' })),
+      ),
+    };
+  }
   if (slug === 'heatmap')
     return {
       'heatmap-weeks': await renderHtml(Heatmap, { id: 'ex-hm-weeks', ...weeksSetting(lang) }),

@@ -33,12 +33,14 @@ import LinkCard from '@feitio/astro/LinkCard.astro';
 import Masonry from '@feitio/astro/Masonry.astro';
 import Nav from '@feitio/astro/Nav.astro';
 import Notice from '@feitio/astro/Notice.astro';
+import Page from '@feitio/astro/Page.astro';
 import Pagination from '@feitio/astro/Pagination.astro';
 import Radios from '@feitio/astro/Radios.astro';
 import ScrollFade from '@feitio/astro/ScrollFade.astro';
 import Search from '@feitio/astro/Search.astro';
 import SegmentedControl from '@feitio/astro/SegmentedControl.astro';
 import Select from '@feitio/astro/Select.astro';
+import Skeleton from '@feitio/astro/Skeleton.astro';
 import SkipLink from '@feitio/astro/SkipLink.astro';
 import Stack from '@feitio/astro/Stack.astro';
 import StatusOverlay from '@feitio/astro/StatusOverlay.astro';
@@ -265,6 +267,134 @@ export async function playgroundFor(
           ? `<div class="feitio-inline" data-gap="3"><span>${a}</span>${hr}<span>${b}</span></div>`
           : `<div class="feitio-stack demo-pg-1" data-gap="3"><span>${a}</span>${hr}<span>${b}</span></div>`;
       }),
+    };
+  }
+  if (slug === 'page') {
+    const keys = [
+      ['dashboard', 'sections', 'detail', 'board'],
+      ['reading', 'full'],
+      ['trail', ''],
+    ];
+    const block = (text: string) => renderHtml(Block, {}, `<p>${text}</p>`);
+    return {
+      placeholder: PH,
+      text: words('Configurações', 'Settings', 'Ajustes', 'Réglages', 'Einstellungen'),
+      controls: [
+        {
+          name: 'layout',
+          label: words('Layout', 'Layout', 'Diseño', 'Mise en page', 'Layout'),
+          options: [
+            { value: 'dashboard', label: 'dashboard' },
+            { value: 'sections', label: 'sections' },
+            { value: 'detail', label: 'detail' },
+            { value: 'board', label: 'board' },
+          ],
+        },
+        {
+          name: 'width',
+          label: words(
+            'Largura (detail)',
+            'Width (detail)',
+            'Ancho (detail)',
+            'Largeur (detail)',
+            'Breite (detail)',
+          ),
+          options: [
+            { value: 'reading', label: words('Leitura', 'Reading', 'Lectura', 'Lecture', 'Lesen') },
+            { value: 'full', label: words('Toda', 'Full', 'Todo', 'Toute', 'Ganz') },
+          ],
+        },
+        {
+          name: 'trail',
+          label: words(
+            'Caminho de volta',
+            'Way back',
+            'Camino de vuelta',
+            'Chemin du retour',
+            'Weg zurück',
+          ),
+          options: [
+            { value: 'trail', label: words('Com', 'With', 'Con', 'Avec', 'Mit') },
+            { value: '', label: words('Sem', 'Without', 'Sin', 'Sans', 'Ohne') },
+          ],
+        },
+      ],
+      combos: await combos(keys, async ([layout, width, trail]) => {
+        const content = await renderHtml(
+          Stack,
+          { gap: 3 },
+          (await block('1')) + (await block('2')),
+        );
+        return renderHtml(
+          Page,
+          {
+            as: 'div',
+            level: 3,
+            layout,
+            width,
+            title: PH,
+            lede: words(
+              'De onde vem cada valor',
+              'Where each value comes from',
+              'De dónde viene cada valor',
+              "D'où vient chaque valeur",
+              'Woher jeder Wert kommt',
+            ),
+            trail: trail
+              ? [{ text: words('Início', 'Home', 'Inicio', 'Accueil', 'Start'), href: '#' }]
+              : [],
+            asideLabel: words('Resumo', 'Summary', 'Resumen', 'Résumé', 'Übersicht'),
+            trailLabel: words(
+              'Caminho do playground',
+              'Path of the playground',
+              'Ruta del playground',
+              'Chemin du playground',
+              'Pfad des Playgrounds',
+            ),
+            sprite,
+          },
+          layout === 'detail'
+            ? {
+                default: content,
+                aside: await block(words('Resumo', 'Summary', 'Resumen', 'Résumé', 'Übersicht')),
+              }
+            : content,
+        );
+      }),
+    };
+  }
+  if (slug === 'skeleton') {
+    const keys = [
+      ['text', 'block', 'circle'],
+      ['', 'small', 'large'],
+    ];
+    const label = words('Carregando…', 'Loading…', 'Cargando…', 'Chargement…', 'Lädt…');
+    return {
+      placeholder: PH,
+      text: label,
+      controls: [
+        {
+          name: 'shape',
+          label: words('Forma', 'Shape', 'Forma', 'Forme', 'Form'),
+          options: [
+            { value: 'text', label: words('Texto', 'Text', 'Texto', 'Texte', 'Text') },
+            { value: 'block', label: words('Bloco', 'Block', 'Bloque', 'Bloc', 'Block') },
+            { value: 'circle', label: words('Círculo', 'Circle', 'Círculo', 'Cercle', 'Kreis') },
+          ],
+        },
+        {
+          name: 'size',
+          label: L.size[lang],
+          options: [
+            { value: '', label: words('Normal', 'Regular', 'Normal', 'Normal', 'Normal') },
+            { value: 'small', label: words('Pequeno', 'Small', 'Pequeño', 'Petit', 'Klein') },
+            { value: 'large', label: words('Grande', 'Large', 'Grande', 'Grand', 'Groß') },
+          ],
+        },
+      ],
+      combos: await combos(keys, ([shape, z]) =>
+        renderHtml(Skeleton, { shape, size: z || undefined, label: PH }),
+      ),
     };
   }
   if (slug === 'tag') {

@@ -518,6 +518,9 @@
     inset: auto;
     inline-size: auto;
     block-size: auto;
+    min-block-size: 0;
+    max-block-size: none;
+    align-self: auto;
     overflow: visible;
     translate: none;
     border-inline-start: 0;
@@ -722,6 +725,8 @@
 }
 .live .feitio-app-frame {
   inline-size: 100%;
+  /* An example inside a page is as tall as its content, not the window. */
+  --feitio-app-min: auto;
 }
 .live .toc-mobile {
   display: block !important;

@@ -55,6 +55,11 @@
       "default": "./dist/status.js"
     },
     "./status/source": "./src/status/index.ts",
+    "./arrival": {
+      "types": "./dist/types/arrival/index.d.ts",
+      "default": "./dist/arrival.js"
+    },
+    "./arrival/source": "./src/arrival/index.ts",
     "./scroll": {
       "types": "./dist/types/scroll/index.d.ts",
       "default": "./dist/scroll.js"
@@ -77,8 +82,8 @@
     "./anchor/source": "./src/anchor/index.ts"
   },
   "scripts": {
-    "build": "rm -rf dist && bun build src/index.ts src/notice/index.ts src/menu/index.ts src/forms/index.ts src/status/index.ts src/scroll/index.ts src/dialog/index.ts src/kanban/index.ts src/anchor/index.ts --outdir dist --format esm --entry-naming [dir]/[name].[ext] --root src && bun run rename && tsc -p tsconfig.build.json && bun scripts/fix-declarations.ts",
-    "rename": "mv dist/index.js dist/feitio.js && for m in notice menu forms status scroll dialog kanban anchor; do mv dist/$m/index.js dist/$m.js && rmdir dist/$m; done"
+    "build": "rm -rf dist && bun build src/index.ts src/notice/index.ts src/menu/index.ts src/forms/index.ts src/status/index.ts src/scroll/index.ts src/dialog/index.ts src/kanban/index.ts src/anchor/index.ts src/arrival/index.ts --outdir dist --format esm --entry-naming [dir]/[name].[ext] --root src && bun run rename && tsc -p tsconfig.build.json && bun scripts/fix-declarations.ts",
+    "rename": "mv dist/index.js dist/feitio.js && for m in notice menu forms status scroll dialog kanban anchor arrival; do mv dist/$m/index.js dist/$m.js && rmdir dist/$m; done"
   },
   "dependencies": {
     "@feitio/core": "workspace:*"
