@@ -1030,13 +1030,12 @@ for (const lang of ['pt', 'en', 'es', 'fr', 'de']) {
   await page.goto(`${origin}/fixture?ids=app-shell&mode=light`);
   await page.evaluate(`(() => {
     const app = document.querySelector('.feitio-app');
+    // The app's own shell, right in the body: only that one fills the window.
     const frame = document.createElement('div');
     frame.className = 'feitio-app-frame';
-    app.before(frame);
     frame.append(app);
-    // The fixture's own spacing is not the shell's: the shell alone fills the window.
+    document.body.replaceChildren(frame);
     document.body.style.padding = '0';
-    document.querySelector('.fixture').style.margin = '0';
   })()`);
   await page.waitForTimeout(200);
   const short = (await page.evaluate(`(() => {

@@ -196,13 +196,16 @@
    * A page arriving: its fonts, theme and container queries resolve just after the first paint, and each of
    * those changes would transition, so the page seemed to arrange itself. A root marked data-feitio-arriving
    * moves nothing until settle() (@feitio/vanilla) takes the mark away, once the page has loaded and painted.
+   * Only with scripts on: without them nothing would take the mark away.
    */
-  [data-feitio-arriving],
-  [data-feitio-arriving] *,
-  [data-feitio-arriving] *::before,
-  [data-feitio-arriving] *::after {
-    /* biome-ignore lint/complexity/noImportantStyles: an arriving page must beat the transition every element gets. */
-    transition: none !important;
+  @media (scripting: enabled) {
+    [data-feitio-arriving],
+    [data-feitio-arriving] *,
+    [data-feitio-arriving] *::before,
+    [data-feitio-arriving] *::after {
+      /* biome-ignore lint/complexity/noImportantStyles: an arriving page must beat the transition every element gets. */
+      transition: none !important;
+    }
   }
 
   /*

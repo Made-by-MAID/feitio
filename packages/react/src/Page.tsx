@@ -16,7 +16,10 @@ export interface PageProps {
   sprite?: string;
   /** main by default; div where the page already has its main (an example in the docs), its title then an h2. */
   as?: 'main' | 'div';
-  /** The detail's summary, beside the content; only the detail has one, other layouts drop it. */
+  /**
+   * The detail's summary, beside the content; only the detail has one, other layouts drop it. No summary is
+   * null or undefined: a component that renders nothing still makes the column.
+   */
   aside?: ReactNode;
   children?: ReactNode;
 }
@@ -51,11 +54,13 @@ export function Page({
       </header>
       {layout === 'detail' ? (
         <div className="feitio-page-detail">
-          {aside != null && aside !== false && aside !== '' && (
-            <aside className="aside" aria-label={asideLabel}>
-              {aside}
-            </aside>
-          )}
+          {aside != null &&
+            aside !== false &&
+            !(typeof aside === 'string' && aside.trim() === '') && (
+              <aside className="aside" aria-label={asideLabel}>
+                {aside}
+              </aside>
+            )}
           <div className="main">{children}</div>
         </div>
       ) : (

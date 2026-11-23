@@ -937,7 +937,8 @@
   /* The clip comes only once the list has filtered: until then nothing cuts a lifted card's shadow, in
      every browser. After it, room for that shadow only under the pointer or the focus: an item sliding
      open or shut clips tight. */
-  [data-filtering] [data-search] {
+  [data-filtering] [data-search],
+  [data-search][hidden] {
     overflow: clip;
   }
   [data-filtering] [data-search]:not([hidden]):is(:hover, :focus-within) {
@@ -980,6 +981,7 @@
        a circle keeps its size. */
   .feitio-skeleton {
     display: grid;
+    align-content: start;
     gap: var(--feitio-space-2);
     flex: 1 1 0;
     inline-size: 100%;
@@ -1655,11 +1657,14 @@
     color: var(--feitio-color-text-soft);
   }
   @container (min-width: 64rem) {
-    /* At least the window, header then the rest: a short page never scrolls (#34). */
     .feitio-app {
       grid-template-columns: minmax(12rem, 15rem) minmax(0, 1fr);
       grid-template-areas: "header header" "nav main";
       grid-template-rows: auto 1fr;
+    }
+    /* The app's own shell, right in the body, is at least the window, header then the rest: a short page
+       never scrolls (#34). A shell inside something else (an example, under a banner) keeps its height. */
+    body > .feitio-app-frame > .feitio-app {
       min-block-size: 100dvh;
     }
     .feitio-app-header {

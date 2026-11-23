@@ -17,13 +17,10 @@ export function Skeleton({
   size,
   label = 'Carregando…',
 }: SkeletonProps): ReactElement {
-  const count = Number(lines);
-  const bones =
-    shape === 'text'
-      ? Number.isFinite(count)
-        ? Math.min(Math.max(1, Math.floor(count)), 20)
-        : 3
-      : 1;
+  // Empty or missing is the default; past the ends, the ends; not a number, the default.
+  const count =
+    lines === '' || lines == null ? 3 : Math.min(Math.max(1, Math.floor(Number(lines))), 20);
+  const bones = shape === 'text' ? (Number.isNaN(count) ? 3 : count) : 1;
   return (
     <div
       className="feitio-skeleton"
