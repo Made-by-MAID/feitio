@@ -9,13 +9,14 @@ export interface PageProps {
   lede?: string;
   /** The places above this page, the page itself being the current one. */
   trail?: { text: string; href: string }[];
+  /** The name of the way back, for a screen reader (Breadcrumbs' own by default). */
   trailLabel?: string;
   /** The name of the detail's summary, for a screen reader. */
   asideLabel?: string;
   sprite?: string;
   /** main by default; div where the page already has its main (an example in the docs), its title then an h2. */
   as?: 'main' | 'div';
-  /** The detail's summary, beside the content. */
+  /** The detail's summary, beside the content; only the detail has one, other layouts drop it. */
   aside?: ReactNode;
   children?: ReactNode;
 }
@@ -27,8 +28,8 @@ export function Page({
   title,
   lede,
   trail = [],
-  trailLabel = 'Path',
-  asideLabel = 'Summary',
+  trailLabel,
+  asideLabel = 'Resumo',
   sprite,
   as: Tag = 'main',
   aside,

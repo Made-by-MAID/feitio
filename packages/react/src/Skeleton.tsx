@@ -2,8 +2,8 @@ import type { ReactElement } from 'react';
 
 export interface SkeletonProps {
   shape?: 'text' | 'block' | 'circle';
-  /** Lines of a text skeleton. */
-  lines?: number;
+  /** Lines of a text skeleton, 1 to 20 (a number or its text). */
+  lines?: number | string;
   /** The block's height, or the circle's size. */
   size?: 'small' | 'medium' | 'large';
   /** What a screen reader hears. Empty for the other skeletons of one loading area: one status says it. */
@@ -15,12 +15,13 @@ export function Skeleton({
   shape = 'text',
   lines = 3,
   size,
-  label = 'Loading…',
+  label = 'Carregando…',
 }: SkeletonProps): ReactElement {
+  const count = Number(lines);
   const bones =
     shape === 'text'
-      ? Number.isFinite(lines)
-        ? Math.min(Math.max(1, Math.floor(lines)), 20)
+      ? Number.isFinite(count)
+        ? Math.min(Math.max(1, Math.floor(count)), 20)
         : 3
       : 1;
   return (

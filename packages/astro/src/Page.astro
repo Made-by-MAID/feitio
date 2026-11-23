@@ -16,8 +16,9 @@ interface Props {
   lede?: string;
   /** The places above this page, the page itself being the current one. */
   trail?: { text: string; href: string }[];
+  /** The name of the way back, for a screen reader (Breadcrumbs' own by default). */
   trailLabel?: string;
-  /** The name of the detail's summary, for a screen reader. */
+  /** The name of the detail's summary, for a screen reader. The aside slot is the detail's only: other layouts drop it. */
   asideLabel?: string;
   sprite?: string;
   /** main by default; div where the page already has its main (an example in the docs), its title then an h2. */
@@ -29,11 +30,14 @@ const {
   title,
   lede,
   trail = [],
-  trailLabel = 'Path',
-  asideLabel = 'Summary',
+  trailLabel,
+  asideLabel = 'Resumo',
   sprite,
   as: Tag = 'main',
 } = Astro.props;
 const Title = Tag === 'main' ? 'h1' : 'h2';
+// Rendered first: a slot passed but empty (a summary that is not there) makes no landmark, as in React.
+const aside =
+  layout === 'detail' && Astro.slots.has('aside') ? (await Astro.slots.render('aside')).trim() : '';
 ---
-<Tag class="feitio-page" data-layout={layout} data-width={layout === 'detail' && width === 'full' ? 'full' : undefined}><header class="feitio-page-header">{trail.length > 0 && <Breadcrumbs items={trail} current={title} label={trailLabel} sprite={sprite} />}<Title>{title}</Title>{lede && <p class="lede">{lede}</p>}</header>{layout === 'detail' ? <div class="feitio-page-detail">{Astro.slots.has('aside') && <aside class="aside" aria-label={asideLabel}><slot name="aside" /></aside>}<div class="main"><slot /></div></div> : <slot />}</Tag>
+<Tag class="feitio-page" data-layout={layout} data-width={layout === 'detail' && width === 'full' ? 'full' : undefined}><header class="feitio-page-header">{trail.length > 0 && <Breadcrumbs items={trail} current={title} label={trailLabel} sprite={sprite} />}<Title>{title}</Title>{lede && <p class="lede">{lede}</p>}</header>{layout === 'detail' ? <div class="feitio-page-detail">{aside && <aside class="aside" aria-label={asideLabel} set:html={aside} />}<div class="main"><slot /></div></div> : <slot />}</Tag>

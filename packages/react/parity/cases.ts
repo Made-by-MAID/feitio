@@ -272,6 +272,7 @@ export const cases: ParityCase[] = [
   { id: 'skeleton-block', component: 'Skeleton', props: { shape: 'block', size: 'large' } },
   { id: 'skeleton-circle', component: 'Skeleton', props: { shape: 'circle', size: 'small' } },
   { id: 'skeleton-silent', component: 'Skeleton', props: { lines: 2, label: '' } },
+  { id: 'skeleton-one-silent', component: 'Skeleton', props: { lines: '1', label: '' } },
   { id: 'divider-vertical', component: 'Divider', props: { tone: 'ink', orientation: 'vertical' } },
   {
     id: 'do-dont',

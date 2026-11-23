@@ -925,6 +925,12 @@ for (const lang of ['pt', 'en', 'es', 'fr', 'de']) {
   })()`)) as { beside: boolean; width: number };
   check(row.beside, 'skeleton beside: the lines fell below the circle');
   check(row.width >= 150, `skeleton beside: the lines are ${row.width}px wide beside the circle`);
+  // The last line of a silent two-line Skeleton (no label span) is the short one.
+  const short = (await page.evaluate(`(() => {
+    const bones = [...document.querySelector('.feitio-skeleton[data-shape="text"][aria-hidden="true"]').querySelectorAll('.bone')];
+    return bones.length === 2 && bones[1].getBoundingClientRect().width < bones[0].getBoundingClientRect().width * 0.8;
+  })()`)) as boolean;
+  check(short, 'skeleton beside: the last line of a silent two-line Skeleton is not the short one');
   await page.close();
 }
 
@@ -943,12 +949,14 @@ for (const lang of ['pt', 'en', 'es', 'fr', 'de']) {
   );
   await page.locator('.feitio-filter input').first().fill('button');
   await page.waitForTimeout(400);
+  await page.locator('[data-search]:not([hidden]) .comp-card').first().hover();
+  await page.waitForTimeout(200);
   const room = (await page.evaluate(
-    `parseFloat(getComputedStyle(document.querySelector('[data-search]:not([hidden])')).overflowClipMargin) || 0`,
+    `parseFloat(getComputedStyle(document.querySelector('[data-search]:not([hidden]):hover')).overflowClipMargin) || 0`,
   )) as number;
   check(
     room >= 8,
-    `card shadow: after a filter a shown item clips with ${room}px of room, too little for a lifted card's shadow`,
+    `card shadow: after a filter a hovered item clips with ${room}px of room, too little for a lifted card's shadow`,
   );
   await page.close();
 }

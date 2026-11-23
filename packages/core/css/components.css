@@ -935,11 +935,12 @@
   }
   /* The items the filter hides close their space and the ones it brings back open it: a slide, never a jump. */
   /* The clip comes only once the list has filtered: until then nothing cuts a lifted card's shadow, in
-     every browser. After it, an item showing keeps room for that shadow; one closing clips tight. */
+     every browser. After it, room for that shadow only under the pointer or the focus: an item sliding
+     open or shut clips tight. */
   [data-filtering] [data-search] {
     overflow: clip;
   }
-  [data-filtering] [data-search]:not([hidden]) {
+  [data-filtering] [data-search]:not([hidden]):is(:hover, :focus-within) {
     overflow-clip-margin: var(--feitio-space-2);
   }
   [data-search] {
@@ -986,9 +987,9 @@
   /* A line needs some width of its own where nothing gives it any (beside a circle, in a box that shrinks);
      Stack's and Inline's children reset theirs to 0, so this one weighs more. A plain length: min() with
      100% shrinks the lines beside a circle in an Inline and drops them below it. In a box narrower than
-     this, give the Skeleton a width of its own. */
+     this, set --feitio-skeleton-min on it (or on the Skeleton), say to 0. */
   .feitio-skeleton:not([data-shape="circle"]) {
-    min-inline-size: calc(var(--feitio-space-7) * 2);
+    min-inline-size: var(--feitio-skeleton-min, calc(var(--feitio-space-7) * 2));
   }
   .feitio-skeleton .bone {
     display: block;
@@ -1014,7 +1015,7 @@
     block-size: calc(var(--feitio-font-size-h3) * 0.8);
   }
   /* A paragraph ends short. */
-  .feitio-skeleton[data-shape="text"] .bone:last-child:not(:nth-child(2)) {
+  .feitio-skeleton[data-shape="text"] .bone + .bone:last-child {
     inline-size: 62%;
   }
   .feitio-skeleton[data-shape="block"] .bone {
