@@ -722,6 +722,8 @@
 }
 .live .feitio-app-frame {
   inline-size: 100%;
+  /* An example inside a page is as tall as its content, not the window. */
+  --feitio-app-min: auto;
 }
 .live .toc-mobile {
   display: block !important;

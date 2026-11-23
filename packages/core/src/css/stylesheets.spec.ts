@@ -34,6 +34,8 @@ test('the components read no Feitio variable that the tokens or the base do not 
     '--feitio-scroll-fade-to',
     // Set by the page for a Skeleton in a box narrower than its minimum.
     '--feitio-skeleton-min',
+    // Set by the page for an AppShell under a banner or inside a page.
+    '--feitio-app-min',
   ]);
   const unknown = [...usedVariables(components)].filter((name) => !declared.has(name));
   expect(unknown).toEqual([]);

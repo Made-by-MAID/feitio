@@ -949,14 +949,12 @@ for (const lang of ['pt', 'en', 'es', 'fr', 'de']) {
   );
   await page.locator('.feitio-filter input').first().fill('button');
   await page.waitForTimeout(400);
-  await page.locator('[data-search]:not([hidden]) .comp-card').first().hover();
-  await page.waitForTimeout(200);
-  const room = (await page.evaluate(
-    `parseFloat(getComputedStyle(document.querySelector('[data-search]:not([hidden]):hover')).overflowClipMargin) || 0`,
-  )) as number;
+  const after = (await page.evaluate(
+    `getComputedStyle(document.querySelector('[data-search]:not([hidden])')).overflow`,
+  )) as string;
   check(
-    room >= 8,
-    `card shadow: after a filter a hovered item clips with ${room}px of room, too little for a lifted card's shadow`,
+    after === 'visible',
+    `card shadow: after a filter a shown card's item clips (overflow ${after})`,
   );
   await page.close();
 }

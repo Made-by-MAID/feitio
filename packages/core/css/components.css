@@ -934,15 +934,10 @@
     animation: feitio-filter-spin 1.1s linear infinite;
   }
   /* The items the filter hides close their space and the ones it brings back open it: a slide, never a jump. */
-  /* The clip comes only once the list has filtered: until then nothing cuts a lifted card's shadow, in
-     every browser. After it, room for that shadow only under the pointer or the focus: an item sliding
-     open or shut clips tight. */
-  [data-filtering] [data-search],
+  /* Only an item closing clips: one showing never cuts a lifted card's shadow, in any browser. One opening
+     grows from nothing with its opacity, which hides what passes its edge on the way. */
   [data-search][hidden] {
     overflow: clip;
-  }
-  [data-filtering] [data-search]:not([hidden]):is(:hover, :focus-within) {
-    overflow-clip-margin: var(--feitio-space-2);
   }
   [data-search] {
     transition-property: opacity, block-size, padding-block, display;
@@ -986,11 +981,11 @@
     flex: 1 1 0;
     inline-size: 100%;
   }
-  /* A line needs some width of its own where nothing gives it any (beside a circle, in a box that shrinks);
-     Stack's and Inline's children reset theirs to 0, so this one weighs more. A plain length: min() with
-     100% shrinks the lines beside a circle in an Inline and drops them below it. In a box narrower than
-     this, set --feitio-skeleton-min on it (or on the Skeleton), say to 0. */
-  .feitio-skeleton:not([data-shape="circle"]) {
+  /* In an Inline (beside a circle) nothing gives the lines a width, and Inline resets its children's minimum
+     to 0, so this one weighs more; anywhere else a Skeleton is as wide as its box. A plain length: min()
+     with 100% shrinks the lines and drops them below the circle. An Inline narrower than this wraps them
+     under it; --feitio-skeleton-min sets another minimum. */
+  .feitio-inline > .feitio-skeleton:not([data-shape="circle"]) {
     min-inline-size: var(--feitio-skeleton-min, calc(var(--feitio-space-7) * 2));
   }
   .feitio-skeleton .bone {
@@ -1661,11 +1656,10 @@
       grid-template-columns: minmax(12rem, 15rem) minmax(0, 1fr);
       grid-template-areas: "header header" "nav main";
       grid-template-rows: auto 1fr;
-    }
-    /* The app's own shell, right in the body, is at least the window, header then the rest: a short page
-       never scrolls (#34). A shell inside something else (an example, under a banner) keeps its height. */
-    body > .feitio-app-frame > .feitio-app {
-      min-block-size: 100dvh;
+      /* At least the window, header then the rest: a short page never scrolls and the navigation's line
+         reaches the bottom (#34), wherever the shell sits (a React root, a layout's wrapper). Under a
+         banner, or as an example inside a page, set --feitio-app-min (the window less the banner, auto). */
+      min-block-size: var(--feitio-app-min, 100dvh);
     }
     .feitio-app-header {
       position: static;
