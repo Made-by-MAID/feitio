@@ -934,10 +934,15 @@
     animation: feitio-filter-spin 1.1s linear infinite;
   }
   /* The items the filter hides close their space and the ones it brings back open it: a slide, never a jump. */
-  /* Only an item closing clips: one showing never cuts a lifted card's shadow, in any browser. One opening
-     grows from nothing with its opacity, which hides what passes its edge on the way. */
+  /* An item clips to slide: while closing (whoever hides it) and once its list has filtered, so one opening
+     does not spill over the next. Before any filter nothing clips; after one, room for a lifted card's
+     shadow under the pointer or the focus (Safari has no overflow-clip-margin: there it is cut). */
+  [data-filtering] [data-search],
   [data-search][hidden] {
     overflow: clip;
+  }
+  [data-filtering] [data-search]:not([hidden]):is(:hover, :focus-within) {
+    overflow-clip-margin: var(--feitio-space-2);
   }
   [data-search] {
     transition-property: opacity, block-size, padding-block, display;

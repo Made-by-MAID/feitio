@@ -329,6 +329,7 @@ export async function playgroundFor(
           Page,
           {
             as: 'div',
+            level: 3,
             layout,
             width,
             title: PH,

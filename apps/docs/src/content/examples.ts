@@ -339,6 +339,7 @@ export async function liveExamples(
           )[lang],
           sprite,
           as: 'div',
+          level: 3,
         },
         await parts(),
       ),
@@ -347,6 +348,7 @@ export async function liveExamples(
         {
           layout: 'detail',
           as: 'div',
+          level: 3,
           asideLabel: w('Resumo', 'Summary', 'Resumen', 'Résumé', 'Übersicht')[lang],
           title: w('Saúde', 'Health', 'Salud', 'Santé', 'Zustand')[lang],
           trail: back,
