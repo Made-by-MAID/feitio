@@ -347,6 +347,7 @@ export async function liveExamples(
         {
           layout: 'detail',
           as: 'div',
+          asideLabel: w('Resumo', 'Summary', 'Resumen', 'Résumé', 'Übersicht')[lang],
           title: w('Saúde', 'Health', 'Salud', 'Santé', 'Zustand')[lang],
           trail: back,
           trailLabel: w(

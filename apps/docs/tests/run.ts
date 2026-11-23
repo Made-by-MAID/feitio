@@ -933,7 +933,7 @@ for (const lang of ['pt', 'en', 'es', 'fr', 'de']) {
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
   watch(page, 'search');
   await page.goto(`${origin}/en/components/tag/`);
-  await page.mouse.click(700, 500);
+  await page.evaluate('document.activeElement?.blur()');
   await page.keyboard.press('/');
   await page.waitForTimeout(300);
   check(
@@ -1023,6 +1023,26 @@ for (const lang of ['pt', 'en', 'es', 'fr', 'de']) {
   check(
     Math.abs(short.navBottom - short.window) < 2,
     `app shell: the navigation column ends at ${short.navBottom}px, not at the window's bottom (${short.window}px)`,
+  );
+  // More links than the window holds: the column scrolls on its own and the page still does not.
+  await page.evaluate(`(() => {
+    const list = document.querySelector('.feitio-app-nav .drawer-body ul, .feitio-app-nav .drawer-body ol');
+    const item = list.lastElementChild;
+    for (let i = 0; i < 40; i++) list.append(item.cloneNode(true));
+  })()`);
+  await page.waitForTimeout(200);
+  const long = (await page.evaluate(`({
+    height: document.documentElement.scrollHeight,
+    window: document.documentElement.clientHeight,
+    navBottom: document.querySelector('.feitio-app-nav').getBoundingClientRect().bottom,
+  })`)) as { height: number; window: number; navBottom: number };
+  check(
+    long.height <= long.window,
+    `app shell: with a long navigation a short page is ${long.height}px tall in a ${long.window}px window, so it scrolls`,
+  );
+  check(
+    Math.abs(long.navBottom - long.window) < 2,
+    `app shell: with a long navigation the column ends at ${long.navBottom}px, not at the window's bottom (${long.window}px)`,
   );
   await page.close();
 }

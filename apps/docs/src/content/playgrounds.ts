@@ -342,6 +342,7 @@ export async function playgroundFor(
             trail: trail
               ? [{ text: words('Início', 'Home', 'Inicio', 'Accueil', 'Start'), href: '#' }]
               : [],
+            asideLabel: words('Resumo', 'Summary', 'Resumen', 'Résumé', 'Übersicht'),
             trailLabel: words(
               'Caminho do playground',
               'Path of the playground',
@@ -391,7 +392,7 @@ export async function playgroundFor(
         },
       ],
       combos: await combos(keys, ([shape, z]) =>
-        renderHtml(Skeleton, { shape, size: z || undefined, label }),
+        renderHtml(Skeleton, { shape, size: z || undefined, label: PH }),
       ),
     };
   }

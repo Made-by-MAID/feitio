@@ -121,12 +121,22 @@ async function render() {
   }
   if (ticket !== asked) return;
   const all = [...here, ...found].slice(0, 10);
-  list.innerHTML = all
-    .map(
-      (p, i) =>
-        `<li><a href="${p.url}"${i === 0 && q ? ' data-active' : ''}><strong>${p.title}</strong><small>${p.where}</small></a></li>`,
-    )
-    .join('');
+  // Titles are text: built as nodes, never parsed as HTML (a heading may hold a "<").
+  list.replaceChildren(
+    ...all.map((p, i) => {
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.href = p.url;
+      if (i === 0 && q) a.dataset.active = '';
+      const strong = document.createElement('strong');
+      strong.textContent = p.title;
+      const small = document.createElement('small');
+      small.textContent = p.where;
+      a.append(strong, small);
+      li.append(a);
+      return li;
+    }),
+  );
   empty.hidden = all.length > 0 || !q;
 }
 function openSearch() {

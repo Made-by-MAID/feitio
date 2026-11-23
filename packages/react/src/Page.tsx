@@ -51,9 +51,11 @@ export function Page({
       {layout === 'detail' ? (
         <div className="feitio-page-detail">
           <div className="main">{children}</div>
-          <aside className="aside" aria-label={asideLabel}>
-            {aside}
-          </aside>
+          {aside != null && (
+            <aside className="aside" aria-label={asideLabel}>
+              {aside}
+            </aside>
+          )}
         </div>
       ) : (
         children

@@ -10,10 +10,14 @@ function page(state: 'loading' | 'complete', marked = true) {
   Object.defineProperty(window, 'requestAnimationFrame', {
     value: (callback: FrameRequestCallback) => frames.push(callback),
   });
+  const timeouts: (() => void)[] = [];
+  Object.defineProperty(window, 'setTimeout', {
+    value: (callback: () => void) => timeouts.push(callback),
+  });
   function paint(): void {
     for (const frame of frames.splice(0)) frame(0);
   }
-  return { window, paint, root: window.document.documentElement };
+  return { window, paint, frames, timeouts, root: window.document.documentElement };
 }
 
 test('a loaded page keeps still for two frames, then lets its transitions run', () => {
@@ -36,6 +40,19 @@ test('a page still loading waits for its load first', () => {
   paint();
   paint();
   expect(root.hasAttribute('data-feitio-arriving')).toBe(false);
+});
+
+test('a page whose load is slow settles a second after the call anyway, and only once', () => {
+  const { window, paint, root, frames, timeouts } = page('loading');
+  settle(window as unknown as Window);
+  expect(timeouts.length).toBe(1);
+  timeouts[0]?.();
+  expect(frames.length).toBe(1);
+  paint();
+  paint();
+  expect(root.hasAttribute('data-feitio-arriving')).toBe(false);
+  window.dispatchEvent(new window.Event('load'));
+  expect(frames.length).toBe(0);
 });
 
 test('a page that never marked itself is left alone', () => {

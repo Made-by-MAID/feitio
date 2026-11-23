@@ -1001,6 +1001,12 @@
     animation: feitio-skeleton-wave calc(var(--feitio-duration-change) * 5)
       var(--feitio-easing-change) infinite;
   }
+  .feitio-skeleton[data-shape="text"][data-size="small"] .bone {
+    block-size: calc(var(--feitio-font-size-small) * 0.8);
+  }
+  .feitio-skeleton[data-shape="text"][data-size="large"] .bone {
+    block-size: calc(var(--feitio-font-size-h3) * 0.8);
+  }
   /* A paragraph ends short. */
   .feitio-skeleton[data-shape="text"] .bone:last-child:not(:nth-child(2)) {
     inline-size: 62%;
@@ -1659,8 +1665,9 @@
     }
     /* The navigation column stays put: sticky at the top of the viewport (it starts below the header,
        which scrolls away). It fills the row below the header, at most the window's height, with its own
-       scroll when its links are longer; its line reaches the bottom on a short page and a long one (#34).
-       100dvh tall in the row under the header made every page taller than the window by the header. */
+       scroll when its links are longer, and never sizes that row itself (block-size 0, at least the row):
+       a short page never scrolls, however many links (#34). On a long page, before the header has
+       scrolled away, the column's foot is still the header's height below the window. */
     .feitio-app-nav[popover] {
       grid-area: nav;
       display: grid;
@@ -1669,7 +1676,9 @@
       inset: 0 auto auto;
       align-self: stretch;
       inline-size: auto;
-      block-size: auto;
+      block-size: 0;
+      /* A min beats a max: capped here, or a long page's row would make the column as long. */
+      min-block-size: min(100%, 100dvh);
       max-block-size: 100dvh;
       overflow: hidden;
       translate: none;
@@ -1740,7 +1749,7 @@
     overflow-wrap: anywhere;
   }
   @container (min-width: 56rem) {
-    .feitio-page-detail {
+    .feitio-page-detail:has(> .aside) {
       grid-template-columns: minmax(0, 1fr) 18rem;
       gap: var(--feitio-space-6);
     }
@@ -2923,11 +2932,12 @@
 }
 
 @keyframes feitio-skeleton-wave {
+  /* With a 40% wide light, -70% and 170% put it wholly outside the bone at both ends: no jump on the loop. */
   from {
-    background-position: -40% 0;
+    background-position: -70% 0;
   }
   to {
-    background-position: 140% 0;
+    background-position: 170% 0;
   }
 }
 
