@@ -50,12 +50,12 @@ export function Page({
       </header>
       {layout === 'detail' ? (
         <div className="feitio-page-detail">
-          <div className="main">{children}</div>
-          {aside != null && (
+          {aside != null && aside !== false && aside !== '' && (
             <aside className="aside" aria-label={asideLabel}>
               {aside}
             </aside>
           )}
+          <div className="main">{children}</div>
         </div>
       ) : (
         children

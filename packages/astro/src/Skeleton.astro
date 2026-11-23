@@ -10,10 +10,15 @@ interface Props {
   lines?: number;
   /** The block's height, or the circle's size. */
   size?: 'small' | 'medium' | 'large';
-  /** What a screen reader hears. */
+  /** What a screen reader hears. Empty for the other skeletons of one loading area: one status says it. */
   label?: string;
 }
 const { shape = 'text', lines = 3, size, label = 'Loading…' } = Astro.props;
-const bones = shape === 'text' ? Math.max(1, Math.floor(lines)) : 1;
+const bones =
+  shape === 'text'
+    ? Number.isFinite(lines)
+      ? Math.min(Math.max(1, Math.floor(lines)), 20)
+      : 3
+    : 1;
 ---
-<div class="feitio-skeleton" data-shape={shape} data-size={size} role="status"><span class="feitio-visually-hidden">{label}</span>{Array.from({ length: bones }, () => <span class="bone" aria-hidden="true"></span>)}</div>
+<div class="feitio-skeleton" data-shape={shape} data-size={size} role={label ? 'status' : undefined} aria-hidden={label ? undefined : 'true'}>{label && <span class="feitio-visually-hidden">{label}</span>}{Array.from({ length: bones }, () => <span class="bone" aria-hidden="true"></span>)}</div>

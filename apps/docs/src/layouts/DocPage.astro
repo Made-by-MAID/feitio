@@ -209,16 +209,19 @@ const GH =
 <script is:inline src={`${base}site.js`}></script>
 <script is:inline src={`${base}demos.js`}></script>
 <script>
+  // Nothing transitions while the page arrives (fonts, theme, container queries); then motion is back. Its
+  // own script, first: a failure in the other behaviors must not leave the page without motion.
+  import { settle } from '@feitio/vanilla/arrival/source';
+  settle(window);
+</script>
+<script>
   // Every page wires the Notice behavior: the examples come as HTML, not through Notice.astro.
   import { anchors } from '@feitio/vanilla/anchor/source';
-  import { settle } from '@feitio/vanilla/arrival/source';
   import { dialogs } from '@feitio/vanilla/dialog/source';
   import { forms } from '@feitio/vanilla/forms/source';
   import { kanbans } from '@feitio/vanilla/kanban/source';
   import { notices } from '@feitio/vanilla/notice/source';
   import { scrolls } from '@feitio/vanilla/scroll/source';
-  // Nothing transitions while the page arrives (fonts, theme, container queries); then motion is back.
-  settle(window);
   const page = window as Window & { feitioNotice?: ReturnType<typeof notices> };
   page.feitioNotice ??= notices(window);
   forms(window);

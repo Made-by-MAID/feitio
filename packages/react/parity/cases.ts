@@ -252,6 +252,12 @@ export const cases: ParityCase[] = [
     slots: { default: 'Checks', aside: 'Index' },
   },
   {
+    id: 'page-detail-alone',
+    component: 'Page',
+    props: { layout: 'detail', title: 'A post' },
+    slots: { default: 'The post' },
+  },
+  {
     id: 'page-board',
     component: 'Page',
     props: { layout: 'board', title: 'Posts' },
@@ -265,6 +271,7 @@ export const cases: ParityCase[] = [
   },
   { id: 'skeleton-block', component: 'Skeleton', props: { shape: 'block', size: 'large' } },
   { id: 'skeleton-circle', component: 'Skeleton', props: { shape: 'circle', size: 'small' } },
+  { id: 'skeleton-silent', component: 'Skeleton', props: { lines: 2, label: '' } },
   { id: 'divider-vertical', component: 'Divider', props: { tone: 'ink', orientation: 'vertical' } },
   {
     id: 'do-dont',

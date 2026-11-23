@@ -911,18 +911,44 @@ for (const lang of ['pt', 'en', 'es', 'fr', 'de']) {
   await page.close();
 }
 
+// A Skeleton's lines beside a circle in an Inline stay beside it, with room, on a phone: a min() with 100% once
+// shrank them and dropped them below the circle.
+{
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  watch(page, 'skeleton beside');
+  await page.goto(`${origin}/en/components/skeleton/`);
+  const row = (await page.evaluate(`(() => {
+    const live = [...document.querySelectorAll('.feitio-example .live')].find((l) => l.querySelector('.feitio-skeleton[data-shape="circle"]'));
+    const circle = live.querySelector('.feitio-skeleton[data-shape="circle"]').getBoundingClientRect();
+    const lines = live.querySelector('.feitio-skeleton[data-shape="text"]').getBoundingClientRect();
+    return { beside: lines.top < circle.bottom && lines.left >= circle.right, width: lines.width };
+  })()`)) as { beside: boolean; width: number };
+  check(row.beside, 'skeleton beside: the lines fell below the circle');
+  check(row.width >= 150, `skeleton beside: the lines are ${row.width}px wide beside the circle`);
+  await page.close();
+}
+
 // A filterable item clips to slide shut, with room for what its card casts: the lifted card's shadow on hover
 // once lost its bottom-right corner to the clip.
 {
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
   watch(page, 'card shadow');
   await page.goto(`${origin}/en/components/`);
+  const before = (await page.evaluate(
+    `getComputedStyle(document.querySelector('[data-search]')).overflow`,
+  )) as string;
+  check(
+    before === 'visible',
+    `card shadow: before any filter a card's item clips (overflow ${before})`,
+  );
+  await page.locator('.feitio-filter input').first().fill('button');
+  await page.waitForTimeout(400);
   const room = (await page.evaluate(
-    `parseFloat(getComputedStyle(document.querySelector('[data-search]')).overflowClipMargin) || 0`,
+    `parseFloat(getComputedStyle(document.querySelector('[data-search]:not([hidden])')).overflowClipMargin) || 0`,
   )) as number;
   check(
     room >= 8,
-    `card shadow: a filterable item clips with ${room}px of room, too little for a lifted card's shadow`,
+    `card shadow: after a filter a shown item clips with ${room}px of room, too little for a lifted card's shadow`,
   );
   await page.close();
 }

@@ -36,4 +36,4 @@ const {
 } = Astro.props;
 const Title = Tag === 'main' ? 'h1' : 'h2';
 ---
-<Tag class="feitio-page" data-layout={layout} data-width={layout === 'detail' && width === 'full' ? 'full' : undefined}><header class="feitio-page-header">{trail.length > 0 && <Breadcrumbs items={trail} current={title} label={trailLabel} sprite={sprite} />}<Title>{title}</Title>{lede && <p class="lede">{lede}</p>}</header>{layout === 'detail' ? <div class="feitio-page-detail"><div class="main"><slot /></div>{Astro.slots.has('aside') && <aside class="aside" aria-label={asideLabel}><slot name="aside" /></aside>}</div> : <slot />}</Tag>
+<Tag class="feitio-page" data-layout={layout} data-width={layout === 'detail' && width === 'full' ? 'full' : undefined}><header class="feitio-page-header">{trail.length > 0 && <Breadcrumbs items={trail} current={title} label={trailLabel} sprite={sprite} />}<Title>{title}</Title>{lede && <p class="lede">{lede}</p>}</header>{layout === 'detail' ? <div class="feitio-page-detail">{Astro.slots.has('aside') && <aside class="aside" aria-label={asideLabel}><slot name="aside" /></aside>}<div class="main"><slot /></div></div> : <slot />}</Tag>

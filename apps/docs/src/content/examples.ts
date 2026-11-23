@@ -377,14 +377,14 @@ export async function liveExamples(
           Stack,
           { gap: 3 },
           (await renderHtml(Skeleton, { shape: 'block', label })) +
-            (await renderHtml(Skeleton, { lines: 2, label })),
+            (await renderHtml(Skeleton, { lines: 2, label: '' })),
         ),
       ),
       'skeleton-avatar': await renderHtml(
         Inline,
         { gap: 3 },
         (await renderHtml(Skeleton, { shape: 'circle', label })) +
-          (await renderHtml(Skeleton, { lines: 2, label })),
+          (await renderHtml(Skeleton, { lines: 2, label: '' })),
       ),
     };
   }

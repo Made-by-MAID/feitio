@@ -934,10 +934,15 @@
     animation: feitio-filter-spin 1.1s linear infinite;
   }
   /* The items the filter hides close their space and the ones it brings back open it: a slide, never a jump. */
-  [data-search] {
+  /* The clip comes only once the list has filtered: until then nothing cuts a lifted card's shadow, in
+     every browser. After it, an item showing keeps room for that shadow; one closing clips tight. */
+  [data-filtering] [data-search] {
     overflow: clip;
-    /* Room for what a piece casts past its edge, like a lifted card's shadow on hover, which the clip cut. */
+  }
+  [data-filtering] [data-search]:not([hidden]) {
     overflow-clip-margin: var(--feitio-space-2);
+  }
+  [data-search] {
     transition-property: opacity, block-size, padding-block, display;
     transition-behavior: allow-discrete;
   }
@@ -979,10 +984,11 @@
     inline-size: 100%;
   }
   /* A line needs some width of its own where nothing gives it any (beside a circle, in a box that shrinks);
-     Stack's and Inline's children reset theirs to 0, so this one weighs more. */
+     Stack's and Inline's children reset theirs to 0, so this one weighs more. A plain length: min() with
+     100% shrinks the lines beside a circle in an Inline and drops them below it. In a box narrower than
+     this, give the Skeleton a width of its own. */
   .feitio-skeleton:not([data-shape="circle"]) {
     min-inline-size: calc(var(--feitio-space-7) * 2);
-    max-inline-size: 100%;
   }
   .feitio-skeleton .bone {
     display: block;
@@ -1743,9 +1749,9 @@
   .feitio-page-detail > .aside {
     min-inline-size: 0;
   }
-  /* On a phone the summary comes right under the title; beside the content when there is room. */
+  /* The summary comes first in the markup, so it is read and tabbed where it is seen: under the title on a
+     phone, beside the content when there is room. */
   .feitio-page-detail > .aside {
-    order: -1;
     overflow-wrap: anywhere;
   }
   @container (min-width: 56rem) {
@@ -1753,10 +1759,16 @@
       grid-template-columns: minmax(0, 1fr) 18rem;
       gap: var(--feitio-space-6);
     }
+    .feitio-page-detail > .main {
+      grid-area: 1 / 1;
+    }
+    /* Sticky beside the content, with its own scroll when it is taller than the window. */
     .feitio-page-detail > .aside {
-      order: 0;
+      grid-area: 1 / 2;
       position: sticky;
       inset-block-start: var(--feitio-space-5);
+      max-block-size: calc(100dvh - var(--feitio-space-5) * 2);
+      overflow-y: auto;
     }
   }
   /* Inside an AppShell's main column: dashboard, sections and a full detail as wide as a big screen allows,
@@ -1767,8 +1779,14 @@
     margin-inline: auto;
   }
   .feitio-app-main > .feitio-page[data-layout="detail"]:not([data-width="full"]) {
-    max-inline-size: calc(var(--feitio-measure-reading) + 18rem + var(--feitio-space-6));
+    max-inline-size: var(--feitio-measure-reading);
     margin-inline: auto;
+  }
+  .feitio-app-main
+    > .feitio-page[data-layout="detail"]:not([data-width="full"]):has(
+      .feitio-page-detail > .aside
+    ) {
+    max-inline-size: calc(var(--feitio-measure-reading) + 18rem + var(--feitio-space-6));
   }
   .feitio-app-main > .feitio-page[data-layout="board"] {
     max-inline-size: none;
