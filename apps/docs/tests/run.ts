@@ -1117,6 +1117,42 @@ for (const lang of ['pt', 'en', 'es', 'fr', 'de']) {
     box.position !== 'sticky',
     'detail anchor: the Anchor is sticky inside a summary that is already sticky',
   );
+  // Taller than the window: the summary alone scrolls, downward only, and stays inside the detail grid.
+  await page.evaluate(`(() => {
+    const list = document.querySelector('.feitio-page-detail > .aside .feitio-anchor :is(ol, ul)');
+    const item = list.lastElementChild;
+    for (let i = 0; i < 40; i++) list.append(item.cloneNode(true));
+  })()`);
+  await page.waitForTimeout(200);
+  const tall = (await page.evaluate(`(() => {
+    const aside = document.querySelector('.feitio-page-detail > .aside');
+    const anchor = aside.querySelector('.feitio-anchor');
+    return {
+      down: aside.scrollHeight > aside.clientHeight + 1,
+      across: aside.scrollWidth > aside.clientWidth + 1,
+      anchor: anchor.scrollHeight > anchor.clientHeight + 1,
+      past: aside.getBoundingClientRect().right - document.querySelector('.feitio-page-detail').getBoundingClientRect().right,
+    };
+  })()`)) as { down: boolean; across: boolean; anchor: boolean; past: number };
+  check(tall.down, 'detail anchor: a summary taller than the window does not scroll');
+  check(!tall.across, 'detail anchor: a tall summary scrolls sideways');
+  check(
+    !tall.anchor,
+    'detail anchor: the Anchor scrolls inside a tall summary (two nested scrolls)',
+  );
+  check(
+    tall.past <= 1,
+    `detail anchor: the summary passes the detail grid's edge by ${tall.past}px`,
+  );
+  // On a phone width the Anchor in the summary stays inside it.
+  await page.evaluate(`document.querySelector('.feitio-page').style.inlineSize = '24rem'`);
+  await page.waitForTimeout(200);
+  const narrow = (await page.evaluate(`(() => {
+    const aside = document.querySelector('.feitio-page-detail > .aside').getBoundingClientRect();
+    const anchor = document.querySelector('.feitio-page-detail > .aside .feitio-anchor').getBoundingClientRect();
+    return anchor.left >= aside.left - 1 && anchor.right <= aside.right + 1;
+  })()`)) as boolean;
+  check(narrow, "detail anchor: on a narrow page the Anchor passes the summary's edges");
   await page.close();
 }
 
