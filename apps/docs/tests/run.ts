@@ -1140,7 +1140,9 @@ for (const lang of ['pt', 'en', 'es', 'fr', 'de']) {
     `detail anchor: the summary passes the detail grid's edge by ${tall.past}px`,
   );
   // On a phone width the Anchor in the summary stays inside it.
-  await page.evaluate(`document.querySelector('.feitio-page').style.inlineSize = '24rem'`);
+  // A real phone: the window itself narrow, so a sideways scroll of the page would show.
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.evaluate(`document.querySelector('.feitio-page').style.inlineSize = ''`);
   await page.waitForTimeout(200);
   const narrow = (await page.evaluate(`(() => {
     const aside = document.querySelector('.feitio-page-detail > .aside');
