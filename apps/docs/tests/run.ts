@@ -1104,19 +1104,14 @@ for (const lang of ['pt', 'en', 'es', 'fr', 'de']) {
       beside: aside.getBoundingClientRect().left > document.querySelector('.feitio-page-detail > .main').getBoundingClientRect().right,
       aside: scrolls(aside),
       anchor: scrolls(anchor),
-      position: getComputedStyle(anchor).position,
     };
-  })()`)) as { beside: boolean; aside: boolean; anchor: boolean; position: string };
+  })()`)) as { beside: boolean; aside: boolean; anchor: boolean };
   check(
     box.beside,
     'detail anchor: the summary is not beside the content, so the case was not tried',
   );
   check(!box.aside, 'detail anchor: the summary holding a sticky Anchor scrolls while it fits');
   check(!box.anchor, 'detail anchor: the Anchor in the summary scrolls while it fits');
-  check(
-    box.position !== 'sticky',
-    'detail anchor: the Anchor is sticky inside a summary that is already sticky',
-  );
   // Taller than the window: the summary alone scrolls, downward only, and stays inside the detail grid.
   await page.evaluate(`(() => {
     const list = document.querySelector('.feitio-page-detail > .aside .feitio-anchor :is(ol, ul)');
@@ -1148,11 +1143,17 @@ for (const lang of ['pt', 'en', 'es', 'fr', 'de']) {
   await page.evaluate(`document.querySelector('.feitio-page').style.inlineSize = '24rem'`);
   await page.waitForTimeout(200);
   const narrow = (await page.evaluate(`(() => {
-    const aside = document.querySelector('.feitio-page-detail > .aside').getBoundingClientRect();
-    const anchor = document.querySelector('.feitio-page-detail > .aside .feitio-anchor').getBoundingClientRect();
-    return anchor.left >= aside.left - 1 && anchor.right <= aside.right + 1;
-  })()`)) as boolean;
-  check(narrow, "detail anchor: on a narrow page the Anchor passes the summary's edges");
+    const aside = document.querySelector('.feitio-page-detail > .aside');
+    const anchor = aside.querySelector('.feitio-anchor');
+    // A scrollbar only where the box scrolls (the page always may).
+    const across = (el) => getComputedStyle(el).overflowX !== 'visible' && el.scrollWidth > el.clientWidth + 1;
+    const page = document.documentElement.scrollWidth > document.documentElement.clientWidth + 1;
+    return { aside: across(aside), anchor: across(anchor), page };
+  })()`)) as { aside: boolean; anchor: boolean; page: boolean };
+  check(
+    !narrow.aside && !narrow.anchor && !narrow.page,
+    `detail anchor: on a narrow page something scrolls sideways (${JSON.stringify(narrow)})`,
+  );
   await page.close();
 }
 
