@@ -1080,6 +1080,92 @@ for (const lang of ['pt', 'en', 'es', 'fr', 'de']) {
   await page.close();
 }
 
+// A sticky Anchor in a detail Page's summary (MAID's Settings): one scroll at most, never two nested, and no
+// scrollbar on the summary while it fits: the summary's own scroll and the Anchor's negative margin once gave it
+// bars both ways.
+{
+  const page = await browser.newPage({
+    viewport: { width: 1440, height: 900 },
+    reducedMotion: 'reduce',
+  });
+  watch(page, 'detail anchor');
+  await page.goto(`${origin}/fixture?ids=page-detail,anchor-sticky&mode=light`);
+  await page.evaluate(`(() => {
+    const aside = document.querySelector('.feitio-page-detail > .aside');
+    aside.replaceChildren(document.querySelector('.feitio-anchor[data-sticky]'));
+    document.querySelector('.feitio-page').style.inlineSize = '72rem';
+  })()`);
+  await page.waitForTimeout(200);
+  const box = (await page.evaluate(`(() => {
+    const aside = document.querySelector('.feitio-page-detail > .aside');
+    const anchor = aside.querySelector('.feitio-anchor');
+    const scrolls = (el) => el.scrollWidth > el.clientWidth + 1 || el.scrollHeight > el.clientHeight + 1;
+    return {
+      beside: aside.getBoundingClientRect().left > document.querySelector('.feitio-page-detail > .main').getBoundingClientRect().right,
+      aside: scrolls(aside),
+      anchor: scrolls(anchor),
+    };
+  })()`)) as { beside: boolean; aside: boolean; anchor: boolean };
+  check(
+    box.beside,
+    'detail anchor: the summary is not beside the content, so the case was not tried',
+  );
+  check(!box.aside, 'detail anchor: the summary holding a sticky Anchor scrolls while it fits');
+  check(!box.anchor, 'detail anchor: the Anchor in the summary scrolls while it fits');
+  // Taller than the window: the summary alone scrolls, downward only, and stays inside the detail grid.
+  await page.evaluate(`(() => {
+    const list = document.querySelector('.feitio-page-detail > .aside .feitio-anchor :is(ol, ul)');
+    const item = list.lastElementChild;
+    for (let i = 0; i < 40; i++) list.append(item.cloneNode(true));
+  })()`);
+  await page.waitForTimeout(200);
+  const tall = (await page.evaluate(`(() => {
+    const aside = document.querySelector('.feitio-page-detail > .aside');
+    const anchor = aside.querySelector('.feitio-anchor');
+    return {
+      down: aside.scrollHeight > aside.clientHeight + 1,
+      across: aside.scrollWidth > aside.clientWidth + 1,
+      anchor: anchor.scrollHeight > anchor.clientHeight + 1,
+      past: aside.getBoundingClientRect().right - document.querySelector('.feitio-page-detail').getBoundingClientRect().right,
+    };
+  })()`)) as { down: boolean; across: boolean; anchor: boolean; past: number };
+  check(tall.down, 'detail anchor: a summary taller than the window does not scroll');
+  check(!tall.across, 'detail anchor: a tall summary scrolls sideways');
+  check(
+    !tall.anchor,
+    'detail anchor: the Anchor scrolls inside a tall summary (two nested scrolls)',
+  );
+  check(
+    tall.past <= 1,
+    `detail anchor: the summary passes the detail grid's edge by ${tall.past}px`,
+  );
+  // On a phone width the Anchor in the summary stays inside it.
+  // A real phone: the window itself narrow, so a sideways scroll of the page would show.
+  await page.setViewportSize({ width: 390, height: 844 });
+  // The fixture box shrinks to its content, so the page is given the phone's width (less its gutters).
+  await page.evaluate(
+    `document.querySelector('.feitio-page').style.inlineSize = 'calc(100vw - 3rem)'`,
+  );
+  await page.waitForTimeout(200);
+  const narrow = (await page.evaluate(`(() => {
+    const aside = document.querySelector('.feitio-page-detail > .aside');
+    const anchor = aside.querySelector('.feitio-anchor');
+    const box = aside.getBoundingClientRect();
+    const inner = anchor.getBoundingClientRect();
+    return {
+      // The Anchor inside the summary, the summary's content inside it, and no sideways scroll of the page.
+      aside: aside.scrollWidth > aside.clientWidth + 1,
+      anchor: inner.left < box.left - 1 || inner.right > box.right + 1 || anchor.scrollWidth > anchor.clientWidth + 1,
+      page: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+    };
+  })()`)) as { aside: boolean; anchor: boolean; page: boolean };
+  check(
+    !narrow.aside && !narrow.anchor && !narrow.page,
+    `detail anchor: on a narrow page something scrolls sideways (${JSON.stringify(narrow)})`,
+  );
+  await page.close();
+}
+
 // A sticky Anchor that fits hands the wheel to the page (#35): over it, on a long page, the window scrolls.
 {
   const page = await browser.newPage({
