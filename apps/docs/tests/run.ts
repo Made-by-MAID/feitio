@@ -1142,15 +1142,22 @@ for (const lang of ['pt', 'en', 'es', 'fr', 'de']) {
   // On a phone width the Anchor in the summary stays inside it.
   // A real phone: the window itself narrow, so a sideways scroll of the page would show.
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.evaluate(`document.querySelector('.feitio-page').style.inlineSize = ''`);
+  // The fixture box shrinks to its content, so the page is given the phone's width (less its gutters).
+  await page.evaluate(
+    `document.querySelector('.feitio-page').style.inlineSize = 'calc(100vw - 3rem)'`,
+  );
   await page.waitForTimeout(200);
   const narrow = (await page.evaluate(`(() => {
     const aside = document.querySelector('.feitio-page-detail > .aside');
     const anchor = aside.querySelector('.feitio-anchor');
-    // A scrollbar only where the box scrolls (the page always may).
-    const across = (el) => getComputedStyle(el).overflowX !== 'visible' && el.scrollWidth > el.clientWidth + 1;
-    const page = document.documentElement.scrollWidth > document.documentElement.clientWidth + 1;
-    return { aside: across(aside), anchor: across(anchor), page };
+    const box = aside.getBoundingClientRect();
+    const inner = anchor.getBoundingClientRect();
+    return {
+      // The Anchor inside the summary, the summary's content inside it, and no sideways scroll of the page.
+      aside: aside.scrollWidth > aside.clientWidth + 1,
+      anchor: inner.left < box.left - 1 || inner.right > box.right + 1 || anchor.scrollWidth > anchor.clientWidth + 1,
+      page: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+    };
   })()`)) as { aside: boolean; anchor: boolean; page: boolean };
   check(
     !narrow.aside && !narrow.anchor && !narrow.page,
